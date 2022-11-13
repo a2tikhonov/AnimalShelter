@@ -9,6 +9,9 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static ru.skypro.jd6.team3.animalshelter.model.BotInfoMenuConstants.*;
 
 /**
  * Вызывает меню для пользователя и обрабатывает входящие запросы
@@ -24,11 +27,12 @@ public class BotInfoMenu {
     public BotInfoMenu(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
+        setButtons();
 
     }
 
-    public void setButtons(ArrayList<String> buttons) {
-        this.buttons = buttons;
+    private void setButtons() {
+        this.buttons = new ArrayList<>(List.of(button1, button2, button3, button4));
         buttons.forEach(button -> {
             keyboard.addRow(new InlineKeyboardButton(button).callbackData(button));
         });
@@ -47,12 +51,14 @@ public class BotInfoMenu {
     /**
      * Обработчик запросов от пользователя
      * @param query принимает запрос с данными от кнопки, кот. нажал пользователь
+     * @return answer возвращает имя нажатой кнопки для идентификации, либо строку "пустой запрос"
      */
-    public void processRequest(CallbackQuery query) {
+
+    public String processRequest(CallbackQuery query) {
+        String answer = "Пустой запрос";
         if (query != null && buttons.contains(query.data())) {
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
-            String answer = "Извините, об этом пока нет информации";
             switch (query.data()) {
                 case ("Узнать информацию о приюте"):
                     answer = BotInfoMenuConstants.SHELTER_INFO;
@@ -70,6 +76,7 @@ public class BotInfoMenu {
             SendMessage sm = new SendMessage(query.message().chat().id(), answer);
             telegramBot.execute(sm);
         }
+        return answer;
     }
 
 }

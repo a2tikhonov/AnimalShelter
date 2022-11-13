@@ -41,11 +41,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
         updates.forEach(update -> {
             if (update.message() != null && update.message().text().equalsIgnoreCase("/start") ) {
-                botInfoMenu.setButtons(new ArrayList<>(List.of(
-                        "Узнать информацию о приюте"
-                        , "Как взять собаку из приюта"
-                        , "Прислать отчет о питомце"
-                        , "Позвать волонтера")));
                 botInfoMenu.send(update.message().chat().id(), "Добро пожаловать в приют для собак.");
             }
             botInfoMenu.processRequest(update.callbackQuery());

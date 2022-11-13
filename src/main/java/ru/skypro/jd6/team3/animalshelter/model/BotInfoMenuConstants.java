@@ -2,6 +2,13 @@ package ru.skypro.jd6.team3.animalshelter.model;
 
 final class BotInfoMenuConstants {
 
+    public static final String button1 = "Узнать информацию о приюте";
+
+    public static final String button2 = "Как взять собаку из приюта";
+
+    public static final String button3 = "Прислать отчет о питомце";
+
+    public static final String button4 = "Позвать волонтера";
 
     public static final String SHELTER_INFO = "Приют для собак. Часы работы пн-сб с 9:00 до 20:00.";
 
