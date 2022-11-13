@@ -1,4 +1,4 @@
-package ru.skypro.jd6.team3.animalshelter.configuration.listener;
+package ru.skypro.jd6.team3.animalshelter.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
