@@ -2,8 +2,12 @@ package ru.skypro.jd6.team3.animalshelter.service;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.skypro.jd6.team3.animalshelter.component.RecordComponent;
 import ru.skypro.jd6.team3.animalshelter.entity.Owner;
+import ru.skypro.jd6.team3.animalshelter.entity.Pet;
 import ru.skypro.jd6.team3.animalshelter.exception.OwnerNotFoundException;
+import ru.skypro.jd6.team3.animalshelter.exception.PetNotFoundException;
+import ru.skypro.jd6.team3.animalshelter.record.OwnerRecord;
 import ru.skypro.jd6.team3.animalshelter.repository.OwnerRepository;
 import ru.skypro.jd6.team3.animalshelter.repository.PetRepository;
 
@@ -19,14 +23,22 @@ public class OwnerService {
 
     private final PetRepository petRepository;
 
+    private final RecordComponent recordComponent;
+
     public OwnerService(OwnerRepository ownerRepository,
-                        PetRepository petRepository) {
+                        PetRepository petRepository,
+                        RecordComponent recordComponent) {
         this.ownerRepository = ownerRepository;
         this.petRepository = petRepository;
+        this.recordComponent = recordComponent;
     }
 
-    public Owner createOwner(Owner owner) {
-        return ownerRepository.save(owner);
+    public OwnerRecord createOwner(OwnerRecord ownerRecord) {
+        Owner owner = recordComponent.toEntityOwnerRecord(ownerRecord);
+        if (ownerRecord.getPet() != null) {
+            Pet pet = petRepository.findById(ownerRecord.getPet().getId()).orElseThrow(PetNotFoundException::new);
+        }
+        return recordComponent.toRecordOwner(ownerRepository.save(owner));
     }
 
     public Owner getOwnerById(Long id) {
@@ -39,14 +51,13 @@ public class OwnerService {
         }
     }
 
-    public Owner updateOwner(Owner owner) {
-        Owner oldOwner = ownerRepository.findById(owner.getOwnerId())
+    public OwnerRecord updateOwner(OwnerRecord ownerRecord) {
+        Owner oldOwner = ownerRepository.findById(ownerRecord.getId())
                 .orElseThrow(OwnerNotFoundException::new);
-        oldOwner.setEmail(owner.getEmail());
-        oldOwner.setName(owner.getName());
-        oldOwner.setPets(owner.getPets());
-        oldOwner.setPhoneNumber(owner.getPhoneNumber());
-        return ownerRepository.save(oldOwner);
+        oldOwner.setEmail(ownerRecord.getEmail());
+        oldOwner.setName(ownerRecord.getName());
+        oldOwner.setPhoneNumber(ownerRecord.getNumber());
+        return recordComponent.toRecordOwner(ownerRepository.save(oldOwner));
     }
 
     public void deleteOwner(Long id) {

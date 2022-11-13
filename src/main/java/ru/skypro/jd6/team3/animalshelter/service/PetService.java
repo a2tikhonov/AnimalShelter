@@ -2,10 +2,12 @@ package ru.skypro.jd6.team3.animalshelter.service;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.skypro.jd6.team3.animalshelter.component.RecordComponent;
 import ru.skypro.jd6.team3.animalshelter.entity.Owner;
 import ru.skypro.jd6.team3.animalshelter.entity.Pet;
 import ru.skypro.jd6.team3.animalshelter.exception.OwnerNotFoundException;
 import ru.skypro.jd6.team3.animalshelter.exception.PetNotFoundException;
+import ru.skypro.jd6.team3.animalshelter.record.PetRecord;
 import ru.skypro.jd6.team3.animalshelter.repository.OwnerRepository;
 import ru.skypro.jd6.team3.animalshelter.repository.PetRepository;
 
@@ -19,15 +21,23 @@ public class PetService {
     private final OwnerRepository ownerRepository;
 
     private final PetRepository petRepository;
+    private final RecordComponent recordComponent;
 
     public PetService(OwnerRepository ownerRepository,
-                      PetRepository petRepository) {
+                      PetRepository petRepository,
+                      RecordComponent recordComponent) {
         this.petRepository = petRepository;
-        this.ownerRepository =ownerRepository;
+        this.ownerRepository = ownerRepository;
+        this.recordComponent = recordComponent;
     }
 
-    public Pet createPet(Pet pet) {
-        return petRepository.save(pet);
+    public PetRecord createPet(PetRecord petRecord) {
+        Pet pet = recordComponent.toEntityPetRecord(petRecord);
+        if (petRecord.getOwner() != null) {
+            Owner owner = ownerRepository.findById(petRecord.getOwner().getId()).orElseThrow(OwnerNotFoundException::new);
+            pet.setOwner(owner);
+        }
+        return recordComponent.toRecordPet(petRepository.save(pet));
     }
 
     public Pet getPet(Long id) {
@@ -40,14 +50,14 @@ public class PetService {
         }
     }
 
-    public Pet updatePet(Pet pet) {
-        Pet oldPet = petRepository.findById(pet.getPetId())
+    public PetRecord updatePet(PetRecord petRecord) {
+        Pet oldPet = petRepository.findById(petRecord.getId())
                 .orElseThrow(PetNotFoundException::new);
-        oldPet.setAge(pet.getAge());
-        oldPet.setName(pet.getName());
-        oldPet.setBreed(pet.getBreed());
-        oldPet.setWeight(pet.getWeight());
-        return petRepository.save(oldPet);
+        oldPet.setAge(petRecord.getAge());
+        oldPet.setName(petRecord.getName());
+        oldPet.setBreed(petRecord.getBreed());
+        oldPet.setWeight(petRecord.getWeight());
+        return recordComponent.toRecordPet(petRepository.save(oldPet));
     }
 
     public void deletePet(Long id) {
