@@ -2,6 +2,10 @@ package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
 
+/**
+ * Класс для питомце, питомцев, а не собак так как приют может в будующем принимать и других животных
+ */
+
 @Entity
 @Table(name = "pets")
 public class Pet {
@@ -17,6 +21,10 @@ public class Pet {
     private Owner owner;
 
     public Pet() {}
+
+    /**
+     * Стандартные методы гет и сет
+     */
 
     public long getPetId() {
         return petId;

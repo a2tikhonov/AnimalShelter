@@ -1,4 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.GlobalExceptionHandler;
+/**
+ * Обработка всех ошибок
+ */
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,5 +1,8 @@
 package ru.skypro.jd6.team3.animalshelter.record;
 
+/**
+ * Класс рекорд Питомец для сущности Питомец
+ */
 public class PetRecord {
     private long id;
     private String name;
