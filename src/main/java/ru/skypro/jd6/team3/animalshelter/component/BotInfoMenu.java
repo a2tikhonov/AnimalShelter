@@ -1,4 +1,4 @@
-package ru.skypro.jd6.team3.animalshelter.model;
+package ru.skypro.jd6.team3.animalshelter.component;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.CallbackQuery;
@@ -8,7 +8,7 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
 
-import static ru.skypro.jd6.team3.animalshelter.model.BotInfoMenuConstants.*;
+import static ru.skypro.jd6.team3.animalshelter.component.BotInfoMenuConstants.*;
 
 /**
  * Вызывает меню для пользователя и обрабатывает входящие запросы

@@ -1,4 +1,4 @@
-package ru.skypro.jd6.team3.animalshelter.model;
+package ru.skypro.jd6.team3.animalshelter.component;
 
 import java.util.HashMap;
 import java.util.Map;
