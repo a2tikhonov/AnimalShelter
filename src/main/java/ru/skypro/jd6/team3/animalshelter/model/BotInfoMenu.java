@@ -8,9 +8,6 @@ import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static ru.skypro.jd6.team3.animalshelter.model.BotInfoMenuConstants.*;
 
 /**
@@ -22,7 +19,6 @@ public class BotInfoMenu {
 
     private final InlineKeyboardMarkup keyboard;
     private final TelegramBot telegramBot;
-    private ArrayList<String> buttons;
 
     public BotInfoMenu(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
@@ -32,16 +28,16 @@ public class BotInfoMenu {
     }
 
     private void setButtons() {
-        this.buttons = new ArrayList<>(List.of(button1, button2, button3, button4));
-        buttons.forEach(button -> {
+        buttons.keySet().forEach(button -> {
             keyboard.addRow(new InlineKeyboardButton(button).callbackData(button));
         });
     }
 
     /**
      * Отсылает меню в чат пользователя
+     *
      * @param chatId идентификатор чата
-     * @param what сообщение
+     * @param what   сообщение
      */
     public void send(Long chatId, String what) {
         SendMessage sm = new SendMessage(chatId, what).replyMarkup(keyboard);
@@ -50,29 +46,17 @@ public class BotInfoMenu {
 
     /**
      * Обработчик запросов от пользователя
+     *
      * @param query принимает запрос с данными от кнопки, кот. нажал пользователь
-     * @return answer возвращает имя нажатой кнопки для идентификации, либо строку "пустой запрос"
+     * @return answer возвращает имя нажатой кнопки для идентификации, либо строку "неверный запрос"
      */
 
     public String processRequest(CallbackQuery query) {
-        String answer = "Пустой запрос";
-        if (query != null && buttons.contains(query.data())) {
+        String answer = "Неверный запрос";
+        if (query != null && buttons.containsKey(query.data())) {
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
-            switch (query.data()) {
-                case ("Узнать информацию о приюте"):
-                    answer = BotInfoMenuConstants.SHELTER_INFO;
-                    break;
-                case ("Как взять собаку из приюта"):
-                    answer = BotInfoMenuConstants.HOT_TO_ADOPT;
-                    break;
-                case ("Прислать отчет о питомце"):
-                    answer = BotInfoMenuConstants.SUBMIT_PET_INFORMATION;
-                    break;
-                case ("Позвать волонтера"):
-                    answer = BotInfoMenuConstants.ASK_FOR_VOLUNTEER;
-                    break;
-            }
+            answer = buttons.get(query.data());
             SendMessage sm = new SendMessage(query.message().chat().id(), answer);
             telegramBot.execute(sm);
         }
