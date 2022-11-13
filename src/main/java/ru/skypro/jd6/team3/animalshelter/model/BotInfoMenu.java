@@ -27,15 +27,20 @@ public class BotInfoMenu {
             keyboard.addRow(new InlineKeyboardButton(button).callbackData(button));
         });
     }
+
     /**
      * Отсылает меню в чат пользователя
+     * @param chatId идентификатор чата
+     * @param what сообщение
      */
     public void send(Long chatId, String what) {
         SendMessage sm = new SendMessage(chatId, what).replyMarkup(keyboard);
         telegramBot.execute(sm);
     }
+
     /**
      * Обработчик запросов от пользователя
+     * @param query принимает запрос с данными от кнопки, кот. нажал пользователь
      */
     public void processRequest(CallbackQuery query) {
         if (query != null && buttons.contains(query.data())) {
