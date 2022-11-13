@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.util.Collection;
 
+/**
+ * Класс для Хозяина собак
+        */
 @Entity
 @Table(name = "owners")
 public class Owner {
@@ -14,6 +17,11 @@ public class Owner {
     private long phoneNumber;
     private String name;
     private String email;
+
+    /**
+     * Стандартные методы гет и сет
+     */
+
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY)

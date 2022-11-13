@@ -6,9 +6,16 @@ import ru.skypro.jd6.team3.animalshelter.entity.Pet;
 import ru.skypro.jd6.team3.animalshelter.record.OwnerRecord;
 import ru.skypro.jd6.team3.animalshelter.record.PetRecord;
 
+/**
+ * Класс для работы с рекордами классов и с классами
+ */
 @Component
 public class RecordComponent {
-
+    /**
+     * Превращает сущновсть Хозяин в рекорд Хоязин
+     * @param owner прнимаемая сущность Хозяин
+     * @return возвращаемый рекорд Хозяин
+     */
     public OwnerRecord toRecordOwner(Owner owner) {
         OwnerRecord ownerRecord = new OwnerRecord();
         ownerRecord.setId(owner.getOwnerId());
@@ -18,6 +25,11 @@ public class RecordComponent {
         return ownerRecord;
     }
 
+    /**
+     * Превращает рекорд Хозяин в сущность Хозяин
+     * @param ownerRecord принемаемый рекорд Хозяин
+     * @return возвращаемая сущность Хозяин
+     */
     public Owner toEntityOwnerRecord(OwnerRecord ownerRecord) {
         Owner owner = new Owner();
         owner.setName(ownerRecord.getName());
@@ -26,7 +38,11 @@ public class RecordComponent {
         return owner;
     }
 
-
+    /**
+     * Превращает сущновсть Питомец в рекорд Питомец
+     * @param pet прнимаемая сущность Питомец
+     * @return возвращаемый рекорд Питомец
+     */
     public PetRecord toRecordPet(Pet pet) {
         PetRecord petRecord = new PetRecord();
         petRecord.setId(pet.getPetId());
@@ -41,6 +57,11 @@ public class RecordComponent {
         return petRecord;
     }
 
+    /**
+     * Превращает рекорд Питомец в сущновсть Питомец
+     * @param petRecord принемаемый рекорд Питомец
+     * @return возвращаемая сущность Питомец
+     */
     public Pet toEntityPetRecord(PetRecord petRecord) {
         Pet pet = new Pet();
         pet.setName(petRecord.getName());

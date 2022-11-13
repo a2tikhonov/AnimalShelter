@@ -1,5 +1,8 @@
 package ru.skypro.jd6.team3.animalshelter.record;
 
+/**
+ * Рекорд класс Хозяин для сущности Хозяин
+ */
 public class OwnerRecord {
 
     private Long id;
