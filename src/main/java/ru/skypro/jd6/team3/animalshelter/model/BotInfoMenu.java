@@ -6,22 +6,28 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
 /**
  * Вызывает меню для пользователя и обрабатывает входящие запросы
  */
+@Component
 public class BotInfoMenu {
 
 
     private final InlineKeyboardMarkup keyboard;
     private final TelegramBot telegramBot;
-    private final ArrayList<String> buttons;
+    private ArrayList<String> buttons;
 
-    public BotInfoMenu(TelegramBot telegramBot, ArrayList<String> buttons) {
+    public BotInfoMenu(TelegramBot telegramBot) {
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
+
+    }
+
+    public void setButtons(ArrayList<String> buttons) {
         this.buttons = buttons;
         buttons.forEach(button -> {
             keyboard.addRow(new InlineKeyboardButton(button).callbackData(button));

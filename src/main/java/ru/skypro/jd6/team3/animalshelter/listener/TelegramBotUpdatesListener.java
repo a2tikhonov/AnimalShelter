@@ -21,9 +21,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final TelegramBot telegramBot;
 
+    private final BotInfoMenu botInfoMenu;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot) {
+
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, BotInfoMenu botInfoMenu) {
         this.telegramBot = telegramBot;
+        this.botInfoMenu = botInfoMenu;
     }
 
     private static final Pattern pattern = Pattern.compile("([0-9.:\\s]{16})(\\s)([\\W+|\\w]+)");
@@ -35,17 +38,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
-        BotInfoMenu menu = new BotInfoMenu(telegramBot, new ArrayList<>(List.of(
-                "Узнать информацию о приюте"
-                , "Как взять собаку из приюта"
-                , "Прислать отчет о питомце"
-                , "Позвать волонтера")));
+
         updates.forEach(update -> {
             if (update.message() != null && update.message().text().equalsIgnoreCase("/start") ) {
-                //greetMessage(update);
-                menu.send(update.message().chat().id(), "Добро пожаловать в приют для собак.");
+                botInfoMenu.setButtons(new ArrayList<>(List.of(
+                        "Узнать информацию о приюте"
+                        , "Как взять собаку из приюта"
+                        , "Прислать отчет о питомце"
+                        , "Позвать волонтера")));
+                botInfoMenu.send(update.message().chat().id(), "Добро пожаловать в приют для собак.");
             }
-            menu.processRequest(update.callbackQuery());
+            botInfoMenu.processRequest(update.callbackQuery());
 
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
