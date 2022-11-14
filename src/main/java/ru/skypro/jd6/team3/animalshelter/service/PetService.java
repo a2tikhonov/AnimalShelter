@@ -19,7 +19,9 @@ import java.util.logging.Logger;
 
 @Service
 public class PetService {
-    private final Logger logger = (Logger) LoggerFactory.getLogger(PetService.class);
+
+// Закомментировал, потому что иначе Spring не запускается - а) не может создать Bean; б) Ругается на логгер
+//    private final Logger logger = (Logger) LoggerFactory.getLogger(PetService.class);
 
     private final OwnerRepository ownerRepository;
 
