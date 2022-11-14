@@ -14,6 +14,7 @@ public class Owner {
     private long phoneNumber;
     private String name;
     private String email;
+    private boolean petOwner = false;
 
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY)
@@ -57,6 +58,10 @@ public class Owner {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isPetOwner() {
+        return petOwner;
     }
 
     @Override
