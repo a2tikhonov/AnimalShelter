@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS pets
 
 -- add some data into tables
 
-INSERT INTO shelter(shelter_id, description, email, location)
-VALUES (1, 'Jd 6/team № 3 Shelter', 'Jd6_t3_shelter@gmail.com', 'Come on, use Google... meh...');
+INSERT INTO shelter(shelter_id, description, email, location, howToFindUs)
+VALUES (1, 'Jd 6/team № 3 Shelter', 'Jd6_t3_shelter@gmail.com', 'Come on, use Google... meh...', 'Legit use some navigation');
 
 INSERT INTO owners (phone_number, name, age, email)
 VALUES
