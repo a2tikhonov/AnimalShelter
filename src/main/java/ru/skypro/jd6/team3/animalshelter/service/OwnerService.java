@@ -20,7 +20,8 @@ import java.util.logging.Logger;
 @Service
 public class OwnerService {
 
-    private final Logger logger = (Logger) LoggerFactory.getLogger(OwnerService.class);
+// Закомментировал, потому что иначе Spring не запускается - а) не может создать Bean; б) Ругается на логгер
+//    private final Logger logger = (Logger) LoggerFactory.getLogger(OwnerService.class);
 
     private final OwnerRepository ownerRepository;
 

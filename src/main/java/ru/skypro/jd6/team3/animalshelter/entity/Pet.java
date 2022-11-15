@@ -16,6 +16,7 @@ public class Pet {
     private double weight;
     private double age;
     private String breed;
+    private boolean adopted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Owner owner;
@@ -72,6 +73,10 @@ public class Pet {
 
     public void setOwner(Owner owner) {
         this.owner = owner;
+    }
+
+    public boolean isAdopted() {
+        return adopted;
     }
 
     @Override
