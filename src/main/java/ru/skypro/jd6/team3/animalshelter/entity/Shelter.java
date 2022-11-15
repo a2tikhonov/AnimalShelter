@@ -16,6 +16,28 @@ public class Shelter {
     private String location;
     private String description;
     private String email;
+    private String howToFindUs;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Shelter shelter = (Shelter) o;
+        return shelterId == shelter.shelterId && location.equals(shelter.location) && description.equals(shelter.description) && email.equals(shelter.email) && howToFindUs.equals(shelter.howToFindUs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(shelterId, location, description, email, howToFindUs);
+    }
+
+    public String getHowToFindUs() {
+        return howToFindUs;
+    }
+
+    public void setHowToFindUs(String howToFindUs) {
+        this.howToFindUs = howToFindUs;
+    }
 
     public long getShelterId() {
         return shelterId;
@@ -49,16 +71,4 @@ public class Shelter {
         this.email = email;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Shelter shelter = (Shelter) o;
-        return shelterId == shelter.shelterId && location.equals(shelter.location) && description.equals(shelter.description) && email.equals(shelter.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(shelterId, location, description, email);
-    }
 }
