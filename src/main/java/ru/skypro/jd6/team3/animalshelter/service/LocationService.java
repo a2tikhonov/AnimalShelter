@@ -3,7 +3,6 @@ package ru.skypro.jd6.team3.animalshelter.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.jd6.team3.animalshelter.entity.Location;
@@ -16,9 +15,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -26,8 +22,8 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class LocationService {
     private final Logger logger = LoggerFactory.getLogger(LocationService.class);
 
-    @Value("${students.avatar.dir.path}$")
-    private String avatarDir;
+    @Value("${upload.path}$")
+    private String uploadPath;
 
     private final LocationRepository locationRepository;
     private final ShelterService shelterService;
@@ -37,11 +33,10 @@ public class LocationService {
         this.shelterService = shelterService;
     }
 
-    public void uploadAvatar(Long id, MultipartFile file) throws IOException {
-        logger.info("Since i too afraid to brake something in Avatar chain. I will give only info. This upload avatar of student on server and makes connection between model Avatar & student. ");
+    public void uploadLocation(Long id, MultipartFile file) throws IOException {
         Shelter shelter = shelterService.getShelter(id);
 
-        Path filePath = Path.of(avatarDir, id + "." + getExtension(file.getOriginalFilename()));
+        Path filePath = Path.of(uploadPath, id + "." + getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
 
@@ -65,12 +60,12 @@ public class LocationService {
     }
 
     public Location findLocation(Long id) {
-        logger.info("Simple find avatar by id");
+        logger.info("Simple find location by id");
         return locationRepository.findByShelter_ShelterId(id).orElse(new Location());
     }
 
     public byte[] generateImagePreview(Path filePath) throws IOException {
-        logger.info("This generates preview of avatar.");
+        logger.info("This generates preview of location.");
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
