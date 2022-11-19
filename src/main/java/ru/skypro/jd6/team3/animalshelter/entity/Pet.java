@@ -17,6 +17,7 @@ public class Pet {
     private double age;
     private String breed;
     private boolean adopted = false;
+    private boolean disabled = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Owner owner;
@@ -77,6 +78,10 @@ public class Pet {
 
     public boolean isAdopted() {
         return adopted;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
     }
 
     @Override
