@@ -51,10 +51,7 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.12</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
+
     </dependencies>
 
     <build>
@@ -67,10 +64,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>18</source>
-                    <target>18</target>
-                </configuration>
+                <version>3.8.1</version>
             </plugin>
         </plugins>
     </build>
