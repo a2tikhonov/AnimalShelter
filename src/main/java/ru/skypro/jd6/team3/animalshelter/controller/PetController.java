@@ -7,6 +7,9 @@ import ru.skypro.jd6.team3.animalshelter.entity.Pet;
 import ru.skypro.jd6.team3.animalshelter.record.PetRecord;
 import ru.skypro.jd6.team3.animalshelter.service.PetService;
 
+/**
+ * Контроллер для класса "Pet"
+ */
 @RestController
 @RequestMapping("/pet")
 public class PetController {
