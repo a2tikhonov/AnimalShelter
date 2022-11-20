@@ -6,31 +6,29 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import ru.skypro.jd6.team3.animalshelter.service.InfoMenuService;
 
-import static ru.skypro.jd6.team3.animalshelter.component.BotInfoMenuConstants.*;
 
 /**
  * Вызывает меню для пользователя и обрабатывает входящие запросы
  */
-@Component
-public class BotInfoMenu {
-
-
+@Service
+public class InfoMenuForBot {
     private final InlineKeyboardMarkup keyboard;
     private final TelegramBot telegramBot;
+    private final InfoMenuService infoMenuService;
 
-    public BotInfoMenu(TelegramBot telegramBot) {
+
+    public InfoMenuForBot(TelegramBot telegramBot, InfoMenuService infoMenuService) {
+        this.infoMenuService = infoMenuService;
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
-        setButtons();
-
     }
 
-    private void setButtons() {
-        buttons.keySet().forEach(button -> {
-            keyboard.addRow(new InlineKeyboardButton(button).callbackData(button));
-        });
+    public void setButtons() {
+        infoMenuService.getButtons().forEach(button ->
+                keyboard.addRow(new InlineKeyboardButton(button).callbackData(button)));
     }
 
     /**
@@ -53,10 +51,10 @@ public class BotInfoMenu {
 
     public String processRequest(CallbackQuery query) {
         String answer = "Неверный запрос";
-        if (query != null && buttons.containsKey(query.data())) {
+        if (query != null && infoMenuService.buttonExist(query.data())) {
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
-            answer = buttons.get(query.data());
+            answer = infoMenuService.findByButton(query.data()).getCallBack();
             SendMessage sm = new SendMessage(query.message().chat().id(), answer);
             telegramBot.execute(sm);
         }
@@ -64,3 +62,4 @@ public class BotInfoMenu {
     }
 
 }
+
