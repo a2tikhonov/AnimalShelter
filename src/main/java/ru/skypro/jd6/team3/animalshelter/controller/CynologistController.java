@@ -20,7 +20,7 @@ public class CynologistController {
 
     /**
      * Создаёт Кинолог в базе данных
-     * @param cynologist новый объект "Киноло"
+     * @param cynologist новый объект "Кинолог"
      *
      */
     @PostMapping

@@ -14,7 +14,7 @@ public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ownerId;
-    private long phoneNumber;
+    private String phoneNumber;
     private String name;
     private String email;
     private boolean petOwner = false;
@@ -36,11 +36,11 @@ public class Owner {
         this.ownerId = ownerId;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

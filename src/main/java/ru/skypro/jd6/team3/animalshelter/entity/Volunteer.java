@@ -13,6 +13,8 @@ public class Volunteer {
     private long phoneNumber;
     private String name;
     private String email;
+    @OneToOne
+    private Shelter shelter;
 
     public long getVolunteerId() {
         return volunteerId;
@@ -44,6 +46,14 @@ public class Volunteer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(Shelter shelter) {
+        this.shelter = shelter;
     }
 
     @Override

@@ -1,9 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +14,10 @@ public class Shelter {
     private String description;
     private String email;
     private String howToFindUs;
+    @ManyToOne
+    private Volunteer volunteer;
+    @ManyToOne
+    private Pet pet;
 
     @Override
     public boolean equals(Object o) {
@@ -71,4 +72,19 @@ public class Shelter {
         this.email = email;
     }
 
+    public Volunteer getVolunteer() {
+        return volunteer;
+    }
+
+    public void setVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
 }

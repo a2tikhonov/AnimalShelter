@@ -6,7 +6,7 @@ package ru.skypro.jd6.team3.animalshelter.record;
 public class OwnerRecord {
 
     private Long id;
-    private Long number;
+    private String number;
     private String name;
     private String email;
     private PetRecord pet;
@@ -19,11 +19,11 @@ public class OwnerRecord {
         this.id = id;
     }
 
-    public Long getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(Long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 

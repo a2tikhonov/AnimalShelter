@@ -22,6 +22,8 @@ public class Pet {
     @ManyToOne(fetch = FetchType.LAZY)
     private Owner owner;
 
+    @OneToOne
+    private Shelter shelter;
     public Pet() {}
 
     /**
@@ -74,6 +76,14 @@ public class Pet {
 
     public void setOwner(Owner owner) {
         this.owner = owner;
+    }
+
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(Shelter shelter) {
+        this.shelter = shelter;
     }
 
     public boolean isAdopted() {
