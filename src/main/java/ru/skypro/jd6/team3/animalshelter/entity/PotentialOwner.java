@@ -1,5 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Objects;
@@ -11,12 +12,14 @@ public class PotentialOwner {
 
     private String name;
 
+    @Column(unique = true)
     private String phone;
 
     public PotentialOwner() {
     }
 
-    public PotentialOwner(String name, String phone) {
+    public PotentialOwner(Long id, String name, String phone) {
+        this.id = id;
         this.name = name;
         this.phone = phone;
     }
@@ -37,7 +40,8 @@ public class PotentialOwner {
     @Override
     public String toString() {
         return "PotentialOwner{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
     }
@@ -65,4 +69,5 @@ public class PotentialOwner {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
 }

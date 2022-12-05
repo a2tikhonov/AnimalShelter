@@ -7,7 +7,8 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.skypro.jd6.team3.animalshelter.component.InfoMenuForBot;
+import ru.skypro.jd6.team3.animalshelter.service.MainMenuService;
+import ru.skypro.jd6.team3.animalshelter.service.NewUserMenuService;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -20,13 +21,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final TelegramBot telegramBot;
 
-    private final InfoMenuForBot infoMenuForBot;
+    private final MainMenuService mainMenuService;
+
+    private final NewUserMenuService newUserMenuService;
 
 
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, InfoMenuForBot infoMenuForBot) {
+
+
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuService, NewUserMenuService newUserMenuService) {
         this.telegramBot = telegramBot;
-        this.infoMenuForBot = infoMenuForBot;
+        this.newUserMenuService = newUserMenuService;
+        this.mainMenuService = mainMenuService;
     }
 
     private static final Pattern pattern = Pattern.compile("([0-9.:\\s]{16})(\\s)([\\W+|\\w]+)");
@@ -38,20 +44,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
-
         updates.forEach(update -> {
             if (update.message() != null && update.message().text().equalsIgnoreCase("/start") ) {
-                infoMenuForBot.setButtons();
-                infoMenuForBot.send(update.message().chat().id(), "Добро пожаловать в приют для собак.");
+                mainMenuService.send(update.message().chat().id(), "Добро пожаловать в приют.");
             }
-            infoMenuForBot.processRequest(update.callbackQuery());
+            if (mainMenuService.processRequest(update.callbackQuery()).longValue() == 1L) {
+                newUserMenuService.processRequest(update.callbackQuery());
+            }
+
 
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
     private void greetMessage(Update update) {
-        SendMessage responseMessage = new SendMessage(update.message().chat().id(), "Sup, @" + update.message().chat().username() + "\n What do you want?!");
+        SendMessage responseMessage = new SendMessage(update.message().chat().id(), "С возвращением, @" + update.message().chat().username() + "\n !");
         telegramBot.execute(responseMessage);
     }
 

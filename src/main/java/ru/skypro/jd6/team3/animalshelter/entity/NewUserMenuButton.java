@@ -7,21 +7,21 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "infomenu")
-public class InfoMenu {
+@Table(name = "new_user_menu")
+public class NewUserMenuButton {
 
     @Id
-    @GeneratedValue(generator = "infoMenuGen")
+    @GeneratedValue(generator = "newUsrMenuGen")
     private Long id;
 
     private String button;
 
     private String callBack;
 
-    public InfoMenu() {
+    public NewUserMenuButton() {
     }
 
-    public InfoMenu(Long id, String button, String callBack) {
+    public NewUserMenuButton(Long id, String button, String callBack) {
         this.id = id;
         this.button = button;
         this.callBack = callBack;
@@ -31,8 +31,8 @@ public class InfoMenu {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        InfoMenu infoMenu = (InfoMenu) o;
-        return id.equals(infoMenu.id);
+        NewUserMenuButton newUserMenuButton = (NewUserMenuButton) o;
+        return id.equals(newUserMenuButton.id);
     }
 
     @Override
@@ -71,4 +71,5 @@ public class InfoMenu {
     public void setCallBack(String callBack) {
         this.callBack = callBack;
     }
+
 }

@@ -17,6 +17,16 @@ public class PotentialOwnerService {
         this.potentialOwnerRepository = potentialOwnerRepository;
     }
 
+    public void add(Long id) {
+        PotentialOwner potentialOwner = new PotentialOwner();
+        potentialOwner.setId(id);
+        potentialOwnerRepository.save(potentialOwner);
+    }
+
+    public boolean find(Long id) {
+        return potentialOwnerRepository.findById(id).isPresent();
+    }
+
     public boolean add(String message) {
         boolean nameIsCorrect = false;
         boolean phoneIsCorrect = false;
@@ -45,8 +55,8 @@ public class PotentialOwnerService {
             phoneIsCorrect = true;
         }
         if (nameIsCorrect && phoneIsCorrect) {
-            PotentialOwner owner = new PotentialOwner(name, phone);
-            potentialOwnerRepository.save(owner);
+            //PotentialOwner owner = new PotentialOwner(name, phone);
+            //potentialOwnerRepository.save(owner);
             return true;
         }
         return false;
