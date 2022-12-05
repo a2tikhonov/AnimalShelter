@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.NewUserMenuButton;
 import ru.skypro.jd6.team3.animalshelter.service.NewUserMenuService;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/newUserMenu")
 public class NewUserMenuController {
@@ -25,5 +27,11 @@ public class NewUserMenuController {
     public ResponseEntity<NewUserMenuButton> get(@RequestParam Long id) {
         NewUserMenuButton newUserMenuButton = newUserMenuService.get(id);
         return ResponseEntity.ok(newUserMenuButton);
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<Collection<String>> getAll() {
+        Collection<String> buttons = newUserMenuService.getButtons();
+        return ResponseEntity.ok(buttons);
     }
 }

@@ -3,10 +3,12 @@ package ru.skypro.jd6.team3.animalshelter.listener;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.ForceReply;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.service.MainMenuService;
 import ru.skypro.jd6.team3.animalshelter.service.NewUserMenuService;
 import ru.skypro.jd6.team3.animalshelter.service.PotentialOwnerService;
@@ -52,24 +54,42 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
-            if (update.message() != null && update.message().text().equalsIgnoreCase("/start") ) {
-                mainMenuService.send(update.message().chat().id(), "Этап0");
+            potentialOwnerDetected = false;
+            if (update.message() != null) {
+                Long userIdFromMessage = update.message().chat().id();
+                potentialOwnerDetected = potentialOwnerService.find(userIdFromMessage);
+                String messageText = update.message().text();
+                if (messageText.equalsIgnoreCase("/start")) {
+                    mainMenuService.send(userIdFromMessage, "Добро пожаловать!");
+                }
+                if (potentialOwnerDetected && potentialOwnerService.get(userIdFromMessage).getPhone().isBlank()
+                        && !update.message().text().isBlank()) {
+                    String msg = update.message().text();
+                    if (msg.matches("^[а-яА-Я]+\\s\\+[0-9]+$")) {
+                        System.out.println("Yappi");
+                        potentialOwnerService.add(userIdFromMessage, msg);
+                    }
+                }
             }
-            if (mainMenuService.buttonTap(update.callbackQuery()).equals("Кнопка1")) {
-                newUserMenuService.send(update.callbackQuery().message().chat().id(), "Этап1");
-            }
-            if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Кнопонька1")) {
-                sendMessage(update.callbackQuery().message().chat().id(), "Кнопонька1 нажалась!");
+            if (update.callbackQuery() != null) {
+                Long userIdFromCallBackQuery = update.callbackQuery().message().chat().id();
+                potentialOwnerDetected = potentialOwnerService.find(userIdFromCallBackQuery);
+                if (mainMenuService.buttonTap(update.callbackQuery()).equals("Узнать информацию о приюте")) {
+                    newUserMenuService.send(userIdFromCallBackQuery, "Консультация с новым пользователем");
+                }
+                if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
+                    if (!potentialOwnerDetected) {
+                        potentialOwnerDetected = potentialOwnerService.add(update.callbackQuery().from().id());
+                        sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона");
+                    } else {
+                        if (!potentialOwnerService.get(userIdFromCallBackQuery).getPhone().isBlank()) {
+                            sendMessage(userIdFromCallBackQuery, "Ваши данные уже в базе");
+                        } else {
+                            sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона");
+                        }
+                    }
+                }
 
-            }
-            if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Кнопонька2")) {
-                    sendMessage(update.callbackQuery().message().chat().id(), "Введите свое имя и номер телефона");
-                    potentialOwnerService.add(update.callbackQuery().from().id());
-                    potentialOwnerDetected = true;
-            }
-            if (update.message() != null && potentialOwnerDetected && !update.message().text().isBlank() && potentialOwnerService.find(update.message().chat().id())) {
-                String msg = update.message().text();
-                potentialOwnerService.add(update.message().chat().id(), msg);
             }
 
 

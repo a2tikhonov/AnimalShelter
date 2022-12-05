@@ -7,7 +7,6 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
-import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButton;
 import ru.skypro.jd6.team3.animalshelter.entity.NewUserMenuButton;
 import ru.skypro.jd6.team3.animalshelter.repository.NewUserMenuRepository;
 
@@ -16,18 +15,16 @@ import java.util.Collection;
 @Service
 public class NewUserMenuService{
 
-    //private final PotentialOwnerService potentialOwnerService;
-
     private final NewUserMenuRepository newUserMenuRepository;
 
     private final InlineKeyboardMarkup keyboard;
 
     private final TelegramBot telegramBot;
 
-    public NewUserMenuService(NewUserMenuRepository newUserMenuRepository, TelegramBot telegramBot) {
+    public NewUserMenuService(TelegramBot telegramBot, NewUserMenuRepository newUserMenuRepository) {
         this.newUserMenuRepository = newUserMenuRepository;
-        this.keyboard = new InlineKeyboardMarkup();
         this.telegramBot = telegramBot;
+        this.keyboard = new InlineKeyboardMarkup();
         setButtons();
     }
 

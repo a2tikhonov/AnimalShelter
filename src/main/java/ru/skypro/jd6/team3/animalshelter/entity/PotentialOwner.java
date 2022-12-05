@@ -15,6 +15,7 @@ public class PotentialOwner {
     @Column(unique = true)
     private String phone;
 
+
     public PotentialOwner() {
     }
 
@@ -23,6 +24,7 @@ public class PotentialOwner {
         this.name = name;
         this.phone = phone;
     }
+
 
     @Override
     public boolean equals(Object o) {

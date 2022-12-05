@@ -25,13 +25,11 @@ public class MainMenuService {
 
     private final MainMenuRepository mainMenuRepository;
 
-    private final NewUserMenuService newUserMenuService;
 
 
 
-    public MainMenuService(TelegramBot telegramBot, MainMenuRepository mainMenuRepository, NewUserMenuService newUserMenuService) {
+    public MainMenuService(TelegramBot telegramBot, MainMenuRepository mainMenuRepository) {
         this.mainMenuRepository = mainMenuRepository;
-        this.newUserMenuService = newUserMenuService;
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
         setButtons();

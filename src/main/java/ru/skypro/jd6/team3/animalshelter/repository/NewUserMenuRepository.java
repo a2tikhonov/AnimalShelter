@@ -2,7 +2,6 @@ package ru.skypro.jd6.team3.animalshelter.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButton;
 import ru.skypro.jd6.team3.animalshelter.entity.NewUserMenuButton;
 
 import java.util.Collection;
