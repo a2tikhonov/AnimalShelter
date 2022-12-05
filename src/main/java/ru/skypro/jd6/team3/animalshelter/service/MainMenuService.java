@@ -37,7 +37,6 @@ public class MainMenuService {
         setButtons();
     }
 
-
     public MainMenuButton get(Long id) {
         return mainMenuRepository.findById(id).orElse(null);
     }
@@ -81,15 +80,15 @@ public class MainMenuService {
      * @return answer возвращает имя нажатой кнопки для идентификации, либо строку "неверный запрос"
      */
 
-    public Long processRequest(CallbackQuery query) {
-        Long id = -1L;
+    public String buttonTap(CallbackQuery query) {
+        String button = "";
         if (query != null && buttonExist(query.data())) {
-            MainMenuButton mainMenuButton = mainMenuRepository.findByButton(findByButton(query.data()).getCallBack());
-            id = mainMenuButton.getId();
+            MainMenuButton mainMenuButton = mainMenuRepository.findByButton(query.data());
+            button = mainMenuButton.getButton();
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
         }
-        return id;
+        return button;
     }
 
 }

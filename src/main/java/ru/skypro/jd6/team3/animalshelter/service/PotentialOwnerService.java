@@ -20,6 +20,8 @@ public class PotentialOwnerService {
     public void add(Long id) {
         PotentialOwner potentialOwner = new PotentialOwner();
         potentialOwner.setId(id);
+        potentialOwner.setName("");
+        potentialOwner.setPhone("");
         potentialOwnerRepository.save(potentialOwner);
     }
 
@@ -27,18 +29,13 @@ public class PotentialOwnerService {
         return potentialOwnerRepository.findById(id).isPresent();
     }
 
-    public boolean add(String message) {
+    public boolean add(Long id, String message) {
         boolean nameIsCorrect = false;
         boolean phoneIsCorrect = false;
-        String name = null;
-        String phone = null;
-        String regex = "([0-9.:\\s]{16})(\\s)([\\W+]+)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(message);
-        if (matcher.matches()) {
-            name = matcher.group(1);
-            phone = matcher.group(3);
-        }
+        System.out.println("message = " + message);
+        String[] msg = message.split(" ");
+        String name = msg[0];
+        String phone = msg[1];
         if (!name.isBlank() && name.length() >= 2) {
             name = name.toLowerCase(Locale.ROOT);
             String firstLetter = name.substring(0, 1).toUpperCase(Locale.ROOT);
@@ -55,8 +52,8 @@ public class PotentialOwnerService {
             phoneIsCorrect = true;
         }
         if (nameIsCorrect && phoneIsCorrect) {
-            //PotentialOwner owner = new PotentialOwner(name, phone);
-            //potentialOwnerRepository.save(owner);
+            PotentialOwner owner = new PotentialOwner(id, name, phone);
+            potentialOwnerRepository.save(owner);
             return true;
         }
         return false;

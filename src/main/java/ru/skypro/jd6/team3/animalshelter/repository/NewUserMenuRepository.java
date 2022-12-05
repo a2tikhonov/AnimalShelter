@@ -12,5 +12,5 @@ public interface NewUserMenuRepository extends JpaRepository<NewUserMenuButton, 
     @Query(value = "SELECT new_user_menu.button FROM new_user_menu", nativeQuery = true)
     Collection<String> getAllButtons();
 
-    MainMenuButton findByButton(String button);
+    NewUserMenuButton findByButton(String button);
 }

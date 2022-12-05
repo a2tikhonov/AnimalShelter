@@ -52,7 +52,7 @@ public class NewUserMenuService{
         return newUserMenuRepository.findByButton(button) != null;
     }
 
-    public MainMenuButton findByButton(String button) {
+    public NewUserMenuButton findByButton(String button) {
         return newUserMenuRepository.findByButton(button);
     }
 
@@ -74,22 +74,15 @@ public class NewUserMenuService{
      * @return answer возвращает имя нажатой кнопки для идентификации, либо строку "неверный запрос"
      */
 
-    public String processRequest(CallbackQuery query) {
-        String answer = "Неверный запрос";
+    public String buttonTap(CallbackQuery query) {
+        String button = "";
         if (query != null && buttonExist(query.data())) {
+            NewUserMenuButton mainMenuButton = newUserMenuRepository.findByButton(query.data());
+            button = mainMenuButton.getButton();
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
-            SendMessage sm;
-            if (!query.data().equals("Записать данные для связи")) {
-                answer = findByButton(query.data()).getCallBack();
-
-            } else {
-                answer = "Пожалуйста, введите Ваши контактные данные";
-            }
-            sm = new SendMessage(query.message().chat().id(), answer);
-            telegramBot.execute(sm);
         }
-        return answer;
+        return button;
     }
 
 }
