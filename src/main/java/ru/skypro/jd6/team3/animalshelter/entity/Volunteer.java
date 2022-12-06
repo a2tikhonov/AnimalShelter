@@ -1,13 +1,11 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-public class PotentialOwner {
+public class Volunteer {
     @Id
     private Long id;
 
@@ -15,26 +13,31 @@ public class PotentialOwner {
 
     @Column(unique = true)
     private String phone;
-    @ManyToOne
-    private Volunteer volunteer;
 
+    @Column(unique = true)
+    private String email;
 
-    public PotentialOwner() {
+    private boolean busy;
+    @OneToOne
+    private PotentialOwner potentialOwner;
+
+    public Volunteer() {
     }
 
-    public PotentialOwner(Long id, String name, String phone) {
+    public Volunteer(Long id, String name, String phone, String email, Boolean busy) {
         this.id = id;
         this.name = name;
         this.phone = phone;
+        this.email = email;
+        this.busy = busy;
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PotentialOwner that = (PotentialOwner) o;
-        return id.equals(that.id);
+        Volunteer volunteer = (Volunteer) o;
+        return id.equals(volunteer.id);
     }
 
     @Override
@@ -44,10 +47,11 @@ public class PotentialOwner {
 
     @Override
     public String toString() {
-        return "PotentialOwner{" +
+        return "Volunteer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 
@@ -75,11 +79,27 @@ public class PotentialOwner {
         this.phone = phone;
     }
 
-    public Volunteer getVolunteer() {
-        return volunteer;
+    public String getEmail() {
+        return email;
     }
 
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isBusy() {
+        return busy;
+    }
+
+    public void setBusy(boolean busy) {
+        this.busy = busy;
+    }
+
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
+    }
+
+    public void setPotentialOwner(PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
     }
 }
