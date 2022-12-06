@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButton;
 import ru.skypro.jd6.team3.animalshelter.service.MainMenuService;
 
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/mainMenu")
 public class MainMenuController {
@@ -22,7 +24,12 @@ public class MainMenuController {
     }
 
     @GetMapping
-    public ResponseEntity<MainMenuButton> get(@RequestParam Long id) {
+    public ResponseEntity<Collection<MainMenuButton>> getAll() {
+        return ResponseEntity.ok(mainMenuService.getButtons());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MainMenuButton> get(@PathVariable Long id) {
         MainMenuButton mainMenuButton = mainMenuService.get(id);
         return ResponseEntity.ok(mainMenuButton);
     }

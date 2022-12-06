@@ -17,7 +17,7 @@ public class VolunteerController {
         this.volunteerService = volunteerService;
     }
 
-    @PostMapping
+    @PutMapping
     public ResponseEntity<Volunteer> add(@RequestBody Volunteer volunteer) {
         return ResponseEntity.ok(volunteerService.save(volunteer));
     }

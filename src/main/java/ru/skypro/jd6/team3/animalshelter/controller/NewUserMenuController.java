@@ -23,15 +23,15 @@ public class NewUserMenuController {
         return ResponseEntity.ok(newUserMenuButton1);
     }
 
-    @GetMapping
-    public ResponseEntity<NewUserMenuButton> get(@RequestParam Long id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<NewUserMenuButton> get(@PathVariable Long id) {
         NewUserMenuButton newUserMenuButton = newUserMenuService.get(id);
         return ResponseEntity.ok(newUserMenuButton);
     }
 
-    @GetMapping("/get")
-    public ResponseEntity<Collection<String>> getAll() {
-        Collection<String> buttons = newUserMenuService.getButtons();
+    @GetMapping()
+    public ResponseEntity<Collection<NewUserMenuButton>> getAll() {
+        Collection<NewUserMenuButton> buttons = newUserMenuService.getButtons();
         return ResponseEntity.ok(buttons);
     }
 }

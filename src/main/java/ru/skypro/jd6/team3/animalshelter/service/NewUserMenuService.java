@@ -32,13 +32,13 @@ public class NewUserMenuService{
         return newUserMenuRepository.findById(id).orElse(null);
     }
 
-    public Collection<String> getButtons() {
-        return newUserMenuRepository.getAllButtons();
+    public Collection<NewUserMenuButton> getButtons() {
+        return newUserMenuRepository.findAll();
     }
 
     public void setButtons() {
         getButtons().forEach(button ->
-                keyboard.addRow(new InlineKeyboardButton(button).callbackData(button)));
+                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
     }
 
     public NewUserMenuButton add(NewUserMenuButton newUserMenu) {
@@ -46,11 +46,7 @@ public class NewUserMenuService{
     }
 
     public boolean buttonExist(String button) {
-        return newUserMenuRepository.findByButton(button) != null;
-    }
-
-    public NewUserMenuButton findByButton(String button) {
-        return newUserMenuRepository.findByButton(button);
+        return newUserMenuRepository.existsByButton(button);
     }
 
     /**

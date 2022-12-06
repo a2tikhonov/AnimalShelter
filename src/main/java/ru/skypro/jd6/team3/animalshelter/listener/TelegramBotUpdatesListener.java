@@ -139,16 +139,20 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     }
                 }
                 if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                    sendMessage(userIdFromCallBackQuery, "Волонтер скоро Вам ответит");
-                    PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromCallBackQuery);
-                    Volunteer volunteer = volunteerService.get(volunteerService.getFree().getId());
-                    potentialOwner.setVolunteer(volunteer);
-                    potentialOwnerService.save(potentialOwner);
-                    volunteer.setPotentialOwner(potentialOwner);
-                    volunteer.setBusy(true);
-                    volunteerService.save(volunteer);
-                    sendMessage(potentialOwner.getVolunteer().getId(),
-                            potentialOwner + " ждет от тебя помощи");
+                    if (volunteerService.isAnyFree()) {
+                        sendMessage(userIdFromCallBackQuery, "Волонтер скоро Вам ответит");
+                        PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromCallBackQuery);
+                        Volunteer volunteer = volunteerService.get(volunteerService.getFree().getId());
+                        potentialOwner.setVolunteer(volunteer);
+                        potentialOwnerService.save(potentialOwner);
+                        volunteer.setPotentialOwner(potentialOwner);
+                        volunteer.setBusy(true);
+                        volunteerService.save(volunteer);
+                        sendMessage(potentialOwner.getVolunteer().getId(),
+                                potentialOwner + " ждет от тебя помощи");
+                    } else {
+                        sendMessage(userIdFromCallBackQuery, "Все волонтеры заняты, попробуйте позже");
+                    }
                 }
 
             }
