@@ -51,14 +51,14 @@ public class PotentialOwnerService {
             nameIsCorrect = true;
             System.out.println("nameIsCorrect = " + nameIsCorrect);
         }
-        phone.replaceAll("\\D+", "");
-        System.out.println("phone = " + phone);
-        if (phone.matches("(7|8)?90(5|9)\\d{7}")) {
+        String phone1 = phone.replaceAll("\\D+", "");
+        System.out.println("phone1 = " + phone1);
+        if (phone1.matches("(7|8)?9\\d{9}")) {
             phoneIsCorrect = true;
             System.out.println("phoneIsCorrect = " + phoneIsCorrect);
         }
         if (nameIsCorrect && phoneIsCorrect) {
-            PotentialOwner owner = new PotentialOwner(id, name, phone);
+            PotentialOwner owner = new PotentialOwner(id, name, phone1);
             potentialOwnerRepository.save(owner);
             return true;
         }

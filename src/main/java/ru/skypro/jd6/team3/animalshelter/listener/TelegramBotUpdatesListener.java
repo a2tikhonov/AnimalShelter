@@ -66,7 +66,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         && !update.message().text().isBlank()) {
                     String msg = update.message().text();
                     if (msg.matches("^[а-яА-Я]+\\s\\+[0-9]+$")) {
-                        System.out.println("Yappi");
                         potentialOwnerService.add(userIdFromMessage, msg);
                     }
                 }
