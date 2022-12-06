@@ -1,4 +1,4 @@
-package ru.skypro.jd6.team3.animalshelter.component;
+package ru.skypro.jd6.team3.animalshelter.service;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.CallbackQuery;
@@ -6,31 +6,58 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardButton;
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButton;
+import ru.skypro.jd6.team3.animalshelter.repository.MainMenuRepository;
 
-import static ru.skypro.jd6.team3.animalshelter.component.BotInfoMenuConstants.*;
+import java.util.Collection;
+
 
 /**
  * Вызывает меню для пользователя и обрабатывает входящие запросы
  */
-@Component
-public class BotInfoMenu {
-
+@Service
+public class MainMenuService {
 
     private final InlineKeyboardMarkup keyboard;
+
     private final TelegramBot telegramBot;
 
-    public BotInfoMenu(TelegramBot telegramBot) {
+    private final MainMenuRepository mainMenuRepository;
+
+
+
+
+    public MainMenuService(TelegramBot telegramBot, MainMenuRepository mainMenuRepository) {
+        this.mainMenuRepository = mainMenuRepository;
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
         setButtons();
+    }
 
+    public MainMenuButton get(Long id) {
+        return mainMenuRepository.findById(id).orElse(null);
+    }
+
+    public MainMenuButton findByButton(String button) {
+        return mainMenuRepository.findByButton(button);
+    }
+
+    public Collection<String> getButtons() {
+        return mainMenuRepository.getAllButtons();
     }
 
     private void setButtons() {
-        buttons.keySet().forEach(button -> {
-            keyboard.addRow(new InlineKeyboardButton(button).callbackData(button));
-        });
+        getButtons().forEach(button ->
+                keyboard.addRow(new InlineKeyboardButton(button).callbackData(button)));
+    }
+
+    public MainMenuButton add(MainMenuButton mainMenuButton) {
+        return mainMenuRepository.save(mainMenuButton);
+    }
+
+    public boolean buttonExist(String button) {
+        return mainMenuRepository.findByButton(button) != null;
     }
 
     /**
@@ -51,16 +78,15 @@ public class BotInfoMenu {
      * @return answer возвращает имя нажатой кнопки для идентификации, либо строку "неверный запрос"
      */
 
-    public String processRequest(CallbackQuery query) {
-        String answer = "Неверный запрос";
-        if (query != null && buttons.containsKey(query.data())) {
+    public String buttonTap(CallbackQuery query) {
+        String button = "";
+        if (query != null && buttonExist(query.data())) {
+            MainMenuButton mainMenuButton = mainMenuRepository.findByButton(query.data());
+            button = mainMenuButton.getButton();
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
-            answer = buttons.get(query.data());
-            SendMessage sm = new SendMessage(query.message().chat().id(), answer);
-            telegramBot.execute(sm);
         }
-        return answer;
+        return button;
     }
 
 }
