@@ -7,10 +7,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
-import ru.skypro.jd6.team3.animalshelter.service.MainMenuService;
-import ru.skypro.jd6.team3.animalshelter.service.NewUserMenuService;
-import ru.skypro.jd6.team3.animalshelter.service.PotentialOwnerService;
-import ru.skypro.jd6.team3.animalshelter.service.VolunteerService;
+import ru.skypro.jd6.team3.animalshelter.service.*;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -23,6 +20,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final MainMenuService mainMenuService;
 
     private final NewUserMenuService newUserMenuService;
+
+    private final PotentialOwnerMenuService potentialOwnerMenuService;
 
     private final PotentialOwnerService potentialOwnerService;
 
@@ -37,11 +36,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuService,
-                                      NewUserMenuService newUserMenuService, PotentialOwnerService potentialOwnerService,
+                                      NewUserMenuService newUserMenuService,
+                                      PotentialOwnerMenuService potentialOwnerMenuService,
+                                      PotentialOwnerService potentialOwnerService,
                                       VolunteerService volunteerService) {
         this.telegramBot = telegramBot;
-        this.newUserMenuService = newUserMenuService;
         this.mainMenuService = mainMenuService;
+        this.newUserMenuService = newUserMenuService;
+        this.potentialOwnerMenuService = potentialOwnerMenuService;
         this.potentialOwnerService = potentialOwnerService;
         this.volunteerService = volunteerService;
     }
@@ -64,9 +66,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (update.message().text() != null) {
                     messageText = update.message().text();
                 }
+                if (!potentialOwnerDetected && !volunteerDetected) {
+                    if (messageText.equalsIgnoreCase("/start")) {
+                        mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
+                    }
+                }
                 if (potentialOwnerDetected) {
                     if (messageText.equalsIgnoreCase("/start")) {
-                        mainMenuService.send(userIdFromMessage, "Добро пожаловать!");
+                        mainMenuService.send(userIdFromMessage, "Добро пожаловать " +
+                                potentialOwnerService.get(userIdFromMessage).getName() + "!");
                     }
                     if (messageText.equalsIgnoreCase("/close")
                             && potentialOwnerService.get(userIdFromMessage).getVolunteer() != null) {
@@ -101,6 +109,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 potentialOwnerDetected = potentialOwnerService.find(userIdFromCallBackQuery);
                 if (mainMenuService.buttonTap(update.callbackQuery()).equals("Узнать информацию о приюте")) {
                     newUserMenuService.send(userIdFromCallBackQuery, "Консультация с новым пользователем");
+                }
+                if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
+                    if (potentialOwnerDetected) {
+                        potentialOwnerMenuService.send(userIdFromCallBackQuery, "");
+                    } else {
+                        sendMessage(userIdFromCallBackQuery, "Сначала оставьте контактные данные");
+                    }
                 }
                 if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
                     if (!potentialOwnerDetected) {
