@@ -1,11 +1,10 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-public class Volunteer {
+public class PotentialOwner {
     @Id
     private Long id;
 
@@ -13,31 +12,26 @@ public class Volunteer {
 
     @Column(unique = true)
     private String phone;
-
-    @Column(unique = true)
-    private String email;
-
-    private boolean busy;
     @OneToOne
-    private PotentialOwner potentialOwner;
+    private Volunteer volunteer;
 
-    public Volunteer() {
+
+    public PotentialOwner() {
     }
 
-    public Volunteer(Long id, String name, String phone, String email, Boolean busy) {
+    public PotentialOwner(Long id, String name, String phone) {
         this.id = id;
         this.name = name;
         this.phone = phone;
-        this.email = email;
-        this.busy = busy;
     }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Volunteer volunteer = (Volunteer) o;
-        return id.equals(volunteer.id);
+        PotentialOwner that = (PotentialOwner) o;
+        return id.equals(that.id);
     }
 
     @Override
@@ -47,11 +41,10 @@ public class Volunteer {
 
     @Override
     public String toString() {
-        return "Volunteer{" +
+        return "PotentialOwner{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
                 '}';
     }
 
@@ -79,27 +72,11 @@ public class Volunteer {
         this.phone = phone;
     }
 
-    public String getEmail() {
-        return email;
+    public Volunteer getVolunteer() {
+        return volunteer;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public boolean isBusy() {
-        return busy;
-    }
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
-
-    public PotentialOwner getPotentialOwner() {
-        return potentialOwner;
-    }
-
-    public void setPotentialOwner(PotentialOwner potentialOwner) {
-        this.potentialOwner = potentialOwner;
+    public void setVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
     }
 }

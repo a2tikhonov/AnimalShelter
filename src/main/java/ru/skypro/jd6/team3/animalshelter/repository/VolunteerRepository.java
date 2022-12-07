@@ -6,4 +6,9 @@ import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 
 @Repository
 public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
+
+    Volunteer getFirstByBusy(Boolean busy);
+
+    Boolean existsByBusy(Boolean busy);
+
 }
