@@ -112,7 +112,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
                 if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
                     if (potentialOwnerDetected) {
-                        potentialOwnerMenuService.send(userIdFromCallBackQuery, "");
+                        potentialOwnerMenuService.send(userIdFromCallBackQuery, "Консультация с потенциальным хозяином");
                     } else {
                         sendMessage(userIdFromCallBackQuery, "Сначала оставьте контактные данные");
                     }
