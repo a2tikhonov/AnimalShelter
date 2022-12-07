@@ -7,46 +7,46 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
-import ru.skypro.jd6.team3.animalshelter.entity.NewUserMenuButton;
-import ru.skypro.jd6.team3.animalshelter.repository.NewUserMenuRepository;
+import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwnerMenuButton;
+import ru.skypro.jd6.team3.animalshelter.repository.PotentialOwnerMenuRepository;
 
 import java.util.Collection;
 
 @Service
-public class NewUserMenuService{
-
-    private final NewUserMenuRepository newUserMenuRepository;
+public class PotentialOwnerMenuService {
 
     private final InlineKeyboardMarkup keyboard;
 
     private final TelegramBot telegramBot;
 
-    public NewUserMenuService(TelegramBot telegramBot, NewUserMenuRepository newUserMenuRepository) {
-        this.newUserMenuRepository = newUserMenuRepository;
+    private final PotentialOwnerMenuRepository potentialOwnerMenuRepository;
+
+    public PotentialOwnerMenuService(TelegramBot telegramBot, PotentialOwnerMenuRepository potentialOwnerMenuRepository) {
+        this.potentialOwnerMenuRepository = potentialOwnerMenuRepository;
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
         setButtons();
     }
 
-    public NewUserMenuButton get(Long id) {
-        return newUserMenuRepository.findById(id).orElse(null);
+    public PotentialOwnerMenuButton get(Long id) {
+        return potentialOwnerMenuRepository.findById(id).orElse(null);
     }
 
-    public Collection<NewUserMenuButton> getButtons() {
-        return newUserMenuRepository.findAll();
+    public Collection<PotentialOwnerMenuButton> getButtons() {
+        return potentialOwnerMenuRepository.findAll();
     }
 
-    public void setButtons() {
+    private void setButtons() {
         getButtons().forEach(button ->
                 keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
     }
 
-    public NewUserMenuButton add(NewUserMenuButton newUserMenu) {
-        return newUserMenuRepository.save(newUserMenu);
+    public PotentialOwnerMenuButton add(PotentialOwnerMenuButton potentialOwnerMenuButton) {
+        return potentialOwnerMenuRepository.save(potentialOwnerMenuButton);
     }
 
     public boolean buttonExist(String button) {
-        return newUserMenuRepository.existsByButton(button);
+        return potentialOwnerMenuRepository.existsByButton(button);
     }
 
     /**
@@ -70,12 +70,11 @@ public class NewUserMenuService{
     public String buttonTap(CallbackQuery query) {
         String button = "";
         if (query != null && buttonExist(query.data())) {
-            NewUserMenuButton mainMenuButton = newUserMenuRepository.findByButton(query.data());
-            button = mainMenuButton.getButton();
+            PotentialOwnerMenuButton potentialOwnerMenuButton = potentialOwnerMenuRepository.findByButton(query.data());
+            button = potentialOwnerMenuButton.getButton();
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
         }
         return button;
     }
-
 }

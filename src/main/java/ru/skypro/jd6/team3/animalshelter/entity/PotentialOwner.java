@@ -1,8 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +12,8 @@ public class PotentialOwner {
 
     @Column(unique = true)
     private String phone;
+    @OneToOne
+    private Volunteer volunteer;
 
 
     public PotentialOwner() {
@@ -72,4 +72,11 @@ public class PotentialOwner {
         this.phone = phone;
     }
 
+    public Volunteer getVolunteer() {
+        return volunteer;
+    }
+
+    public void setVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
 }

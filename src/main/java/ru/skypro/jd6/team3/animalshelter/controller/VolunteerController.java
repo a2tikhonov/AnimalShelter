@@ -17,59 +17,18 @@ public class VolunteerController {
         this.volunteerService = volunteerService;
     }
 
-    /**
-     * Поиск волонтера по идентификатору
-     *
-     * @param id - идентификатор волонтера
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<Volunteer> findVolunteer(@PathVariable Long id) {
-        Volunteer volunteer = volunteerService.findVolunteer(id);
-        if (volunteer == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(volunteer);
-    }
-
-    /**
-     * Поиск всех волонтеров
-     *
-     */
-    @GetMapping
-    public ResponseEntity<Collection<Volunteer>> findVolunteers() {
-        return ResponseEntity.ok(volunteerService.findAll());
-    }
-
-    /**
-     * Добавление волонтера через браузер
-     *
-     * @param volunteer новый объект "Волонтер"
-     */
-    @PostMapping
-    public ResponseEntity<Volunteer> addVolunteer(@RequestBody Volunteer volunteer) {
-        Volunteer newVolunteer = volunteerService.addVolunteer(volunteer);
-        return ResponseEntity.ok(newVolunteer);
-    }
-
-    /**
-     * Замена волонтера через браузер
-     *
-     * @param volunteer новый объект "Волонтер"
-     */
     @PutMapping
-    public ResponseEntity<Volunteer> editVolunteer(@RequestBody Volunteer volunteer) {
-        Volunteer updateVolunteer = volunteerService.editVolunteer(volunteer);
-        return ResponseEntity.ok(updateVolunteer);
+    public ResponseEntity<Volunteer> add(@RequestBody Volunteer volunteer) {
+        return ResponseEntity.ok(volunteerService.save(volunteer));
     }
 
-    /**
-     * Удалить волонтера по идентификатору
-     *
-     * @param id - идентификатор волонтера
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteVolunteer(@PathVariable Long id) {
-        volunteerService.deleteVolunteer(id);
-        return ResponseEntity.ok().build();
+    @GetMapping("/{id}")
+    public ResponseEntity<Volunteer> get(@PathVariable Long id) {
+        return ResponseEntity.ok(volunteerService.get(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<Collection<Volunteer>> get() {
+        return ResponseEntity.ok(volunteerService.get());
     }
 }
