@@ -1,5 +1,9 @@
 package ru.skypro.jd6.team3.animalshelter.record;
 
+import ru.skypro.jd6.team3.animalshelter.entity.Pet;
+
+import java.util.Collection;
+
 /**
  * Рекорд класс Хозяин для сущности Хозяин
  */
@@ -9,7 +13,7 @@ public class OwnerRecord {
     private String number;
     private String name;
     private String email;
-    private PetRecord pet;
+    private Collection<PetRecord> petsRecord;
 
     public Long getId() {
         return id;
@@ -43,11 +47,11 @@ public class OwnerRecord {
         this.email = email;
     }
 
-    public PetRecord getPet() {
-        return pet;
+    public Collection<PetRecord> getPetsRecord() {
+        return petsRecord;
     }
 
-    public void setPet(PetRecord pet) {
-        this.pet = pet;
+    public void setPetsRecord(Collection<PetRecord> petsRecord) {
+        this.petsRecord = petsRecord;
     }
 }

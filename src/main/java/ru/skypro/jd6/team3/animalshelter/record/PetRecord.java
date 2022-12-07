@@ -1,5 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.record;
 
+import ru.skypro.jd6.team3.animalshelter.entity.Shelter;
+
 /**
  * Класс рекорд Питомец для сущности Питомец
  */
@@ -9,6 +11,8 @@ public class PetRecord {
     private double weight;
     private double age;
     private String breed;
+    private String species;
+    private Shelter shelter;
     private OwnerRecord owner;
 
     public long getId() {
@@ -49,6 +53,22 @@ public class PetRecord {
 
     public void setBreed(String breed) {
         this.breed = breed;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(Shelter shelter) {
+        this.shelter = shelter;
     }
 
     public OwnerRecord getOwner() {

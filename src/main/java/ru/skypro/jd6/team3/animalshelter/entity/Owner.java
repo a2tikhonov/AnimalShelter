@@ -14,10 +14,16 @@ public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ownerId;
-    private String phoneNumber;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(unique=true, nullable = false)
     private String email;
     private boolean petOwner = false;
+
+    @Column(unique=true, nullable = false)
+    private String phoneNumber;
 
     /**
      * Стандартные методы гет и сет

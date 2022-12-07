@@ -1,6 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -14,10 +15,10 @@ public class Shelter {
     private String description;
     private String email;
     private String howToFindUs;
-    @ManyToOne
-    private Volunteer volunteer;
-    @ManyToOne
-    private Pet pet;
+    @OneToMany
+    private Collection<Volunteer> volunteer;
+    @OneToMany(orphanRemoval = true)
+    private Collection <Pet> pet = new java.util.ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
@@ -72,19 +73,19 @@ public class Shelter {
         this.email = email;
     }
 
-    public Volunteer getVolunteer() {
+    public Collection<Volunteer> getVolunteer() {
         return volunteer;
     }
 
-    public void setVolunteer(Volunteer volunteer) {
+    public void setVolunteer(Collection<Volunteer> volunteer) {
         this.volunteer = volunteer;
     }
 
-    public Pet getPet() {
+    public Collection<Pet> getPet() {
         return pet;
     }
 
-    public void setPet(Pet pet) {
+    public void setPet(Collection<Pet> pet) {
         this.pet = pet;
     }
 }

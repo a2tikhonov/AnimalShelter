@@ -14,6 +14,8 @@ import ru.skypro.jd6.team3.animalshelter.repository.PetRepository;
 
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Сервис для работы с классом Хозяин
@@ -29,6 +31,7 @@ public class OwnerService {
     private final PetRepository petRepository;
 
     private final RecordComponent recordComponent;
+    private final Pattern numberChecker = Pattern.compile("^(\\+7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$");
 
     public OwnerService(OwnerRepository ownerRepository,
                         PetRepository petRepository,
@@ -47,18 +50,23 @@ public class OwnerService {
     public OwnerRecord createOwner(OwnerRecord ownerRecord) {
         Owner owner = recordComponent.toEntityOwnerRecord(ownerRecord);
         String numberCheck = ownerRecord.getNumber();
-        numberCheck.replaceAll("[^a-zA-Zа-яёА-ЯЁ ]", "\\d+");
-        if (numberCheck.startsWith("+7")) {
-            numberCheck.replace("+7", "8");
-            ownerRecord.setNumber(numberCheck);
+        Matcher matcher = numberChecker.matcher(numberCheck);
+        boolean found = matcher.matches();
+        if (ownerRecord.getNumber() != ownerRepository.getOwnersByPhoneNumber(owner.getPhoneNumber()).getPhoneNumber() || ownerRecord.getEmail() != ownerRepository.getOwnersByEmail(owner.getEmail()).getEmail()) {
+            if (found == true) {
+                numberCheck.replace("+7", "8");
+                ownerRecord.setNumber(numberCheck);
+                return recordComponent.toRecordOwner(ownerRepository.save(owner));
+            } else if (found == false) {
+                System.out.println("Телефон написан не корректно!");
+                return null;
+            }
+            return recordComponent.toRecordOwner(ownerRepository.save(owner));
+        } else if (ownerRecord.getNumber() == ownerRepository.getOwnersByPhoneNumber(owner.getPhoneNumber()).getPhoneNumber() || ownerRecord.getEmail() == ownerRepository.getOwnersByEmail(owner.getEmail()).getEmail()) {
+            System.out.println("Этот номер или email заняты, попробуйте другой номер или email.");
+            return null;
         }
-        if (numberCheck.length()>=12) {
-            System.out.println("Телефон слишком длинный!");
-        }
-        if (ownerRecord.getPet() != null) {
-            Pet pet = petRepository.findById(ownerRecord.getPet().getId()).orElseThrow(PetNotFoundException::new);
-        }
-        return recordComponent.toRecordOwner(ownerRepository.save(owner));
+        return null;
     }
 
     /**
