@@ -70,15 +70,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     }
                     if (messageText.equalsIgnoreCase("/close")
                             && potentialOwnerService.get(userIdFromMessage).getVolunteer() != null) {
-                        PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromMessage);
-                        Volunteer volunteer = volunteerService.get(potentialOwner.getVolunteer().getId());
-                        potentialOwner.setVolunteer(null);
-                        volunteer.setPotentialOwner(null);
-                        volunteer.setBusy(false);
-                        potentialOwnerService.save(potentialOwner);
-                        volunteerService.save(volunteer);
-                        sendMessage(volunteer.getId(), "Пользователь закрыл чат");
-                        sendMessage(userIdFromMessage, "Вы закрыли чат");
+                        closeChatByOwner(userIdFromMessage);
                     }
                     if (potentialOwnerService.get(userIdFromMessage).getPhone().isBlank()
                             && !messageText.isBlank()) {
@@ -96,15 +88,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         sendMessage(userIdFromMessage, "Добро пожаловать волонтер!");
                     }
                     if (messageText.equalsIgnoreCase("/close") && volunteerService.get(userIdFromMessage).isBusy()) {
-                        Volunteer volunteer = volunteerService.get(userIdFromMessage);
-                        PotentialOwner potentialOwner = potentialOwnerService.get(volunteer.getPotentialOwner().getId());
-                        potentialOwner.setVolunteer(null);
-                        volunteer.setPotentialOwner(null);
-                        volunteer.setBusy(false);
-                        volunteerService.save(volunteer);
-                        potentialOwnerService.save(potentialOwner);
-                        sendMessage(potentialOwner.getId(), "Волонтер закрыл чат");
-                        sendMessage(userIdFromMessage, "Вы закрыли чат");
+                        closeChatByVolunteer(userIdFromMessage);
                     }
                     if (messageText.charAt(0) != '/' && volunteerService.get(userIdFromMessage).getPotentialOwner() != null) {
                         Volunteer volunteer = volunteerService.get(userIdFromMessage);
@@ -131,20 +115,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     }
                 }
                 if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                    if (volunteerService.isAnyFree()) {
-                        sendMessage(userIdFromCallBackQuery, "Волонтер скоро Вам ответит");
-                        PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromCallBackQuery);
-                        Volunteer volunteer = volunteerService.get(volunteerService.getFree().getId());
-                        potentialOwner.setVolunteer(volunteer);
-                        potentialOwnerService.save(potentialOwner);
-                        volunteer.setPotentialOwner(potentialOwner);
-                        volunteer.setBusy(true);
-                        volunteerService.save(volunteer);
-                        sendMessage(potentialOwner.getVolunteer().getId(),
-                                potentialOwner + " ждет от тебя помощи");
-                    } else {
-                        sendMessage(userIdFromCallBackQuery, "Все волонтеры заняты, попробуйте позже");
-                    }
+                        openChat(userIdFromCallBackQuery);
+                }
+                if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
+                        openChat(userIdFromCallBackQuery);
                 }
 
             }
@@ -163,6 +137,47 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public void sendMessage(Long chatId, String what) {
         SendMessage sm = new SendMessage(chatId, what);
         telegramBot.execute(sm);
+    }
+
+    public void openChat(Long id) {
+        if (volunteerService.isAnyFree()) {
+            sendMessage(id, "Волонтер скоро Вам ответит");
+            PotentialOwner potentialOwner = potentialOwnerService.get(id);
+            Volunteer volunteer = volunteerService.get(volunteerService.getFree().getId());
+            potentialOwner.setVolunteer(volunteer);
+            potentialOwnerService.save(potentialOwner);
+            volunteer.setPotentialOwner(potentialOwner);
+            volunteer.setBusy(true);
+            volunteerService.save(volunteer);
+            sendMessage(potentialOwner.getVolunteer().getId(),
+                    potentialOwner + " ждет от тебя помощи");
+        } else {
+            sendMessage(id, "Все волонтеры заняты, попробуйте позже");
+        }
+    }
+
+    public void closeChatByOwner(Long id) {
+        PotentialOwner potentialOwner = potentialOwnerService.get(id);
+        Volunteer volunteer = volunteerService.get(potentialOwner.getVolunteer().getId());
+        potentialOwner.setVolunteer(null);
+        volunteer.setPotentialOwner(null);
+        volunteer.setBusy(false);
+        potentialOwnerService.save(potentialOwner);
+        volunteerService.save(volunteer);
+        sendMessage(volunteer.getId(), "Пользователь закрыл чат");
+        sendMessage(id, "Вы закрыли чат");
+    }
+
+    public void closeChatByVolunteer(Long id) {
+        Volunteer volunteer = volunteerService.get(id);
+        PotentialOwner potentialOwner = potentialOwnerService.get(volunteer.getPotentialOwner().getId());
+        potentialOwner.setVolunteer(null);
+        volunteer.setPotentialOwner(null);
+        volunteer.setBusy(false);
+        volunteerService.save(volunteer);
+        potentialOwnerService.save(potentialOwner);
+        sendMessage(potentialOwner.getId(), "Волонтер закрыл чат");
+        sendMessage(id, "Вы закрыли чат");
     }
 
 

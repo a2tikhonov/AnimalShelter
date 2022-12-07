@@ -1,9 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -15,7 +12,7 @@ public class PotentialOwner {
 
     @Column(unique = true)
     private String phone;
-    @ManyToOne
+    @OneToOne
     private Volunteer volunteer;
 
 
