@@ -28,6 +28,11 @@ public class NewUserMenuService{
         setButtons();
     }
 
+    @Override
+    public String toString() {
+        return "NewUserMenuService";
+    }
+
     public NewUserMenuButton get(Long id) {
         return newUserMenuRepository.findById(id).orElse(null);
     }

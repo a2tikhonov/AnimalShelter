@@ -35,6 +35,11 @@ public class MainMenuService {
         setButtons();
     }
 
+    @Override
+    public String toString() {
+        return "MainMenu";
+    }
+
     public MainMenuButton get(Long id) {
         return mainMenuRepository.findById(id).orElse(null);
     }

@@ -28,6 +28,11 @@ public class PotentialOwnerMenuService {
         setButtons();
     }
 
+    @Override
+    public String toString() {
+        return "PotentialOwnerMenuService";
+    }
+
     public PotentialOwnerMenuButton get(Long id) {
         return potentialOwnerMenuRepository.findById(id).orElse(null);
     }
