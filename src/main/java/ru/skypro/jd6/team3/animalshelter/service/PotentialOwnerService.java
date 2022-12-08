@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.repository.PotentialOwnerRepository;
 
+import java.util.Collection;
 import java.util.Locale;
 
 @Service
@@ -20,8 +21,8 @@ public class PotentialOwnerService {
         return "PotentialOwnerService";
     }
 
-    public void save(PotentialOwner potentialOwner) {
-        potentialOwnerRepository.save(potentialOwner);
+    public PotentialOwner save(PotentialOwner potentialOwner) {
+        return potentialOwnerRepository.save(potentialOwner);
     }
 
     public void add(Long id, String locationInMenu) {
@@ -77,6 +78,10 @@ public class PotentialOwnerService {
 
     public void delete(Long id) {
         potentialOwnerRepository.deleteById(id);
+    }
+
+    public Collection<PotentialOwner> getAll() {
+        return potentialOwnerRepository.findAll();
     }
 
 }

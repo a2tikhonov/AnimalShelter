@@ -56,7 +56,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
                 PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromMessage);
                 Volunteer volunteer = volunteerService.get(userIdFromMessage);
-                if (potentialOwner == null && volunteer == null) {
+                if (potentialOwner == null || volunteer == null) {
                     if (messageText.equalsIgnoreCase("/start")) {
                         mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
                     }
@@ -72,7 +72,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     }
                     if (messageText.equalsIgnoreCase("/stop")) {
                         if (potentialOwner.getName().isBlank() || potentialOwner.getPet() != null) {
-                            potentialOwnerService.delete(userIdFromMessage);
+                            //potentialOwnerService.delete(userIdFromMessage);
                         }
                     }
                     if (messageText.equalsIgnoreCase("/close")
@@ -159,7 +159,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                     } else {
                         if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце")) {
-                            System.out.println("BLINK");
                             sendMessage(userIdFromCallBackQuery, "За вами пока не числится животное");
                         }
                     }
