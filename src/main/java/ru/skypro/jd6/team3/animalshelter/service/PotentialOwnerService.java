@@ -37,7 +37,7 @@ public class PotentialOwnerService {
         return potentialOwnerRepository.findById(id).isPresent();
     }
 
-    public boolean add(Long id, String message, String locationInMenu) {
+    public boolean addContactData(Long id, String message, String locationInMenu) {
         boolean nameIsCorrect = false;
         boolean phoneIsCorrect = false;
         String[] msg = message.split(" ");
@@ -73,6 +73,10 @@ public class PotentialOwnerService {
 
     public String getLocationInMenu(Long id) {
         return get(id).getLocationInMenu();
+    }
+
+    public void delete(Long id) {
+        potentialOwnerRepository.deleteById(id);
     }
 
 }

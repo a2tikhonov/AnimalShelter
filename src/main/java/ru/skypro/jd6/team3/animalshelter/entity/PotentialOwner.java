@@ -1,6 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -16,6 +17,8 @@ public class PotentialOwner {
     private String locationInMenu;
     @OneToOne
     private Volunteer volunteer;
+    @OneToOne
+    private Pet pet;
 
 
     public PotentialOwner() {
@@ -90,4 +93,13 @@ public class PotentialOwner {
     public void setLocationInMenu(String locationInMenu) {
         this.locationInMenu = locationInMenu;
     }
+
+    public Pet getPet() {
+        return pet;
+    }
+
+    public void setPet(Pet pet) {
+        this.pet = pet;
+    }
+
 }
