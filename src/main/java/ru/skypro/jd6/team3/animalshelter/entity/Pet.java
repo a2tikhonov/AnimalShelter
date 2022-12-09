@@ -20,7 +20,7 @@ public class Pet {
     private double wight;
 
     private int age;
-    @ManyToOne
+    @OneToOne
     private PotentialOwner potentialOwner;
 
     public Pet() {

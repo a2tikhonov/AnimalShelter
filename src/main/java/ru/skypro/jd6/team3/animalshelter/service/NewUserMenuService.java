@@ -37,6 +37,10 @@ public class NewUserMenuService{
         return newUserMenuRepository.findById(id).orElse(null);
     }
 
+    public NewUserMenuButton get(String button) {
+        return newUserMenuRepository.findByButton(button);
+    }
+
     public Collection<NewUserMenuButton> getButtons() {
         return newUserMenuRepository.findAll();
     }

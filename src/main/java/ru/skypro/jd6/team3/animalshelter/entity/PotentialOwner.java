@@ -1,8 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,8 +18,8 @@ public class PotentialOwner {
     private String locationInMenu;
     @OneToOne
     private Volunteer volunteer;
-    @OneToMany
-    private List<Pet> pet = new ArrayList<>();
+    @OneToOne
+    private Pet pet;
 
 
     public PotentialOwner() {
@@ -97,11 +95,11 @@ public class PotentialOwner {
         this.locationInMenu = locationInMenu;
     }
 
-    public List<Pet> getPet() {
+    public Pet getPet() {
         return pet;
     }
 
-    public void setPet(List<Pet> pet) {
+    public void setPet(Pet pet) {
         this.pet = pet;
     }
 }
