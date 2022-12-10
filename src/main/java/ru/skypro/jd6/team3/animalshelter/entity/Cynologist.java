@@ -12,7 +12,6 @@ public class Cynologist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int phoneNumber;
-    private String email;
     private String name;
     private double yearsOfPractice;
     private String specialties;
@@ -31,14 +30,6 @@ public class Cynologist {
 
     public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getName() {
@@ -70,12 +61,12 @@ public class Cynologist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cynologist that = (Cynologist) o;
-        return phoneNumber == that.phoneNumber && Double.compare(that.yearsOfPractice, yearsOfPractice) == 0 && Objects.equals(id, that.id) && Objects.equals(email, that.email) && Objects.equals(name, that.name) && Objects.equals(specialties, that.specialties);
+        return phoneNumber == that.phoneNumber && Double.compare(that.yearsOfPractice, yearsOfPractice) == 0 && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(specialties, that.specialties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, phoneNumber, email, name, yearsOfPractice, specialties);
+        return Objects.hash(id, phoneNumber, name, yearsOfPractice, specialties);
     }
 
     @Override
@@ -83,7 +74,6 @@ public class Cynologist {
         return "Cynologist{" +
                 "id=" + id +
                 ", phoneNumber=" + phoneNumber +
-                ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", yearsOfPractice=" + yearsOfPractice +
                 ", specialties='" + specialties + '\'' +

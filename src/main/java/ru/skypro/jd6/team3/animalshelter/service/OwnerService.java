@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import ru.skypro.jd6.team3.animalshelter.component.RecordComponent;
 import ru.skypro.jd6.team3.animalshelter.entity.Owner;
-import ru.skypro.jd6.team3.animalshelter.entity.Pet;
 import ru.skypro.jd6.team3.animalshelter.exception.OwnerNotFoundException;
 import ru.skypro.jd6.team3.animalshelter.exception.PetNotFoundException;
 import ru.skypro.jd6.team3.animalshelter.record.OwnerRecord;
 import ru.skypro.jd6.team3.animalshelter.repository.OwnerRepository;
 import ru.skypro.jd6.team3.animalshelter.repository.PetRepository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -107,5 +107,9 @@ public class OwnerService {
      */
     public void deleteOwner(Long id) {
         ownerRepository.deleteById(id);
+    }
+
+    public Collection<Owner> findAll() {
+        return ownerRepository.findAll();
     }
 }

@@ -30,11 +30,10 @@ public class Pet {
     @Column(nullable = false)
     private String species;
 
-    private boolean adopted = false;
     private boolean disabled = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Owner owner;
+    @OneToOne(fetch = FetchType.LAZY)
+    private PotentialOwner potentialOwner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Shelter shelter;
@@ -84,13 +83,18 @@ public class Pet {
         this.breed = breed;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
     }
+
+    public void setPotentialOwner(PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
+    }
+
 
     public Shelter getShelter() {
         return shelter;
@@ -98,10 +102,6 @@ public class Pet {
 
     public void setShelter(Shelter shelter) {
         this.shelter = shelter;
-    }
-
-    public boolean isAdopted() {
-        return adopted;
     }
 
     public boolean isDisabled() {

@@ -4,12 +4,15 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import ru.skypro.jd6.team3.animalshelter.entity.Owner;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.service.*;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -27,25 +30,25 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final VolunteerService volunteerService;
 
+    private final OwnerService ownerService;
+
     Boolean potentialOwnerDetected = false;
 
     Boolean volunteerDetected = false;
-
-
-
 
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuService,
                                       NewUserMenuService newUserMenuService,
                                       PotentialOwnerMenuService potentialOwnerMenuService,
                                       PotentialOwnerService potentialOwnerService,
-                                      VolunteerService volunteerService) {
+                                      VolunteerService volunteerService, OwnerService ownerService) {
         this.telegramBot = telegramBot;
         this.mainMenuService = mainMenuService;
         this.newUserMenuService = newUserMenuService;
         this.potentialOwnerMenuService = potentialOwnerMenuService;
         this.potentialOwnerService = potentialOwnerService;
         this.volunteerService = volunteerService;
+        this.ownerService = ownerService;
     }
 
     @PostConstruct
@@ -195,5 +198,41 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         sendMessage(id, "Вы закрыли чат");
     }
 
+    @Scheduled(cron = "0 0 0/10 * * *")
+    public void sendReport() {
+        String notification = "It is time for you to send the report";
+        String agreed = "You have passed";
+        String declined = "You have failed";
+        String oneMoreChance = "You have one more chance";
 
+        Collection<Owner> ownerList = ownerService.findAll();
+
+        ownerList.forEach(owner -> {
+            long chatId = owner.getOwnerId();
+
+            if (notification.equals("sendReport")) {
+                sendMessage(chatId, notification);
+            }
+
+            if (agreed.equals("agreed")) {
+                sendMessage(chatId, agreed);
+            }
+
+            if (declined.equals("declined")) {
+                sendMessage(chatId, declined);
+            }
+
+            if (oneMoreChance.equals("chance")) {
+                sendMessage(chatId, oneMoreChance);
+
+            }
+        });
+    }
+
+    @Scheduled(cron = "0 0/60 * * * *")
+    public void sendOwnerStatus() {
+        String agreed = "Yes!";
+        String declined = "Whoops";
+        String oneMoreChance = "You have one more chance";
+    }
 }

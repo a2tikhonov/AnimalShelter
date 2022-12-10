@@ -2,11 +2,20 @@ package ru.skypro.jd6.team3.animalshelter.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.jd6.team3.animalshelter.entity.Location;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
+import ru.skypro.jd6.team3.animalshelter.entity.Shelter;
 import ru.skypro.jd6.team3.animalshelter.repository.ReportRepository;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
+
+import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 public class ReportService {
@@ -14,6 +23,9 @@ public class ReportService {
     private final Logger logger = LoggerFactory.getLogger(VolunteerService.class);
 
     private final ReportRepository reportRepository;
+
+    @Value("${upload.path}$")
+    private String uploadPath;
 
     public ReportService(ReportRepository repository) {
         this.reportRepository = repository;
@@ -25,7 +37,7 @@ public class ReportService {
      * @param report новый объект "Отчет"
      */
     public Report addReport(Report report) {
-        logger.info("*addVolunteer* method was invoked");
+        logger.info("*addReport* method was invoked");
         return reportRepository.save(report);
     }
 
@@ -88,4 +100,32 @@ public class ReportService {
         logger.debug("*findAllReports* method was invoked");
         return reportRepository.findAll();
     }
+
+//    public void uploadReportPhoto(Long reportId, MultipartFile reportFile) throws IOException {
+//        Report report = findReport(reportId);
+//
+//        Path filePath = Path.of(uploadPath, reportId + "." + getExtension(reportFile.getOriginalFilename()));
+//        Files.createDirectories(filePath.getParent());
+//        Files.deleteIfExists(filePath);
+//
+//        try (
+//                InputStream is = reportFile.getInputStream();
+//                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+//                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+//                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
+//        ) {
+//            bis.transferTo(bos);
+//        }
+//
+//        report.setFilePath(filePath.toString());
+//        report.setFileSize(reportFile.getSize());
+//        report.setMediaType(reportFile.getContentType());
+//        report.setPhoto(reportFile.getBytes());
+//
+//        reportRepository.save(report);
+//    }
+//
+//    private String getExtension(String fileName) {
+//        return fileName.substring(fileName.lastIndexOf(".") + 1);
+//    }
 }

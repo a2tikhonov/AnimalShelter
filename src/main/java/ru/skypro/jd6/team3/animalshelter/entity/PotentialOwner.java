@@ -1,11 +1,10 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "potential_owner")
+@Table(name = "potential_owners")
 public class PotentialOwner {
     @Id
     private Long id;
@@ -14,22 +13,17 @@ public class PotentialOwner {
 
     @Column(unique = true)
     private String phone;
-
-    private String locationInMenu;
     @OneToOne
     private Volunteer volunteer;
-    @OneToOne
-    private Pet pet;
 
 
     public PotentialOwner() {
     }
 
-    public PotentialOwner(Long id, String name, String phone, String locationInMenu) {
+    public PotentialOwner(Long id, String name, String phone) {
         this.id = id;
         this.name = name;
         this.phone = phone;
-        this.locationInMenu = locationInMenu;
     }
 
 
@@ -85,21 +79,5 @@ public class PotentialOwner {
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
-    }
-
-    public String getLocationInMenu() {
-        return locationInMenu;
-    }
-
-    public void setLocationInMenu(String locationInMenu) {
-        this.locationInMenu = locationInMenu;
-    }
-
-    public Pet getPet() {
-        return pet;
-    }
-
-    public void setPet(Pet pet) {
-        this.pet = pet;
     }
 }

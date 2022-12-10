@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "shelter")
+@Table(name = "shelters")
 public class Shelter {
 
     @Id
