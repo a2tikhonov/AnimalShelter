@@ -50,10 +50,8 @@ public class RecordComponent {
         petRecord.setBreed(pet.getBreed());
         petRecord.setAge(pet.getAge());
         petRecord.setWeight(pet.getWeight());
-        if (pet.getOwner() != null) {
-            petRecord.setOwner(toRecordOwner(pet.getOwner()));
-        }
-
+        petRecord.setSpecies(pet.getSpecies());
+        petRecord.setShelter(pet.getShelter());
         return petRecord;
     }
 
@@ -68,6 +66,8 @@ public class RecordComponent {
         pet.setWeight(petRecord.getWeight());
         pet.setBreed(petRecord.getBreed());
         pet.setAge(petRecord.getAge());
+        pet.setSpecies(petRecord.getSpecies());
+        pet.setShelter(petRecord.getShelter());
         return pet;
     }
 }

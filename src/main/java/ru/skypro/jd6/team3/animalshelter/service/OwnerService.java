@@ -2,6 +2,7 @@ package ru.skypro.jd6.team3.animalshelter.service;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import ru.skypro.jd6.team3.animalshelter.component.RecordComponent;
 import ru.skypro.jd6.team3.animalshelter.entity.Owner;
 import ru.skypro.jd6.team3.animalshelter.entity.Pet;
@@ -13,6 +14,8 @@ import ru.skypro.jd6.team3.animalshelter.repository.PetRepository;
 
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Сервис для работы с классом Хозяин
@@ -28,6 +31,7 @@ public class OwnerService {
     private final PetRepository petRepository;
 
     private final RecordComponent recordComponent;
+    private final Pattern numberChecker = Pattern.compile("^(\\+7|8)?[\\s\\-]?\\(?[489][0-9]{2}\\)?[\\s\\-]?[0-9]{3}[\\s\\-]?[0-9]{2}[\\s\\-]?[0-9]{2}$");
 
     public OwnerService(OwnerRepository ownerRepository,
                         PetRepository petRepository,
@@ -39,19 +43,35 @@ public class OwnerService {
 
     /**
      * Создает нового Хозяина в базе данных
+     *
      * @param ownerRecord принимает рекорд Хозяин
      * @return возвращает сущность добавленную в базу данных
      */
     public OwnerRecord createOwner(OwnerRecord ownerRecord) {
         Owner owner = recordComponent.toEntityOwnerRecord(ownerRecord);
-        if (ownerRecord.getPet() != null) {
-            Pet pet = petRepository.findById(ownerRecord.getPet().getId()).orElseThrow(PetNotFoundException::new);
+        String numberCheck = ownerRecord.getNumber();
+        Matcher matcher = numberChecker.matcher(numberCheck);
+        boolean found = matcher.matches();
+        if (ownerRecord.getNumber() != ownerRepository.getOwnersByPhoneNumber(owner.getPhoneNumber()).getPhoneNumber() || ownerRecord.getEmail() != ownerRepository.getOwnersByEmail(owner.getEmail()).getEmail()) {
+            if (found == true) {
+                numberCheck.replace("+7", "8");
+                ownerRecord.setNumber(numberCheck);
+                return recordComponent.toRecordOwner(ownerRepository.save(owner));
+            } else if (found == false) {
+                System.out.println("Телефон написан не корректно!");
+                return null;
+            }
+            return recordComponent.toRecordOwner(ownerRepository.save(owner));
+        } else if (ownerRecord.getNumber() == ownerRepository.getOwnersByPhoneNumber(owner.getPhoneNumber()).getPhoneNumber() || ownerRecord.getEmail() == ownerRepository.getOwnersByEmail(owner.getEmail()).getEmail()) {
+            System.out.println("Этот номер или email заняты, попробуйте другой номер или email.");
+            return null;
         }
-        return recordComponent.toRecordOwner(ownerRepository.save(owner));
+        return null;
     }
 
     /**
      * Получает Хозяин из баззы данных
+     *
      * @param id параметр для поиска Хозяин в базе данных
      * @return возвращает Хозяин из базы данных если он есть, если его нет то выдаёт ошибку
      */
@@ -67,6 +87,7 @@ public class OwnerService {
 
     /**
      * Обновляет Хозяин из базы данных
+     *
      * @param ownerRecord этот рекорд содержит данные для поиск и обновления
      * @return возвращает обновленную сущность Хозяин для базы данных
      */
@@ -81,6 +102,7 @@ public class OwnerService {
 
     /**
      * Удаляет Хозяин из базы данных
+     *
      * @param id используется для поиска в базе данных
      */
     public void deleteOwner(Long id) {

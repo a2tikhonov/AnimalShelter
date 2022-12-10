@@ -8,5 +8,8 @@ import ru.skypro.jd6.team3.animalshelter.entity.Owner;
  * Репозиторий для Хозяина
  */
 @Repository
-public interface OwnerRepository extends JpaRepository<Owner,Long> {
+public interface OwnerRepository extends JpaRepository<Owner, Long> {
+    Owner getOwnersByPhoneNumber(String phoneNumber);
+
+    Owner getOwnersByEmail(String email);
 }

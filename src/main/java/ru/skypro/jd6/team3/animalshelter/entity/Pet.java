@@ -1,5 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 
 /**
@@ -12,16 +14,30 @@ public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long petId;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private double weight;
+
+    @Column(nullable = false)
     private double age;
+
+    @Column(nullable = false)
     private String breed;
+
+    @Column(nullable = false)
+    private String species;
+
     private boolean adopted = false;
     private boolean disabled = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Owner owner;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Shelter shelter;
     public Pet() {}
 
     /**
@@ -76,12 +92,28 @@ public class Pet {
         this.owner = owner;
     }
 
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(Shelter shelter) {
+        this.shelter = shelter;
+    }
+
     public boolean isAdopted() {
         return adopted;
     }
 
     public boolean isDisabled() {
         return disabled;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
     }
 
     @Override

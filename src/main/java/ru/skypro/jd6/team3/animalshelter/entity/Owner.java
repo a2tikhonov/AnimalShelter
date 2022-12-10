@@ -14,10 +14,16 @@ public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long ownerId;
-    private long phoneNumber;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(unique=true, nullable = false)
     private String email;
     private boolean petOwner = false;
+
+    @Column(unique=true, nullable = false)
+    private String phoneNumber;
 
     /**
      * Стандартные методы гет и сет
@@ -36,11 +42,11 @@ public class Owner {
         this.ownerId = ownerId;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
