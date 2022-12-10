@@ -28,8 +28,17 @@ public class NewUserMenuService{
         setButtons();
     }
 
+    @Override
+    public String toString() {
+        return "NewUserMenuService";
+    }
+
     public NewUserMenuButton get(Long id) {
         return newUserMenuRepository.findById(id).orElse(null);
+    }
+
+    public NewUserMenuButton get(String button) {
+        return newUserMenuRepository.findByButton(button);
     }
 
     public Collection<NewUserMenuButton> getButtons() {

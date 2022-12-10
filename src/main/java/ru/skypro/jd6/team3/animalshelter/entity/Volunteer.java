@@ -1,35 +1,67 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "volunteers")
+@Table(name = "volunteer")
 public class Volunteer {
     @Id
-    @GeneratedValue
-    private long volunteerId;
+    private Long id;
 
-    private long phoneNumber;
     private String name;
+
+    @Column(unique = true)
+    private String phone;
+
+    @Column(unique = true)
     private String email;
+
+    private boolean busy;
     @OneToOne
-    private Shelter shelter;
+    private PotentialOwner potentialOwner;
 
-    public long getVolunteerId() {
-        return volunteerId;
+    public Volunteer() {
     }
 
-    public void setVolunteerId(long volunteerId) {
-        this.volunteerId = volunteerId;
+    public Volunteer(Long id, String name, String phone, String email, Boolean busy) {
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+        this.busy = busy;
     }
 
-    public long getPhoneNumber() {
-        return phoneNumber;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Volunteer volunteer = (Volunteer) o;
+        return id.equals(volunteer.id);
     }
 
-    public void setPhoneNumber(long phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Volunteer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -40,6 +72,14 @@ public class Volunteer {
         this.name = name;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -48,34 +88,19 @@ public class Volunteer {
         this.email = email;
     }
 
-    public Shelter getShelter() {
-        return shelter;
+    public boolean isBusy() {
+        return busy;
     }
 
-    public void setShelter(Shelter shelter) {
-        this.shelter = shelter;
+    public void setBusy(boolean busy) {
+        this.busy = busy;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Volunteer volunteer = (Volunteer) o;
-        return volunteerId == volunteer.volunteerId && phoneNumber == volunteer.phoneNumber && name.equals(volunteer.name) && email.equals(volunteer.email);
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(volunteerId, phoneNumber, name, email);
-    }
-
-    @Override
-    public String toString() {
-        return "Volunteer{" +
-                "volunteerId=" + volunteerId +
-                ", phoneNumber=" + phoneNumber +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public void setPotentialOwner(PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
     }
 }
