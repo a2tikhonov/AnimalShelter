@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "recommendations")
+//@Table(name = "recommendations")
 public class Recommendations {
     @Id
     @GeneratedValue

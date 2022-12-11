@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
-@Table(name = "reports")
+//@Table(name = "reports")
 public class Report {
 
     @Id
@@ -137,7 +137,7 @@ public class Report {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Report report = (Report) o;
-        return fileSize == report.fileSize && Objects.equals(id, report.id) && Objects.equals(filePath, report.filePath) && Arrays.equals(photo, report.photo) && Objects.equals(dateTime, report.dateTime) && Objects.equals(diet, report.diet) && Objects.equals(condition, report.condition) && Objects.equals(changes, report.changes) && Objects.equals(owner, report.owner);
+        return fileSize == report.fileSize && Objects.equals(id, report.id) && Objects.equals(filePath, report.filePath) && Arrays.equals(photo, report.photo) && Objects.equals(dateTime, report.dateTime) && Objects.equals(diet, report.diet) && Objects.equals(condition, report.condition) && Objects.equals(changes, report.changes) && Objects.equals(potentialOwner, report.potentialOwner);
     }
 
     @Override

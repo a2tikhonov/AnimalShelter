@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "potential_owners")
+//@Table(name = "potential_owners")
 public class PotentialOwner {
     @Id
     private Long id;

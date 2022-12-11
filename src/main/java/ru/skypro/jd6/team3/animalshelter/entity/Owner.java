@@ -9,7 +9,7 @@ import java.util.Collection;
  * Класс для Хозяина собак
         */
 @Entity
-@Table(name = "owners")
+//@Table(name = "owners")
 public class Owner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

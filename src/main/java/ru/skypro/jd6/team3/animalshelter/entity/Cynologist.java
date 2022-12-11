@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "cynologists")
+//@Table(name = "cynologists")
 public class Cynologist {
 
     @Id

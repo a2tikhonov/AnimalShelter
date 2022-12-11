@@ -17,12 +17,12 @@ CREATE TABLE IF NOT EXISTS cynologists
 
 CREATE TABLE IF NOT EXISTS locations
 (
-    id         SERIAL PRIMARY KEY,
-    file_path  TEXT UNIQUE,
-    file_size  BIGINT,
-    mediaType  TEXT,
-    data       bytea,
-    shelter_id SERIAL REFERENCES shelters (id)
+    id        SERIAL PRIMARY KEY,
+    file_path TEXT UNIQUE,
+    file_size BIGINT,
+    mediaType TEXT,
+    data      bytea
+--     shelter_id SERIAL REFERENCES shelters (id)
 );
 
 -- creating table main_menu
@@ -47,15 +47,15 @@ CREATE TABLE IF NOT EXISTS new_user_menu
 
 CREATE TABLE IF NOT EXISTS pets
 (
-    id                 SERIAL PRIMARY KEY,
-    name               VARCHAR(20) NOT NULL,
-    weight             BIGINT      NOT NULL,
-    age                BIGINT      NOT NULL,
-    breed              VARCHAR(30),
-    species            VARCHAR(30),
-    disabled           BOOLEAN DEFAULT FALSE,
-    potential_owner_id REAL REFERENCES potentialOwners (id),
-    shelter_id         REAL REFERENCES shelters (id)
+    id       SERIAL PRIMARY KEY,
+    name     VARCHAR(20) NOT NULL,
+    weight   BIGINT      NOT NULL,
+    age      BIGINT      NOT NULL,
+    breed    VARCHAR(30),
+    species  VARCHAR(30),
+    disabled BOOLEAN DEFAULT FALSE
+--     potential_owner_id REAL REFERENCES potentialOwners (id),
+--     shelter_id         REAL REFERENCES shelters (id)
 );
 
 -- creating table potentialOwners
@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS potentialOwners
     id           SERIAL PRIMARY KEY NOT NULL,
 --     chat_id      integer UNIQUE     NOT NULL,
     phone_number VARCHAR(20) UNIQUE NOT NULL,
-    name         VARCHAR(20)        NOT NULL,
-    volunteer_id REAL REFERENCES volunteers (id)
+    name         VARCHAR(20)        NOT NULL
+--     volunteer_id REAL REFERENCES volunteers (id)
 );
 
 -- creating table potential_owner_menu
@@ -96,16 +96,16 @@ CREATE TABLE IF NOT EXISTS potential_owner_menu
 
 CREATE TABLE IF NOT EXISTS reports
 (
-    id                 SERIAL PRIMARY KEY,
-    file_path          TEXT,
-    file_size          BIGINT,
-    photo              BYTEA,
-    date_time          TIMESTAMP WITHOUT TIME ZONE,
-    condition          TEXT,
-    diet               TEXT,
-    changes            TEXT,
-    mediaType          TEXT,
-    potential_owner_id REAL REFERENCES potentialOwners (id)
+    id        SERIAL PRIMARY KEY,
+    file_path TEXT,
+    file_size BIGINT,
+    photo     BYTEA,
+    date_time TIMESTAMP WITHOUT TIME ZONE,
+    condition TEXT,
+    diet      TEXT,
+    changes   TEXT,
+    mediaType TEXT
+--     potential_owner_id REAL REFERENCES potentialOwners (id)
 );
 
 -- creating table shelter
@@ -113,10 +113,10 @@ CREATE TABLE IF NOT EXISTS reports
 CREATE TABLE IF NOT EXISTS shelters
 (
     id             SERIAL PRIMARY KEY,
-    location       TEXT UNIQUE        NOT NULL,
-    description    TEXT               NOT NULL,
-    email          VARCHAR(30) UNIQUE NOT NULL,
-    how_to_find_us TEXT               NOT NULL
+    location       TEXT        NOT NULL,
+    description    TEXT        NOT NULL,
+    email          TEXT UNIQUE NOT NULL,
+    how_to_find_us TEXT        NOT NULL
 );
 
 
@@ -124,16 +124,51 @@ CREATE TABLE IF NOT EXISTS shelters
 
 CREATE TABLE IF NOT EXISTS volunteers
 (
-    id                 SERIAL PRIMARY KEY,
-    name               VARCHAR(20)        NOT NULL,
-    phone_number       VARCHAR(20) UNIQUE NOT NULL,
-    email              VARCHAR(30) UNIQUE NOT NULL,
-    busy               BOOLEAN DEFAULT FALSE,
-    shelter_id         REAL REFERENCES shelters (id),
-    potential_owner_id REAL REFERENCES potentialOwners (id)
+    id           SERIAL PRIMARY KEY,
+    name         VARCHAR(20)        NOT NULL,
+    phone_number VARCHAR(20) UNIQUE NOT NULL,
+    email        VARCHAR(30) UNIQUE NOT NULL,
+    busy         BOOLEAN DEFAULT FALSE
+--     shelter_id         REAL REFERENCES shelters (id),
+--     potential_owner_id REAL REFERENCES potentialOwners (id)
 );
 
 -- changeSet: ydeev:2
+
+-- modifying tables by adding foreign keys between those
+
+ALTER TABLE potentialOwners
+    ADD CONSTRAINT fk_pets_id
+        FOREIGN KEY (id)
+            REFERENCES pets (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE potentialOwners
+    ADD CONSTRAINT fk_reports_id
+        FOREIGN KEY (id)
+            REFERENCES reports (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE potentialOwners
+    ADD CONSTRAINT fk_volunteers_id
+        FOREIGN KEY (id)
+            REFERENCES volunteers (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE shelters
+    ADD CONSTRAINT fk_pets_id
+        FOREIGN KEY (id)
+            REFERENCES pets (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE shelters
+    ADD CONSTRAINT fk_locations_id
+        FOREIGN KEY (id)
+            REFERENCES locations (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+
+-- changeSet: ydeev:3
 
 -- add some data into table cynologists
 
@@ -171,21 +206,21 @@ VALUES ('О приюте', 'О приюте'),
 -- add some data into table pets
 
 INSERT INTO pets
-(name, weight, age, breed, species, disabled, potential_owner_id, shelter_id)
-VALUES ('Landish', 2.7, 1, 'persian', 'cat', false, null, null),
-       ('Busya', 3.4, 3, 'foldex', 'cat', false, null, null),
-       ('Khadjo', 73, 21, 'khajiit', 'cat', false, null, null),
-       ('Neltarion', 32, 4, 'german shepherd', 'dog', false, null, null),
-       ('Maligos', 16.2, 2, 'border collie', 'dog', false, null, null),
-       ('Diktator', 15, 5, 'free breed dog', 'dog', false, null, null);
+    (name, weight, age, breed, species, disabled)
+VALUES ('Landish', 2.7, 1, 'persian', 'cat', false),
+       ('Busya', 3.4, 3, 'foldex', 'cat', false),
+       ('Khadjo', 73, 21, 'khajiit', 'cat', false),
+       ('Neltarion', 32, 4, 'german shepherd', 'dog', false),
+       ('Maligos', 16.2, 2, 'border collie', 'dog', false),
+       ('Diktator', 15, 5, 'free breed dog', 'dog', false);
 
 -- add some data into table potentional_owners
 
-INSERT INTO potentialOwners (phone_number, name, volunteer_id)
-VALUES (89854457280, 'Mark', null),
-       (89163904237, 'Dmitriy', null),
-       (89854457280, 'Mark', null),
-       (89854457280, 'Mark', null);
+INSERT INTO potentialOwners (phone_number, name)
+VALUES (89854457280, 'Mark'),
+       (89163904237, 'Dmitriy'),
+       (89165559800, 'Lindsey'),
+       (89852218570, 'Abignail');
 
 -- add some data into table potential_owner_menu
 
@@ -213,22 +248,22 @@ VALUES ('Правила знакомства с животным', 'Его на�
 -- add some data into table reports
 
 INSERT INTO reports (file_path, file_size, photo, date_time, condition, diet,
-                     changes, mediaType, potential_owner_id)
-VALUES ('null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null'),
-       ('null', 'null', 'null', 'null', 'null', 'null', 'null', 'null', 'null');
+                     changes, mediaType)
+VALUES (null, null, null, null, null, null, null, null),
+       (null, null, null, null, null, null, null, null),
+       (null, null, null, null, null, null, null, null),
+       (null, null, null, null, null, null, null, null);
 
 -- add some data into table shelters
 
 INSERT INTO shelters (location, description, email, how_to_find_us)
-VALUES ('Astana, adress', 'We have dogs mostly', 'Astana_dog_shelter_1992@gmail.com', 'google it'),
-       ('Astana, adress', 'We have cats mostly', 'Astana_cat_shelter_2003@gmail.com', 'google it');
+VALUES ('Astana1, adress', 'We have dogs mostly', 'Astana_dog_shelter_1992@gmail.com', 'google it'),
+       ('Astana2, adress', 'We have cats mostly', 'Astana_cat_shelter_2003@gmail.com', 'google it');
 
 -- add some data into table volunteers
 
-INSERT INTO volunteers (name, phone_number, email, busy, shelter_id, potential_owner_id)
-VALUES ('Agatha', 87825172840, 'Agatha_volunteer_@gmail.com', false, null, null),
-       ('Mark', 89605397817, 'Mark_volunteer_@mail.ru', false, null, null),
-       ('Bethony', 89255887913, 'Bethany_volunteer_@gmail.com', false, null, null),
-       ('Tracy', 89166207830, 'Tracy_volunteer_@yandex.ru', false, null, null);
-
-
+INSERT INTO volunteers (name, phone_number, email, busy)
+VALUES ('Agatha', 87825172840, 'Agatha_volunteer_@gmail.com', false),
+       ('Mark', 89605397817, 'Mark_volunteer_@mail.ru', false),
+       ('Bethony', 89255887913, 'Bethany_volunteer_@gmail.com', false),
+       ('Tracy', 89166207830, 'Tracy_volunteer_@yandex.ru', false);

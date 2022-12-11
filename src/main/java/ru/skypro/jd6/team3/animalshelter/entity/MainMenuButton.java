@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "main_menu")
+//@Table(name = "main_menu")
 public class MainMenuButton {
 
     @Id
