@@ -26,7 +26,7 @@ public class CynologistController {
     @PostMapping
     public ResponseEntity<Cynologist> createCynologist(@RequestBody Cynologist cynologist) {
         Cynologist newCynologist = cynologistService.createCynologist(cynologist);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(newCynologist);
     }
 
     /**
@@ -37,7 +37,7 @@ public class CynologistController {
     @PutMapping
     public ResponseEntity<Cynologist> updateCynologist(@RequestBody Cynologist cynologist) {
         Cynologist updateCynologist = cynologistService.updateCynologist(cynologist);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(updateCynologist);
     }
 
     /**
@@ -51,7 +51,7 @@ public class CynologistController {
         if (cynologist == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(cynologist);
     }
 
     /**

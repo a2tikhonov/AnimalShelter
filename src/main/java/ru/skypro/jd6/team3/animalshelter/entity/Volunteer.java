@@ -13,6 +13,7 @@ public class Volunteer {
     private long phoneNumber;
     private String name;
     private String email;
+
     @OneToOne
     private Shelter shelter;
 

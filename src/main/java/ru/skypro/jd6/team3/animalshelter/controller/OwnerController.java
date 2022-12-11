@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.Owner;
-import ru.skypro.jd6.team3.animalshelter.record.OwnerRecord;
 import ru.skypro.jd6.team3.animalshelter.service.OwnerService;
 
 @RestController
@@ -19,13 +18,12 @@ public class OwnerController {
 
     /**
      * Создаёт Хозяин в базе данных
-     * @param ownerRecord Передаваемый упрощённый Хозяин
      * @return Возвращает полноценную сущность Хозяин из базы данных
      */
     @PostMapping
-    public ResponseEntity<OwnerRecord> createOwner(@RequestBody OwnerRecord ownerRecord) {
+    public ResponseEntity<Owner> createOwner(@RequestBody Owner owner) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ownerService.createOwner(ownerRecord));
+                .body(ownerService.createOwner(owner));
     }
 
     /**
@@ -44,12 +42,11 @@ public class OwnerController {
 
     /**
      * Обновляет Хозяин в базе данных
-     * @param ownerRecord Данные для обновления в базе данных
      * @return Возвращает обновлённую сущность из базы данных
      */
     @PutMapping
-    public OwnerRecord updateOwner(@RequestBody OwnerRecord ownerRecord) {
-        return ownerService.updateOwner(ownerRecord);
+    public Owner updateOwner(@RequestBody Owner owner) {
+        return ownerService.updateOwner(owner);
     }
 
     /**

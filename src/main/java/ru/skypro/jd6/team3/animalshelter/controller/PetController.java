@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.Pet;
-import ru.skypro.jd6.team3.animalshelter.record.PetRecord;
+
 import ru.skypro.jd6.team3.animalshelter.service.PetService;
 
 /**
@@ -26,7 +26,7 @@ public class PetController {
      * @return Возвращает полноценную сущность Питомец из базы данных
      */
     @PostMapping
-    public ResponseEntity<PetRecord> createPet(@RequestBody PetRecord pet) {
+    public ResponseEntity<Pet> createPet(@RequestBody Pet pet) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(petService.createPet(pet));
     }
@@ -47,12 +47,12 @@ public class PetController {
 
     /**
      * Обновляет Питомец в базе данных
-     * @param petRecord Данные для обновления в базе данных
+     *
      * @return Возвращает обновлённую сущность из базы данных
      */
     @PutMapping
-    public PetRecord updatePet(@RequestBody PetRecord petRecord) {
-        return petService.updatePet(petRecord);
+    public Pet updatePet(@RequestBody Pet pet) {
+        return petService.updatePet(pet);
     }
 
     /**
