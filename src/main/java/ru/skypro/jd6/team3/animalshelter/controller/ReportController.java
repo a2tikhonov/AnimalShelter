@@ -58,11 +58,20 @@ public class ReportController {
 //        return ResponseEntity.ok(reportService.findAll());
 //    }
 
-    /**
-     * Добавление отчета через браузер
-     *
-     * @param report новый объект "Волонтер"
-     */
+    @Operation(
+            summary = "add report",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "adds report",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = Report.class))
+                            )
+                    )
+            },
+            tags = "Report"
+    )
     @PostMapping
     public ResponseEntity<Report> addReport(@RequestBody Report report) {
         Report newReport = reportService.addReport(report);
