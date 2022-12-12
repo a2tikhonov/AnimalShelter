@@ -1,62 +1,71 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
-
-/**
- * Класс для питомце, питомцев, а не собак так как приют может в будующем принимать и других животных
- */
+import java.util.Objects;
 
 @Entity
-@Table(name = "pets")
+@Table(name = "pet")
 public class Pet {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long petId;
-    private String name;
-    private double weight;
-    private double age;
+    @GeneratedValue(generator = "pedIdGen")
+    private long id;
+
+    private String type;
+
     private String breed;
-    private boolean adopted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Owner owner;
+    private String name;
 
-    public Pet() {}
+    private double wight;
 
-    /**
-     * Стандартные методы гет и сет
-     */
+    private int age;
+    @OneToOne
+    private PotentialOwner potentialOwner;
 
-    public long getPetId() {
-        return petId;
+    public Pet() {
     }
 
-    public void setPetId(long petId) {
-        this.petId = petId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pet pet = (Pet) o;
+        return id == pet.id;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        return "Pet{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", breed='" + breed + '\'' +
+                ", name='" + name + '\'' +
+                ", wight=" + wight +
+                ", age=" + age +
+                ", potentialOwner=" + potentialOwner +
+                '}';
     }
 
-    public double getWeight() {
-        return weight;
+    public long getId() {
+        return id;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public double getAge() {
-        return age;
+    public String getType() {
+        return type;
     }
 
-    public void setAge(double age) {
-        this.age = age;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getBreed() {
@@ -67,27 +76,35 @@ public class Pet {
         this.breed = breed;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public String getName() {
+        return name;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public boolean isAdopted() {
-        return adopted;
+    public double getWight() {
+        return wight;
     }
 
-    @Override
-    public String toString() {
-        return "Pet{" +
-                "petId=" + petId +
-                ", name='" + name + '\'' +
-                ", weight=" + weight +
-                ", age=" + age +
-                '}';
+    public void setWight(double wight) {
+        this.wight = wight;
     }
 
+    public int getAge() {
+        return age;
+    }
 
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
+    }
+
+    public void setPotentialOwner(PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
+    }
 }
