@@ -1,5 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
@@ -9,34 +10,33 @@ import javax.persistence.*;
  */
 
 @Entity
-//@Table(name = "pets")
+@Table(name = "pets")
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long petId;
+    private Long id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private double weight;
+    private Integer weight;
 
-    @Column(nullable = false)
-    private double age;
+    private Integer age;
 
-    @Column(nullable = false)
     private String breed;
 
-    @Column(nullable = false)
     private String species;
 
     private boolean disabled = false;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn
     private PotentialOwner potentialOwner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    @JsonIgnore
     private Shelter shelter;
+
     public Pet() {}
 
     /**
@@ -44,11 +44,11 @@ public class Pet {
      */
 
     public long getPetId() {
-        return petId;
+        return id;
     }
 
-    public void setPetId(long petId) {
-        this.petId = petId;
+    public void setPetId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -63,7 +63,7 @@ public class Pet {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(Integer weight) {
         this.weight = weight;
     }
 
@@ -71,7 +71,7 @@ public class Pet {
         return age;
     }
 
-    public void setAge(double age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -86,15 +86,6 @@ public class Pet {
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
-
-    public PotentialOwner getPotentialOwner() {
-        return potentialOwner;
-    }
-
-    public void setPotentialOwner(PotentialOwner potentialOwner) {
-        this.potentialOwner = potentialOwner;
-    }
-
 
     public Shelter getShelter() {
         return shelter;
@@ -119,7 +110,7 @@ public class Pet {
     @Override
     public String toString() {
         return "Pet{" +
-                "petId=" + petId +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", weight=" + weight +
                 ", age=" + age +

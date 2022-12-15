@@ -1,29 +1,32 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-//@Table(name = "potential_owners")
+@Table(name = "potential_owners")
 public class PotentialOwner {
     @Id
     private Long id;
 
     private String name;
 
-    @Column(unique = true)
     private String phone;
-    @OneToOne
-    private Volunteer volunteer;
 
+    private String locationInMenu;
 
     public PotentialOwner() {
     }
 
-    public PotentialOwner(Long id, String name, String phone) {
+    public PotentialOwner(Long id, String name, String phone, String locationInMenu) {
         this.id = id;
         this.name = name;
         this.phone = phone;
+        this.locationInMenu = locationInMenu;
     }
 
 
@@ -73,11 +76,12 @@ public class PotentialOwner {
         this.phone = phone;
     }
 
-    public Volunteer getVolunteer() {
-        return volunteer;
+    public String getLocationInMenu() {
+        return locationInMenu;
     }
 
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
+    public void setLocationInMenu(String locationInMenu) {
+        this.locationInMenu = locationInMenu;
     }
+
 }

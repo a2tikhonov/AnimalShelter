@@ -12,22 +12,22 @@ public interface ShelterRepository extends JpaRepository<Shelter, Long> {
      * Получить местоположение приюта (SQL-запрос, впоследствии используется в классе ShelterService)
      *
      */
-    @Query(value = "SELECT shelters.location from shelters WHERE shelters.id = id", nativeQuery = true)
-    String getShelterLocation(id);
+    @Query(value = "SELECT shelters.location_info from shelters", nativeQuery = true)
+    String getShelterLocation();
 
     /**
      * Получить информацию о приюте (SQL-запрос, впоследствии используется в классе ShelterService)
      *
      */
-    @Query(value = "SELECT shelters.description from shelters WHERE shelters.id = id", nativeQuery = true)
-    String getShelterDescription(id);
+    @Query(value = "SELECT shelters.description from shelters", nativeQuery = true)
+    String getShelterDescription();
 
     /**
      * Получить адрес электронной почты приюта (SQL-запрос, впоследствии используется в классе ShelterService)
      *
      */
-    @Query(value = "SELECT shelters.email from shelters WHERE shelters.id = id", nativeQuery = true)
-    String getShelterEmail(id);
+    @Query(value = "SELECT shelters.email from shelters", nativeQuery = true)
+    String getShelterEmail();
 
 }
 

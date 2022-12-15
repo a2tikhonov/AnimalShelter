@@ -1,60 +1,86 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-//@Table(name = "shelters")
+@Table(name = "shelters")
 public class Shelter {
 
     @Id
     @GeneratedValue
-    private long shelterId;
-    private String location;
+    private Long id;
+    private String location_info;
     private String description;
     private String email;
     private String howToFindUs;
-    @OneToMany
-    private Collection<Volunteer> volunteer;
-    @OneToMany(orphanRemoval = true)
-    private Collection <Pet> pet = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "shelter")
+    @JsonIgnore
+    private Collection<Volunteer> volunteers = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "shelter")
+    @JsonIgnore
+    private Collection<Pet> pets = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "shelter")
+    @JsonIgnore
+    private Collection<Cynologist> cynologists = new java.util.ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+    @OneToOne
+    @JoinColumn(name = "recommendations_id")
+    private Recommendations recommendations;
+
+//    public Shelter() {
+//        this.id = null;
+//        this.location_info = null;
+//        this.description = null;
+//        this.email = null;
+//        this.howToFindUs = null;
+//        this.volunteer = null;
+//        this.pet = null;
+//        this.location = null;
+//    }
+
+    public Shelter() {
+    }
+
+    ;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Shelter shelter = (Shelter) o;
-        return shelterId == shelter.shelterId && location.equals(shelter.location) && description.equals(shelter.description) && email.equals(shelter.email) && howToFindUs.equals(shelter.howToFindUs);
+        return id == shelter.id && location_info.equals(shelter.location_info) && description.equals(shelter.description) && email.equals(shelter.email) && howToFindUs.equals(shelter.howToFindUs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shelterId, location, description, email, howToFindUs);
+        return Objects.hash(id, location_info, description, email, howToFindUs);
     }
 
-    public String getHowToFindUs() {
-        return howToFindUs;
+    public Long getId() {
+        return id;
     }
 
-    public void setHowToFindUs(String howToFindUs) {
-        this.howToFindUs = howToFindUs;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public long getShelterId() {
-        return shelterId;
+    public String getLocation_info() {
+        return location_info;
     }
 
-    public void setShelterId(long shelterId) {
-        this.shelterId = shelterId;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocation_info(String location_info) {
+        this.location_info = location_info;
     }
 
     public String getDescription() {
@@ -73,19 +99,54 @@ public class Shelter {
         this.email = email;
     }
 
-    public Collection<Volunteer> getVolunteer() {
-        return volunteer;
+    public String getHowToFindUs() {
+        return howToFindUs;
     }
 
-    public void setVolunteer(Collection<Volunteer> volunteer) {
-        this.volunteer = volunteer;
+    public void setHowToFindUs(String howToFindUs) {
+        this.howToFindUs = howToFindUs;
     }
 
-    public Collection<Pet> getPet() {
-        return pet;
+    public Collection<Volunteer> getVolunteers() {
+        return volunteers;
     }
 
-    public void setPet(Collection<Pet> pet) {
-        this.pet = pet;
+    public void setVolunteers(Collection<Volunteer> volunteers) {
+        this.volunteers = volunteers;
     }
+
+    public Collection<Pet> getPets() {
+        return pets;
+    }
+
+    public void setPets(Collection<Pet> pets) {
+        this.pets = pets;
+    }
+
+    public Collection<Cynologist> getCynologists() {
+        return cynologists;
+    }
+
+
+    public void setCynologists(Collection<Cynologist> cynologists) {
+        this.cynologists = cynologists;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Recommendations getRecommendations() {
+        return recommendations;
+    }
+
+    public void setRecommendations(Recommendations recommendations) {
+        this.recommendations = recommendations;
+    }
+
 }
+

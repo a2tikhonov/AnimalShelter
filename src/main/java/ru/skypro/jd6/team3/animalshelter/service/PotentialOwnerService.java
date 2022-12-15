@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.repository.PotentialOwnerRepository;
 
+import java.util.Collection;
 import java.util.Locale;
 
 @Service
@@ -15,35 +16,34 @@ public class PotentialOwnerService {
         this.potentialOwnerRepository = potentialOwnerRepository;
     }
 
-    public void save(PotentialOwner potentialOwner) {
-        potentialOwnerRepository.save(potentialOwner);
+    @Override
+    public String toString() {
+        return "PotentialOwnerService";
     }
 
-    public boolean add(Long id) {
-        if (find(id)) {
-            return false;
-        }
+    public PotentialOwner save(PotentialOwner potentialOwner) {
+        return potentialOwnerRepository.save(potentialOwner);
+    }
+
+    public void add(Long id, String locationInMenu) {
         PotentialOwner potentialOwner = new PotentialOwner();
         potentialOwner.setId(id);
         potentialOwner.setName("");
-        potentialOwner.setPhone("");
+        potentialOwner.setPhone(id.toString());
+        potentialOwner.setLocationInMenu(locationInMenu);
         potentialOwnerRepository.save(potentialOwner);
-        return true;
     }
 
     public boolean find(Long id) {
         return potentialOwnerRepository.findById(id).isPresent();
     }
 
-    public boolean add(Long id, String message) {
+    public boolean addContactData(Long id, String message, String locationInMenu) {
         boolean nameIsCorrect = false;
         boolean phoneIsCorrect = false;
-        System.out.println("message = " + message);
         String[] msg = message.split(" ");
         String name = msg[0];
-        System.out.println("name = " + name);
         String phone = msg[1];
-        System.out.println("phone = " + phone);
         if (!name.isBlank() && name.length() >= 2) {
             name = name.toLowerCase(Locale.ROOT);
             String firstLetter = name.substring(0, 1).toUpperCase(Locale.ROOT);
@@ -55,7 +55,7 @@ public class PotentialOwnerService {
             phoneIsCorrect = true;
         }
         if (nameIsCorrect && phoneIsCorrect) {
-            PotentialOwner owner = new PotentialOwner(id, name, phone1);
+            PotentialOwner owner = new PotentialOwner(id, name, phone1, locationInMenu);
             potentialOwnerRepository.save(owner);
             return true;
         }
@@ -64,6 +64,24 @@ public class PotentialOwnerService {
 
     public PotentialOwner get(Long id) {
         return potentialOwnerRepository.findById(id).orElse(null);
+    }
+
+    public void setLocationInMenu(Long id, String button) {
+        PotentialOwner potentialOwner = get(id);
+        potentialOwner.setLocationInMenu(button);
+        save(potentialOwner);
+    }
+
+    public String getLocationInMenu(Long id) {
+        return get(id).getLocationInMenu();
+    }
+
+    public void delete(Long id) {
+        potentialOwnerRepository.deleteById(id);
+    }
+
+    public Collection<PotentialOwner> getAll() {
+        return potentialOwnerRepository.findAll();
     }
 
 }

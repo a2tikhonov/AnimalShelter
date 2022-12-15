@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
-    List<Report> findOwnerReportByPetIgnoreCase(String name);
-    List<Report> findOwnerReportByPhoneNumber(long phone);
-    List<Report> findOwnerReportByOwnerId(Long id);
+//    List<Report> findOwnerReportByPetIgnoreCase(String name);
+//    List<Report> findOwnerReportByPhoneNumber(long phone);
+//    List<Report> findOwnerReportByOwnerId(Long id);
 }

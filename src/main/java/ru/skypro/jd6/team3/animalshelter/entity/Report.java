@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
-//@Table(name = "reports")
+@Table(name = "reports")
 public class Report {
 
     @Id
@@ -22,7 +22,9 @@ public class Report {
     private String condition;
     private String changes;
     private String mediaType;
+
     @ManyToOne
+    @JoinColumn(name = "potential_owner_id")
     private PotentialOwner potentialOwner;
 
     public Report() {

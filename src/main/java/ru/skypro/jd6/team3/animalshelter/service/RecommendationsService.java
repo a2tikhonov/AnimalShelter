@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.Recommendations;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
 import ru.skypro.jd6.team3.animalshelter.repository.RecommendationsRepository;
-import ru.skypro.jd6.team3.animalshelter.repository.ReportRepository;
+//import ru.skypro.jd6.team3.animalshelter.repository.ReportRepository;
 
 @Service
 public class RecommendationsService {

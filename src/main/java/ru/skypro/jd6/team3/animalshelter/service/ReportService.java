@@ -81,20 +81,20 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
-    public Collection<Report> findOwnerReportById(Long id) {
-        logger.debug("*findOwnerReportById* method was invoked");
-        return reportRepository.findOwnerReportByOwnerId(id);
-    }
+//    public Collection<Report> findOwnerReportById(Long id) {
+//        logger.debug("*findOwnerReportById* method was invoked");
+//        return reportRepository.findOwnerReportByOwnerId(id);
+//    }
 
-    public Collection<Report> findOwnerReportByPhoneNumber(Long phone) {
-        logger.debug("*findOwnerReportByPhoneNumber* method was invoked");
-        return reportRepository.findOwnerReportByPhoneNumber(phone);
-    }
-
-    public Collection<Report> findOwnerReportByPetName(String name){
-        logger.debug("*findOwnerReportByPetName* method was invoked");
-        return reportRepository.findOwnerReportByPetIgnoreCase(name);
-    }
+//    public Collection<Report> findOwnerReportByPhoneNumber(Long phone) {
+//        logger.debug("*findOwnerReportByPhoneNumber* method was invoked");
+//        return reportRepository.findOwnerReportByPhoneNumber(phone);
+//    }
+//
+//    public Collection<Report> findOwnerReportByPetName(String name){
+//        logger.debug("*findOwnerReportByPetName* method was invoked");
+//        return reportRepository.findOwnerReportByPetIgnoreCase(name);
+//    }
 
     public Collection<Report> findAllReports() {
         logger.debug("*findAllReports* method was invoked");

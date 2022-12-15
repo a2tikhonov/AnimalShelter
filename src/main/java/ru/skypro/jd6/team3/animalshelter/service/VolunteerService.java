@@ -1,6 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.service;
 
 import org.springframework.stereotype.Service;
+import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.repository.VolunteerRepository;
 
@@ -35,11 +36,15 @@ public class VolunteerService {
         volunteerRepository.deleteById(id);
     }
 
-    public Volunteer getFree() {
-        return volunteerRepository.getFirstByBusy(false);
+    public Volunteer findByPotentialOwner(Long potentialOwnerId) {
+        return volunteerRepository.findVolunteerByPotentialOwner_Id(potentialOwnerId);
     }
 
-    public Boolean isAnyFree() {
-        return volunteerRepository.existsByBusy(false);
+    public boolean existsByPotentialOwner(PotentialOwner potentialOwner) {
+        return volunteerRepository.existsByPotentialOwner(potentialOwner);
+    }
+
+    public Volunteer getFree() {
+        return volunteerRepository.getFirstByPotentialOwner(null);
     }
 }

@@ -6,30 +6,30 @@
 
 CREATE TABLE IF NOT EXISTS cynologists
 (
-    id                SERIAL PRIMARY KEY,
-    name              VARCHAR(20)        NOT NULL,
-    phone_number      VARCHAR(20) UNIQUE NOT NULL,
-    specialties       TEXT               NOT NULL,
-    years_of_practice DECIMAL            NOT NULL
+    id                BIGSERIAL PRIMARY KEY,
+    name              TEXT        NOT NULL,
+    phone_number      TEXT UNIQUE NOT NULL,
+    specialties       TEXT        NOT NULL,
+    years_of_practice TEXT        NOT NULL
 );
 
 -- creating table locations
 
 CREATE TABLE IF NOT EXISTS locations
 (
-    id        SERIAL PRIMARY KEY,
-    file_path TEXT UNIQUE,
-    file_size BIGINT,
-    mediaType TEXT,
-    data      bytea
---     shelter_id SERIAL REFERENCES shelters (id)
+    id         BIGSERIAL PRIMARY KEY,
+    file_path  TEXT UNIQUE,
+    file_size  BIGINT,
+    media_Type TEXT,
+    data       bytea
+--     shelter_id BIGSERIAL REFERENCES shelters (id)
 );
 
 -- creating table main_menu
 
 CREATE TABLE IF NOT EXISTS main_menu
 (
-    id        SERIAL PRIMARY KEY,
+    id        BIGSERIAL PRIMARY KEY,
     button    TEXT UNIQUE NOT NULL,
     call_back TEXT UNIQUE NOT NULL
 );
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS main_menu
 
 CREATE TABLE IF NOT EXISTS new_user_menu
 (
-    id        SERIAL PRIMARY KEY,
+    id        BIGSERIAL PRIMARY KEY,
     button    TEXT UNIQUE NOT NULL,
     call_back TEXT UNIQUE NOT NULL
 );
@@ -47,12 +47,12 @@ CREATE TABLE IF NOT EXISTS new_user_menu
 
 CREATE TABLE IF NOT EXISTS pets
 (
-    id       SERIAL PRIMARY KEY,
-    name     VARCHAR(20) NOT NULL,
-    weight   BIGINT      NOT NULL,
-    age      BIGINT      NOT NULL,
-    breed    VARCHAR(30),
-    species  VARCHAR(30),
+    id       BIGSERIAL PRIMARY KEY,
+    name     TEXT    NOT NULL,
+    weight   INTEGER NOT NULL,
+    age      INTEGER NOT NULL,
+    breed    TEXT,
+    species  TEXT,
     disabled BOOLEAN DEFAULT FALSE
 --     potential_owner_id REAL REFERENCES potentialOwners (id),
 --     shelter_id         REAL REFERENCES shelters (id)
@@ -60,12 +60,13 @@ CREATE TABLE IF NOT EXISTS pets
 
 -- creating table potentialOwners
 
-CREATE TABLE IF NOT EXISTS potentialOwners
+CREATE TABLE IF NOT EXISTS potential_owners
 (
-    id           SERIAL PRIMARY KEY NOT NULL,
+    id               BIGSERIAL PRIMARY KEY NOT NULL,
 --     chat_id      integer UNIQUE     NOT NULL,
-    phone_number VARCHAR(20) UNIQUE NOT NULL,
-    name         VARCHAR(20)        NOT NULL
+    phone            TEXT UNIQUE           NOT NULL,
+    name             TEXT                  NOT NULL,
+    location_in_menu TEXT
 --     volunteer_id REAL REFERENCES volunteers (id)
 );
 
@@ -73,38 +74,38 @@ CREATE TABLE IF NOT EXISTS potentialOwners
 
 CREATE TABLE IF NOT EXISTS potential_owner_menu
 (
-    id        SERIAL PRIMARY KEY NOT NULL,
-    button    TEXT UNIQUE        NOT NULL,
-    call_back TEXT UNIQUE        NOT NULL
+    id        BIGSERIAL PRIMARY KEY NOT NULL,
+    button    TEXT UNIQUE           NOT NULL,
+    call_back TEXT UNIQUE           NOT NULL
 );
 
 -- creating table recommendations
 
--- CREATE TABLE IF NOT EXISTS recommendations
--- (
---     id                  SERIAL PRIMARY KEY NOT NULL,
---     rules               TEXT,
---     documents           TEXT,
---     transportation_info TEXT,
---     arrangement_info    TEXT,
---     cynologist_advices  TEXT,
---     cynologists         TEXT,
---     common_rejects      TEXT
--- );
+CREATE TABLE IF NOT EXISTS recommendations
+(
+    id                         BIGSERIAL PRIMARY KEY NOT NULL,
+    rules                      TEXT,
+    documents                  TEXT,
+    transportation_information TEXT,
+    arrangement_information    TEXT,
+    cynologist_advices         TEXT,
+    list_of_cynologists        TEXT,
+    common_reject_reasons      TEXT
+);
 
 -- creating table reports
 
 CREATE TABLE IF NOT EXISTS reports
 (
-    id        SERIAL PRIMARY KEY,
+    id        BIGSERIAL PRIMARY KEY,
     file_path TEXT,
-    file_size BIGINT,
+    file_size INTEGER,
     photo     BYTEA,
     date_time TIMESTAMP WITHOUT TIME ZONE,
     condition TEXT,
     diet      TEXT,
     changes   TEXT,
-    mediaType TEXT
+    media_type TEXT
 --     potential_owner_id REAL REFERENCES potentialOwners (id)
 );
 
@@ -112,8 +113,8 @@ CREATE TABLE IF NOT EXISTS reports
 
 CREATE TABLE IF NOT EXISTS shelters
 (
-    id             SERIAL PRIMARY KEY,
-    location       TEXT        NOT NULL,
+    id             BIGSERIAL PRIMARY KEY,
+    location_info  TEXT        NOT NULL,
     description    TEXT        NOT NULL,
     email          TEXT UNIQUE NOT NULL,
     how_to_find_us TEXT        NOT NULL
@@ -124,10 +125,10 @@ CREATE TABLE IF NOT EXISTS shelters
 
 CREATE TABLE IF NOT EXISTS volunteers
 (
-    id           SERIAL PRIMARY KEY,
-    name         VARCHAR(20)        NOT NULL,
-    phone_number VARCHAR(20) UNIQUE NOT NULL,
-    email        VARCHAR(30) UNIQUE NOT NULL,
+    id           BIGSERIAL PRIMARY KEY,
+    name         TEXT        NOT NULL,
+    phone TEXT UNIQUE NOT NULL,
+    email        TEXT UNIQUE NOT NULL,
     busy         BOOLEAN DEFAULT FALSE
 --     shelter_id         REAL REFERENCES shelters (id),
 --     potential_owner_id REAL REFERENCES potentialOwners (id)
@@ -137,35 +138,135 @@ CREATE TABLE IF NOT EXISTS volunteers
 
 -- modifying tables by adding foreign keys between those
 
-ALTER TABLE potentialOwners
-    ADD CONSTRAINT fk_pets_id
-        FOREIGN KEY (id)
-            REFERENCES pets (id)
+-- cynologists
+
+ALTER TABLE cynologists
+    ADD COLUMN shelter_id BIGSERIAL
+        CONSTRAINT fk_shelter_id REFERENCES shelters (id)
             DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE potentialOwners
-    ADD CONSTRAINT fk_reports_id
-        FOREIGN KEY (id)
-            REFERENCES reports (id)
+-- pets
+
+ALTER TABLE pets
+    ADD COLUMN shelter_id BIGSERIAL
+        CONSTRAINT fk_shelter_id REFERENCES shelters (id)
             DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE potentialOwners
-    ADD CONSTRAINT fk_volunteers_id
-        FOREIGN KEY (id)
-            REFERENCES volunteers (id)
+ALTER TABLE pets
+    ADD COLUMN potential_owner_id BIGSERIAL
+        CONSTRAINT fk_potential_owner_id REFERENCES potential_owners (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+-- potential_owners
+
+-- ALTER TABLE potential_owners
+--     ADD COLUMN pet_id BIGSERIAL
+--         CONSTRAINT fk_pets_id REFERENCES pets (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE potential_owners
+    ADD COLUMN report_id BIGSERIAL
+        CONSTRAINT fk_reports_id REFERENCES reports (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+--ALTER TABLE potential_owners
+--    ADD COLUMN volunteer_id BIGSERIAL
+--        CONSTRAINT fk_volunteers_id REFERENCES volunteers (id)
+--            DEFERRABLE INITIALLY DEFERRED;
+
+-- reports
+
+ALTER TABLE reports
+    ADD COLUMN potential_owner_id BIGSERIAL
+        CONSTRAINT fk_potential_owner_id REFERENCES potential_owners (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+-- shelters
+
+ALTER TABLE shelters
+    ADD COLUMN volunteer_id BIGSERIAL
+        CONSTRAINT fk_volunteer_id REFERENCES volunteers (id)
             DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE shelters
-    ADD CONSTRAINT fk_pets_id
-        FOREIGN KEY (id)
-            REFERENCES pets (id)
+    ADD COLUMN pet_id BIGSERIAL
+        CONSTRAINT fk_pets_id REFERENCES pets (id)
             DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE shelters
-    ADD CONSTRAINT fk_locations_id
-        FOREIGN KEY (id)
-            REFERENCES locations (id)
+    ADD COLUMN cynologist_id BIGSERIAL
+        CONSTRAINT fk_cynologist_id REFERENCES cynologists (id)
             DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE shelters
+    ADD COLUMN location_id BIGSERIAL
+        CONSTRAINT fk_locations_id REFERENCES locations (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE shelters
+    ADD COLUMN recommendations_id BIGSERIAL
+        CONSTRAINT fk_recommendations_id REFERENCES recommendations (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+-- locations
+
+ALTER TABLE locations
+    ADD COLUMN shelter_id BIGSERIAL
+        CONSTRAINT fk_shelters_id REFERENCES shelters (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+--ALTER TABLE pets
+--    ADD COLUMN potential_owner_id BIGSERIAL
+--        CONSTRAINT fk_potential_owner_id REFERENCES potential_owners (id)
+--            DEFERRABLE INITIALLY DEFERRED;
+
+-- volunteers
+
+ALTER TABLE volunteers
+    ADD COLUMN potential_owner_id BIGSERIAL
+        CONSTRAINT fk_potential_owner_id REFERENCES potential_owners (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+ALTER TABLE volunteers
+    ADD COLUMN shelter_id BIGSERIAL
+        CONSTRAINT fk_shelter_id REFERENCES shelters (id)
+            DEFERRABLE INITIALLY DEFERRED;
+
+-- ALTER TABLE potentialOwners
+--     ADD CONSTRAINT fk_pets_id
+--         FOREIGN KEY (id)
+--             REFERENCES pets (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE potentialOwners
+--     ADD CONSTRAINT fk_reports_id
+--         FOREIGN KEY (id)
+--             REFERENCES reports (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE potentialOwners
+--     ADD CONSTRAINT fk_volunteers_id
+--         FOREIGN KEY (id)
+--             REFERENCES volunteers (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE shelters
+--     ADD CONSTRAINT fk_pets_id
+--         FOREIGN KEY (id)
+--             REFERENCES pets (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE shelters
+--     ADD CONSTRAINT fk_locations_id
+--         FOREIGN KEY (id)
+--             REFERENCES locations (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE locations
+--     ADD CONSTRAINT fk_shelters_id
+--         FOREIGN KEY (id)
+--             REFERENCES shelters (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
 
 -- changeSet: ydeev:3
@@ -174,18 +275,23 @@ ALTER TABLE shelters
 
 INSERT INTO cynologists
     (name, phone_number, specialties, years_of_practice)
-VALUES ('Baron', 89725551980, 'dog_master', 6),
-       ('Blake', 89187831520, 'cat_master', 4),
-       ('Amanda', 86127382460, 'dog_and_cat_master', 8),
-       ('Tyrion', 88329651730, 'beginner', 1),
-       ('Denice', 89856129017, 'adept', 10);
+VALUES ('Baron', '89725551980', 'dog_master', 6),
+       ('Blake', '89187831520', 'cat_master', 4),
+       ('Amanda', '86127382460', 'dog_and_cat_master', 8),
+       ('Tyrion', '88329651730', 'beginner', 1),
+       ('Denice', '89856129017', 'adept', 10),
+       ('Roger', '89857136715', 'novice', 3);
 
 -- add some data into table locations
 
 INSERT INTO locations
-    (file_path, file_size, mediaType, data)
+    (file_path, file_size, media_Type, data)
 VALUES ('aaa', null, null, null),
-       ('bbb', null, null, null);
+       ('bbb', null, null, null),
+       ('ccc', null, null, null),
+       ('ddd', null, null, null),
+       ('eee', null, null, null),
+       ('ggg', null, null, null);
 
 -- add some data into table main_menu
 
@@ -216,11 +322,13 @@ VALUES ('Landish', 2.7, 1, 'persian', 'cat', false),
 
 -- add some data into table potentional_owners
 
-INSERT INTO potentialOwners (phone_number, name)
-VALUES (89854457280, 'Mark'),
-       (89163904237, 'Dmitriy'),
-       (89165559800, 'Lindsey'),
-       (89852218570, 'Abignail');
+INSERT INTO potential_owners (phone, name, location_in_menu)
+VALUES ('89854457280', 'Mark', null),
+       ('89163904237', 'Dmitriy', null),
+       ('89165559800', 'Lindsey', null),
+       ('89852218570', 'Abignail', null),
+       ('89172291590', 'John', null),
+       ('89684157689', 'Mercy', null);
 
 -- add some data into table potential_owner_menu
 
@@ -238,32 +346,44 @@ VALUES ('Правила знакомства с животным', 'Его на�
        ('Советы кинолога', 'Советы кинолога');
 
 
--- -- add some data into table recommendations
---
--- INSERT INTO recommendations (rules, documents, transportation_info, arrangement_info,
---                              cynologist_advices, cynologists, common_rejects)
--- VALUES ('null', 'null', 'null', 'null', 'null', 'null', 'null'),
---        ('null', 'null', 'null', 'null', 'null', 'null', 'null');
+-- add some data into table recommendations
+
+INSERT INTO recommendations (id, rules, documents, transportation_information, arrangement_information,
+                             cynologist_advices, list_of_cynologists, common_reject_reasons)
+VALUES (1, 'null', 'null', 'null', 'null', 'null', 'null', 'null'),
+       (2, 'null', 'null', 'null', 'null', 'null', 'null', 'null'),
+       (3, 'null', 'null', 'null', 'null', 'null', 'null', 'null'),
+       (4, 'null', 'null', 'null', 'null', 'null', 'null', 'null'),
+       (5, 'null', 'null', 'null', 'null', 'null', 'null', 'null'),
+       (6, 'null', 'null', 'null', 'null', 'null', 'null', 'null');
 
 -- add some data into table reports
 
 INSERT INTO reports (file_path, file_size, photo, date_time, condition, diet,
-                     changes, mediaType)
+                     changes, media_type)
 VALUES (null, null, null, null, null, null, null, null),
+       (null, null, null, null, null, null, null, null),
+       (null, null, null, null, null, null, null, null),
        (null, null, null, null, null, null, null, null),
        (null, null, null, null, null, null, null, null),
        (null, null, null, null, null, null, null, null);
 
 -- add some data into table shelters
 
-INSERT INTO shelters (location, description, email, how_to_find_us)
+INSERT INTO shelters (location_info, description, email, how_to_find_us)
 VALUES ('Astana1, adress', 'We have dogs mostly', 'Astana_dog_shelter_1992@gmail.com', 'google it'),
-       ('Astana2, adress', 'We have cats mostly', 'Astana_cat_shelter_2003@gmail.com', 'google it');
+       ('Astana2, adress', 'We have cats mostly', 'Astana_cat_shelter_2003@gmail.com', 'google it'),
+       ('Astana3, adress', 'We have cats mostly', 'Astana_cat_shelter_2008@gmail.com', 'google it'),
+       ('Astana4, adress', 'We have cats mostly', 'Astana_cat_shelter_2007@gmail.com', 'google it'),
+       ('Astana5, adress', 'We have cats mostly', 'Astana_cat_shelter_2001@gmail.com', 'google it'),
+       ('Astana6, adress', 'We have cats mostly', 'Astana_cat_shelter_2004@gmail.com', 'google it');
 
 -- add some data into table volunteers
 
-INSERT INTO volunteers (name, phone_number, email, busy)
-VALUES ('Agatha', 87825172840, 'Agatha_volunteer_@gmail.com', false),
-       ('Mark', 89605397817, 'Mark_volunteer_@mail.ru', false),
-       ('Bethony', 89255887913, 'Bethany_volunteer_@gmail.com', false),
-       ('Tracy', 89166207830, 'Tracy_volunteer_@yandex.ru', false);
+INSERT INTO volunteers (name, phone, email, busy)
+VALUES ('Agatha', '87825172840', 'Agatha_volunteer_@gmail.com', false),
+       ('Mark', '89605397817', 'Mark_volunteer_@mail.ru', false),
+       ('Bethony', '89255887913', 'Bethany_volunteer_@gmail.com', false),
+       ('Tracy', '89166207830', 'Tracy_volunteer_@yandex.ru', false),
+       ('Gabby', '89267448592', 'Gabby_volunteer_@yandex.ru', false),
+       ('Juel', '89571281901', 'Juel_volunteer_@yandex.ru', false);
