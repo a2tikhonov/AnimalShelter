@@ -16,11 +16,6 @@ public class PotentialOwner {
     private String phone;
 
     private String locationInMenu;
-    @OneToOne
-    private Volunteer volunteer;
-    @OneToOne
-    private Pet pet;
-
 
     public PotentialOwner() {
     }
@@ -79,14 +74,6 @@ public class PotentialOwner {
         this.phone = phone;
     }
 
-    public Volunteer getVolunteer() {
-        return volunteer;
-    }
-
-    public void setVolunteer(Volunteer volunteer) {
-        this.volunteer = volunteer;
-    }
-
     public String getLocationInMenu() {
         return locationInMenu;
     }
@@ -95,11 +82,4 @@ public class PotentialOwner {
         this.locationInMenu = locationInMenu;
     }
 
-    public Pet getPet() {
-        return pet;
-    }
-
-    public void setPet(Pet pet) {
-        this.pet = pet;
-    }
 }
