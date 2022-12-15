@@ -53,8 +53,8 @@ public class VolunteerControllerTest {
         Volunteer volunteer = new Volunteer();
         volunteer.setName(name);
         volunteer.setEmail(email);
-        volunteer.setVolunteerId(volunteerId);
-        volunteer.setPhoneNumber(phoneNumber);
+        volunteer.setId(volunteerId);
+        volunteer.setPhone(phoneNumber);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -70,10 +70,10 @@ public class VolunteerControllerTest {
                     MockHttpServletResponse mockHttpServletResponse = result.getResponse();
                     Volunteer volunteerResult = objectMapper.readValue(mockHttpServletResponse.getContentAsString(StandardCharsets.UTF_8), Volunteer.class);
                     assertThat(mockHttpServletResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
-                    volunteer.setVolunteerId(volunteerResult.getVolunteerId());
+                    volunteer.setId(volunteerResult.getId());
                     assertThat(volunteerResult).isNotNull();
                     assertThat(volunteerResult).usingRecursiveComparison().isEqualTo(volunteer);
-                    assertThat(volunteerResult.getVolunteerId()).isEqualTo(volunteer.getVolunteerId());
+                    assertThat(volunteerResult.getId()).isEqualTo(volunteer.getId());
                 });
     }
 
@@ -87,8 +87,8 @@ public class VolunteerControllerTest {
         Volunteer volunteer = new Volunteer();
         volunteer.setName(name);
         volunteer.setEmail(email);
-        volunteer.setVolunteerId(volunteerId);
-        volunteer.setPhoneNumber(phoneNumber);
+        volunteer.setId(volunteerId);
+        volunteer.setPhone(phoneNumber);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -104,15 +104,15 @@ public class VolunteerControllerTest {
                     MockHttpServletResponse mockHttpServletResponse = result.getResponse();
                     Volunteer volunteerResult = objectMapper.readValue(mockHttpServletResponse.getContentAsString(StandardCharsets.UTF_8), Volunteer.class);
                     assertThat(mockHttpServletResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
-                    volunteer.setVolunteerId(volunteerResult.getVolunteerId());
+                    volunteer.setId(volunteerResult.getId());
                     assertThat(volunteerResult).isNotNull();
                     assertThat(volunteerResult).usingRecursiveComparison().isEqualTo(volunteer);
-                    assertThat(volunteerResult.getVolunteerId()).isEqualTo(volunteer.getVolunteerId());
+                    assertThat(volunteerResult.getId()).isEqualTo(volunteer.getId());
                 });
 
         when(volunteerRepository.getById(eq(volunteerId))).thenReturn(volunteer);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getVolunteerId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getId()))
                 .andExpect(result -> {
                     MockHttpServletResponse mockHttpServletResponse = result.getResponse();
                     Volunteer volunteerResult = objectMapper.readValue(mockHttpServletResponse.getContentAsString(StandardCharsets.UTF_8), Volunteer.class);
@@ -131,8 +131,8 @@ public class VolunteerControllerTest {
         Volunteer volunteer = new Volunteer();
         volunteer.setName(name);
         volunteer.setEmail(email);
-        volunteer.setVolunteerId(volunteerId);
-        volunteer.setPhoneNumber(phoneNumber);
+        volunteer.setId(volunteerId);
+        volunteer.setPhone(phoneNumber);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -148,15 +148,15 @@ public class VolunteerControllerTest {
                     MockHttpServletResponse mockHttpServletResponse = result.getResponse();
                     Volunteer volunteerResult = objectMapper.readValue(mockHttpServletResponse.getContentAsString(StandardCharsets.UTF_8), Volunteer.class);
                     assertThat(mockHttpServletResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
-                    volunteer.setVolunteerId(volunteerResult.getVolunteerId());
+                    volunteer.setId(volunteerResult.getId());
                     assertThat(volunteerResult).isNotNull();
                     assertThat(volunteerResult).usingRecursiveComparison().isEqualTo(volunteer);
-                    assertThat(volunteerResult.getVolunteerId()).isEqualTo(volunteer.getVolunteerId());
+                    assertThat(volunteerResult.getId()).isEqualTo(volunteer.getId());
                 });
 
         when(volunteerRepository.getById(eq(volunteerId))).thenReturn(volunteer);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getVolunteerId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getId()))
                 .andExpect(result -> {
                     MockHttpServletResponse mockHttpServletResponse = result.getResponse();
                     Volunteer volunteerResult = objectMapper.readValue(mockHttpServletResponse.getContentAsString(StandardCharsets.UTF_8), Volunteer.class);
@@ -166,7 +166,7 @@ public class VolunteerControllerTest {
 
         when(volunteerRepository.getById(eq(volunteerId))).thenReturn(volunteer);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getVolunteerId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getId()))
                 .andExpect(result -> {
                     MockHttpServletResponse mockHttpServletResponse = result.getResponse();
                     Volunteer volunteerResult = objectMapper.readValue(mockHttpServletResponse.getContentAsString(StandardCharsets.UTF_8), Volunteer.class);
@@ -197,8 +197,8 @@ public class VolunteerControllerTest {
         Volunteer volunteer = new Volunteer();
         volunteer.setName(name);
         volunteer.setEmail(email);
-        volunteer.setVolunteerId(volunteerId);
-        volunteer.setPhoneNumber(phoneNumber);
+        volunteer.setId(volunteerId);
+        volunteer.setPhone(phoneNumber);
 
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -214,18 +214,18 @@ public class VolunteerControllerTest {
                     MockHttpServletResponse mockHttpServletResponse = result.getResponse();
                     Volunteer volunteerResult = objectMapper.readValue(mockHttpServletResponse.getContentAsString(StandardCharsets.UTF_8), Volunteer.class);
                     assertThat(mockHttpServletResponse.getStatus()).isEqualTo(HttpStatus.OK.value());
-                    volunteer.setVolunteerId(volunteerResult.getVolunteerId());
+                    volunteer.setId(volunteerResult.getId());
                     assertThat(volunteerResult).isNotNull();
                     assertThat(volunteerResult).usingRecursiveComparison().isEqualTo(volunteer);
-                    assertThat(volunteerResult.getVolunteerId()).isEqualTo(volunteer.getVolunteerId());
+                    assertThat(volunteerResult.getId()).isEqualTo(volunteer.getId());
                 });
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/volunteer/" + volunteer.getVolunteerId())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/volunteer/" + volunteer.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(volunteer)))
                 .andExpect(status().is(200));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getVolunteerId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/volunteer/" + volunteer.getId()))
                 .andExpect(status().is(404));
     }
 }

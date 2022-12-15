@@ -17,7 +17,7 @@ public class Pet {
 
     private String name;
 
-    private double wight;
+    private double weight;
 
     private int age;
     @OneToOne
@@ -46,7 +46,7 @@ public class Pet {
                 ", type='" + type + '\'' +
                 ", breed='" + breed + '\'' +
                 ", name='" + name + '\'' +
-                ", wight=" + wight +
+                ", wight=" + weight +
                 ", age=" + age +
                 ", potentialOwner=" + potentialOwner +
                 '}';
@@ -84,12 +84,12 @@ public class Pet {
         this.name = name;
     }
 
-    public double getWight() {
-        return wight;
+    public double getWeight() {
+        return weight;
     }
 
-    public void setWight(double wight) {
-        this.wight = wight;
+    public void setWeight(double wight) {
+        this.weight = wight;
     }
 
     public int getAge() {
