@@ -13,9 +13,6 @@ public class Report {
     private long reportId;
     private long description;
 
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    private Owner owner;
 
     public Report() {
     }
@@ -36,11 +33,4 @@ public class Report {
         this.description = description;
     }
 
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Owner owner) {
-        this.owner = owner;
-    }
 }

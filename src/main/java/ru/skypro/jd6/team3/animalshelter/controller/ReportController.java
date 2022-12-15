@@ -2,9 +2,7 @@ package ru.skypro.jd6.team3.animalshelter.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.jd6.team3.animalshelter.entity.Owner;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
-import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.service.ReportService;
 
 import java.util.Collection;

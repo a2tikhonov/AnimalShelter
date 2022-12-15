@@ -30,23 +30,19 @@ public class PetControllerTest {
     @Test
     public void createPetTest() throws Exception {
         Pet pet = new Pet();
-        pet.setAge(6.3);
-        pet.setSpecies("test");
+        pet.setAge(6);
         pet.setName("test");
         pet.setWeight(4.6);
         pet.setBreed("test");
-        pet.isDisabled();
-        pet.isAdopted();
         HttpEntity<Pet> entity = new HttpEntity<Pet>(pet);
 
         ResponseEntity<Pet> response = testRestTemplate.exchange("/pet", HttpMethod.POST, entity, Pet.class,
-                pet.getPetId());
+                pet.getId());
 
         this.testRestTemplate.postForObject("http://localhost:" + port + "/pet", pet, String.class);
         assertThat(response.getBody().getName()).isEqualTo("test");
-        assertThat(response.getBody().getSpecies()).isEqualTo("test");
         assertThat(response.getBody().getBreed()).isEqualTo("test");
-        assertThat(response.getBody().getPetId()).isNotNull();
+        assertThat(response.getBody().getId()).isNotNull();
         assertThat(response.getBody().getAge()).isEqualTo(pet.getAge());
         assertThat(response.getBody().getWeight()).isEqualTo(pet.getWeight());
     }
@@ -61,52 +57,45 @@ public class PetControllerTest {
     @Test
     public void updatePetTest() throws Exception {
         Pet pet = new Pet();
-        pet.setAge(6.3);
-        pet.setSpecies("test");
+        pet.setAge(6);
         pet.setName("test");
         pet.setWeight(4.6);
         pet.setBreed("test");
-        pet.isDisabled();
-        pet.isAdopted();
         HttpEntity<Pet> entity = new HttpEntity<Pet>(pet);
 
         ResponseEntity<Pet> response = testRestTemplate.exchange("/pet", HttpMethod.POST, entity, Pet.class,
-                pet.getPetId());
-        pet.setPetId(response.getBody().getPetId());
+                pet.getId());
+        pet.setId(response.getBody().getId());
 
-        response.getBody().setAge(6.4);
+        response.getBody().setAge(7);
 
-        testRestTemplate.put("/pet", HttpMethod.PUT, entity, Pet.class, pet.getPetId());
-        Pet petResponseEntity = testRestTemplate.getForObject("/pet", Pet.class, pet.getPetId());
-        assertThat(response.getBody().getAge()).isNotEqualTo(6.3);
-        assertThat(response.getBody().getAge()).isEqualTo(6.4);
+        testRestTemplate.put("/pet", HttpMethod.PUT, entity, Pet.class, pet.getId());
+        Pet petResponseEntity = testRestTemplate.getForObject("/pet", Pet.class, pet.getId());
+        assertThat(response.getBody().getAge()).isNotEqualTo(6);
+        assertThat(response.getBody().getAge()).isEqualTo(7);
         assertThat(response.getBody().getName()).isEqualTo("test");
-        assertThat(response.getBody().getSpecies()).isEqualTo("test");
         assertThat(response.getBody().getBreed()).isEqualTo("test");
-        assertThat(response.getBody().getPetId()).isNotNull();
+        assertThat(response.getBody().getId()).isNotNull();
         assertThat(response.getBody().getWeight()).isEqualTo(pet.getWeight());
     }
 
     @Test
     public void deletePetTest() throws Exception {
         Pet pet = new Pet();
-        pet.setAge(6.3);
-        pet.setSpecies("test");
+        pet.setAge(6);
         pet.setName("test");
         pet.setWeight(4.6);
         pet.setBreed("test");
-        pet.isDisabled();
-        pet.isAdopted();
         HttpEntity<Pet> entity = new HttpEntity<Pet>(pet);
 
         ResponseEntity<Pet> response = testRestTemplate.exchange("/pet", HttpMethod.POST, entity, Pet.class,
-                pet.getPetId());
-        pet.setPetId(response.getBody().getPetId());
+                pet.getId());
+        pet.setId(response.getBody().getId());
 
-        assertThat(this.testRestTemplate.getForEntity("/pet/{id}", Pet.class, response.getBody().getPetId()).getStatusCode())
+        assertThat(this.testRestTemplate.getForEntity("/pet/{id}", Pet.class, response.getBody().getId()).getStatusCode())
                 .isEqualTo(HttpStatus.OK);
-        this.testRestTemplate.delete("/pet/{id}",pet.getPetId());
-        assertThat(this.testRestTemplate.getForEntity("/pet/{id}", Pet.class, response.getBody().getPetId()).getStatusCode())
+        this.testRestTemplate.delete("/pet/{id}",pet.getId());
+        assertThat(this.testRestTemplate.getForEntity("/pet/{id}", Pet.class, response.getBody().getId()).getStatusCode())
                 .isEqualTo(HttpStatus.NOT_FOUND);
     }
 }
