@@ -1,5 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwnerMenuButton;
@@ -17,8 +18,14 @@ public class PotentialOwnerMenuController {
         this.potentialOwnerMenuService = potentialOwnerMenuService;
     }
 
-    @PutMapping
+    @PostMapping
     public ResponseEntity<PotentialOwnerMenuButton> create(@RequestBody PotentialOwnerMenuButton potentialOwnerMenuButton) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(potentialOwnerMenuService.add(potentialOwnerMenuButton));
+    }
+
+    @PutMapping
+    public ResponseEntity<PotentialOwnerMenuButton> add(@RequestBody PotentialOwnerMenuButton potentialOwnerMenuButton) {
         PotentialOwnerMenuButton potentialOwnerMenuButton1 = potentialOwnerMenuService.add(potentialOwnerMenuButton);
         return ResponseEntity.ok(potentialOwnerMenuButton1);
     }
@@ -34,4 +41,9 @@ public class PotentialOwnerMenuController {
         return ResponseEntity.ok(potentialOwnerMenuButton);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        potentialOwnerMenuService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 }

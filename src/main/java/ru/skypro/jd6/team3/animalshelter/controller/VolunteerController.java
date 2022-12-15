@@ -1,5 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
@@ -17,6 +18,12 @@ public class VolunteerController {
         this.volunteerService = volunteerService;
     }
 
+    @PostMapping
+    public ResponseEntity<Volunteer> create(@RequestBody Volunteer volunteer) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(volunteerService.save(volunteer));
+    }
+
     @PutMapping
     public ResponseEntity<Volunteer> add(@RequestBody Volunteer volunteer) {
         return ResponseEntity.ok(volunteerService.save(volunteer));
@@ -30,5 +37,11 @@ public class VolunteerController {
     @GetMapping
     public ResponseEntity<Collection<Volunteer>> get() {
         return ResponseEntity.ok(volunteerService.get());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        volunteerService.remove(id);
+        return ResponseEntity.ok().build();
     }
 }

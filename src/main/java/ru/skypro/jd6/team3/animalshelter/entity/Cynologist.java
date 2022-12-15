@@ -17,6 +17,17 @@ public class Cynologist {
     private double yearsOfPractice;
     private String specialties;
 
+    public Cynologist() {
+    }
+
+    public Cynologist(Long id, long phoneNumber, String name, double yearsOfPractice, String specialties) {
+        this.id = id;
+        this.phoneNumber = phoneNumber;
+        this.name = name;
+        this.yearsOfPractice = yearsOfPractice;
+        this.specialties = specialties;
+    }
+
     public Long getId() {
         return id;
     }

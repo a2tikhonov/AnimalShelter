@@ -85,4 +85,7 @@ public class MainMenuService {
         return button;
     }
 
+    public void delete(Long id) {
+        mainMenuRepository.deleteById(id);
+    }
 }
