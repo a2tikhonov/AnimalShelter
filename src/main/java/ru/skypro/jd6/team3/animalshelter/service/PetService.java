@@ -2,6 +2,7 @@ package ru.skypro.jd6.team3.animalshelter.service;
 
 import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.Pet;
+import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.repository.PetRepository;
 
 import java.util.Collection;
@@ -29,5 +30,9 @@ public class PetService {
 
     public Collection<Pet> getAll() {
         return petRepository.findAll();
+    }
+
+    public Boolean existsPetByPotentialOwner(PotentialOwner potentialOwner) {
+        return petRepository.existsPetByPotentialOwner(potentialOwner);
     }
 }
