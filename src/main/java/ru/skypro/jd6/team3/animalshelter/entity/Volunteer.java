@@ -7,15 +7,30 @@ import java.util.Objects;
 @Table(name = "volunteers")
 public class Volunteer {
     @Id
-    @GeneratedValue
-    private long volunteerId;
+    private Long volunteerId;
 
-    private long phoneNumber;
     private String name;
+
+    @Column(unique = true)
+    private String phoneNumber;
+
+    @Column(unique = true)
     private String email;
 
+    private boolean busy;
     @OneToOne
-    private Shelter shelter;
+    private PotentialOwner potentialOwner;
+
+    public Volunteer() {
+    }
+
+    public Volunteer(Long id, String name, String phone, String email, Boolean busy) {
+        this.volunteerId = id;
+        this.name = name;
+        this.phoneNumber = phone;
+        this.email = email;
+        this.busy = busy;
+    }
 
     public long getVolunteerId() {
         return volunteerId;
@@ -25,11 +40,11 @@ public class Volunteer {
         this.volunteerId = volunteerId;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -49,12 +64,20 @@ public class Volunteer {
         this.email = email;
     }
 
-    public Shelter getShelter() {
-        return shelter;
+    public boolean isBusy() {
+        return busy;
     }
 
-    public void setShelter(Shelter shelter) {
-        this.shelter = shelter;
+    public void setBusy(boolean busy) {
+        this.busy = busy;
+    }
+
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
+    }
+
+    public void setPotentialOwner(PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
     }
 
     @Override

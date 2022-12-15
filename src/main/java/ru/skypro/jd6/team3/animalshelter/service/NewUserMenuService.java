@@ -78,4 +78,7 @@ public class NewUserMenuService{
         return button;
     }
 
+    public void delete(Long id) {
+        newUserMenuRepository.deleteById(id);
+    }
 }

@@ -47,7 +47,7 @@ public class VolunteerControllerTest {
     public void createVolunteerTest() throws Exception {
         final String name = "test";
         final String email = "test";
-        final long phoneNumber = 89000000000L;
+        final String phoneNumber = "89000000000";
         final long volunteerId = 1L;
 
         Volunteer volunteer = new Volunteer();
@@ -81,7 +81,7 @@ public class VolunteerControllerTest {
     public void getVolunteerTest() throws Exception {
         final String name = "test";
         final String email = "test";
-        final long phoneNumber = 89000000000L;
+        final String phoneNumber = "89000000000";
         final long volunteerId = 1L;
 
         Volunteer volunteer = new Volunteer();
@@ -125,7 +125,7 @@ public class VolunteerControllerTest {
     public void updateVolunteerTest() throws Exception {
         final String name = "test";
         final String email = "test";
-        final long phoneNumber = 89000000000L;
+        final String phoneNumber = "89000000000";
         final long volunteerId = 1L;
 
         Volunteer volunteer = new Volunteer();
@@ -191,7 +191,7 @@ public class VolunteerControllerTest {
     public void deleteVolunteerTest() throws Exception {
         final String name = "test";
         final String email = "test";
-        final long phoneNumber = 89000000000L;
+        final String phoneNumber = "89000000000";
         final long volunteerId = 1L;
 
         Volunteer volunteer = new Volunteer();
