@@ -2,7 +2,10 @@ package ru.skypro.jd6.team3.animalshelter.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.File;
+import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.service.*;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -109,8 +113,11 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(userIdFromMessage, "Введите данные корректно: сначала имя кириллицей, затем номер");
                         }
                     }
-                    if (messageText.charAt(0) != '/' && volunteerService.existsByPotentialOwner(potentialOwner)) {
+                    if (volunteerService.existsByPotentialOwner(potentialOwner) && messageText.charAt(0) != '/' ) {
                         sendMessage(volunteerService.findByPotentialOwner(potentialOwner.getId()).getId(), messageText);
+                    }
+                    if (potentialOwner.getLocationInMenu().equals("Прислать отчет о питомце")) {
+                        sendReport(update, potentialOwner);
                     }
                 }
                 if (volunteer != null) {
@@ -160,7 +167,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             potentialOwnerService.setLocationInMenu(userIdFromCallBackQuery, update.callbackQuery().data());
                         }
                     }
-                    if (petService.existsPetByPotentialOwner(potentialOwner) != null) {
+                    if (petService.existsPetByPotentialOwner(potentialOwner)) {
                         if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце")) {
                             //Код Яна
                         }
@@ -171,6 +178,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце") ||
                                 potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список проверенных кинологов")) {
                             sendMessage(userIdFromCallBackQuery, "За вами пока не числится животное");
+                            potentialOwnerService.setLocationInMenu(potentialOwner.getId(), "Прислать отчет о питомце");
                         }
                     }
                 }
@@ -254,6 +262,19 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public void sendPhoto(Long id, byte[] photo, String text) {
         SendPhoto msg = new SendPhoto(id, photo).caption(text);
         telegramBot.execute(msg);
+    }
+
+    public void sendReport(Update update, PotentialOwner potentialOwner) {
+        if (update.message().photo() != null) {
+            sendMessage(potentialOwner.getId(), "Есть картинка!");
+        }
+        PhotoSize photo = update.message().photo()[0];
+        org.telegram.telegrambots.meta.api.objects.File file = execute(getFile);
+        GetFile file = new GetFile(photo.fileId());
+        File file1 = file.getClass().
+
+
+        telegramBot.
     }
 
     public void openChat(Long id, String locationInMenu) {
