@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
+import com.pengrad.telegrambot.request.SendPhoto;
 import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
@@ -27,25 +28,20 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final VolunteerService volunteerService;
 
-    Boolean potentialOwnerDetected = false;
-
-    Boolean volunteerDetected = false;
-
-
-
-
+    private final PetService petService;
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuService,
                                       NewUserMenuService newUserMenuService,
                                       PotentialOwnerMenuService potentialOwnerMenuService,
                                       PotentialOwnerService potentialOwnerService,
-                                      VolunteerService volunteerService) {
+                                      VolunteerService volunteerService, PetService petService) {
         this.telegramBot = telegramBot;
         this.mainMenuService = mainMenuService;
         this.newUserMenuService = newUserMenuService;
         this.potentialOwnerMenuService = potentialOwnerMenuService;
         this.potentialOwnerService = potentialOwnerService;
         this.volunteerService = volunteerService;
+        this.petService = petService;
     }
 
     @PostConstruct
@@ -56,89 +52,190 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
         updates.forEach(update -> {
-            potentialOwnerDetected = false;
-            volunteerDetected = false;
             if (update.message() != null) {
                 Long userIdFromMessage = update.message().chat().id();
-                volunteerDetected = volunteerService.find(userIdFromMessage);
-                potentialOwnerDetected = potentialOwnerService.find(userIdFromMessage);
                 String messageText = "";
                 if (update.message().text() != null) {
                     messageText = update.message().text();
                 }
-                if (!potentialOwnerDetected && !volunteerDetected) {
+                PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromMessage);
+                Volunteer volunteer = volunteerService.get(userIdFromMessage);
+                if (potentialOwner == null || volunteer == null) {
                     if (messageText.equalsIgnoreCase("/start")) {
                         mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
                     }
                 }
-                if (potentialOwnerDetected) {
+                if (potentialOwner != null) {
                     if (messageText.equalsIgnoreCase("/start")) {
-                        mainMenuService.send(userIdFromMessage, "Добро пожаловать " +
-                                potentialOwnerService.get(userIdFromMessage).getName() + "!");
-                    }
-                    if (messageText.equalsIgnoreCase("/close")
-                            && potentialOwnerService.get(userIdFromMessage).getVolunteer() != null) {
-                        closeChatByOwner(userIdFromMessage);
-                    }
-                    if (potentialOwnerService.get(userIdFromMessage).getPhone().isBlank()
-                            && !messageText.isBlank()) {
-                        if (messageText.matches("^[а-яА-Я]+\\s\\+*[0-9]+$")) {
-                            potentialOwnerService.add(userIdFromMessage, messageText);
+                        potentialOwnerService.setLocationInMenu(userIdFromMessage, mainMenuService.toString());
+                        if (potentialOwner.getName().isBlank()) {
+                            mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
+                        } else {
+                            mainMenuService.send(userIdFromMessage, "Добро пожаловать " + potentialOwner.getName() + "!");
                         }
                     }
-                    if (messageText.charAt(0) != '/' && potentialOwnerService.get(userIdFromMessage).getVolunteer() != null) {
-                        PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromMessage);
-                        sendMessage(potentialOwner.getVolunteer().getVolunteerId(), messageText);
+                    if (messageText.equalsIgnoreCase("/stop")) {
+                        if (potentialOwner.getName().isBlank() || !petService.existsPetByPotentialOwner(potentialOwner)) {
+                            potentialOwnerService.delete(userIdFromMessage);
+                        }
+                    }
+                    if (messageText.equalsIgnoreCase("/close")
+                            && volunteerService.existsByPotentialOwner(potentialOwner)) {
+                        String locationInMenu = closeChatBy(potentialOwner);
+                        if (locationInMenu.equals("Консультация без регистрации")) {
+                            potentialOwnerService.delete(potentialOwner.getId());
+                        } else {
+                            switch (locationInMenu) {
+                                case ("MainMenu"):
+                                    mainMenuService.send(userIdFromMessage, "Добро пожаловать " +
+                                            potentialOwner.getName() + "!");
+                                    break;
+                                case ("NewUserMenu"):
+                                    newUserMenuService.send(userIdFromMessage, "Консультация с новым пользователем");
+                                    break;
+                                case ("PotentialOwnerMenu"):
+                                    potentialOwnerMenuService.send(userIdFromMessage, "Консультация с потенциальным хозяином");
+                                    break;
+                            }
+                        }
+                    }
+                    if (potentialOwner.getLocationInMenu().equals("Записать контактные данные") &&
+                            potentialOwner.getName().isBlank() && !messageText.isBlank()) {
+                        if (messageText.matches("^[а-яА-Я]+\\s\\+*[0-9]+$")) {
+                            potentialOwnerService.addContactData(userIdFromMessage, messageText, "Консультация с новым пользователем");
+                            sendMessage(userIdFromMessage, "Данные успешно записаны");
+                            newUserMenuService.send(userIdFromMessage, "Консультация с новым пользователем");
+                        } else {
+                            sendMessage(userIdFromMessage, "Введите данные корректно: сначала имя кириллицей, затем номер");
+                        }
+                    }
+                    if (messageText.charAt(0) != '/' && volunteerService.existsByPotentialOwner(potentialOwner)) {
+                        sendMessage(volunteerService.findByPotentialOwner(potentialOwner.getId()).getId(), messageText);
                     }
                 }
-                if (volunteerDetected) {
+                if (volunteer != null) {
                     if (messageText.equalsIgnoreCase("/start")) {
                         sendMessage(userIdFromMessage, "Добро пожаловать волонтер!");
                     }
-                    if (messageText.equalsIgnoreCase("/close") && volunteerService.get(userIdFromMessage).isBusy()) {
-                        closeChatByVolunteer(userIdFromMessage);
+                    if (messageText.equalsIgnoreCase("/close") && volunteer.getPotentialOwner() != null) {
+                        String locationInMenu = closeChatBy(volunteer);
+                        if (locationInMenu.equals("Консультация без регистрации")) {
+                            potentialOwnerService.delete(volunteer.getPotentialOwner().getId());
+                        }
                     }
-                    if (messageText.charAt(0) != '/' && volunteerService.get(userIdFromMessage).getPotentialOwner() != null) {
-                        Volunteer volunteer = volunteerService.get(userIdFromMessage);
+                    if (messageText.charAt(0) != '/' && volunteer.getPotentialOwner() != null) {
                         sendMessage(volunteer.getPotentialOwner().getId(), messageText);
                     }
                 }
             }
             if (update.callbackQuery() != null) {
                 Long userIdFromCallBackQuery = update.callbackQuery().message().chat().id();
-                potentialOwnerDetected = potentialOwnerService.find(userIdFromCallBackQuery);
-                if (mainMenuService.buttonTap(update.callbackQuery()).equals("Узнать информацию о приюте")) {
-                    newUserMenuService.send(userIdFromCallBackQuery, "Консультация с новым пользователем");
-                }
-                if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
-                    if (potentialOwnerDetected) {
-                        potentialOwnerMenuService.send(userIdFromCallBackQuery, "Консультация с потенциальным хозяином");
-                    } else {
-                        sendMessage(userIdFromCallBackQuery, "Сначала оставьте контактные данные");
+                PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromCallBackQuery);
+                if (potentialOwner != null) {
+                    if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
+                        openChat(userIdFromCallBackQuery, mainMenuService.toString());
                     }
-                }
-                if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
-                    if (!potentialOwnerDetected) {
-                        potentialOwnerDetected = potentialOwnerService.add(update.callbackQuery().from().id());
-                        sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона");
-                    } else {
-                        if (!potentialOwnerService.get(userIdFromCallBackQuery).getPhone().isBlank()) {
+                    if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
+                        openChat(userIdFromCallBackQuery, newUserMenuService.toString());
+                    }
+                    if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
+                        openChat(userIdFromCallBackQuery, potentialOwnerMenuService.toString());
+                    }
+                    if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
+                        potentialOwnerMenuService.send(userIdFromCallBackQuery, "Консультация с потенциальным хозяином");
+                        potentialOwnerService.setLocationInMenu(userIdFromCallBackQuery, potentialOwnerMenuService.toString());
+                    }
+                    if (mainMenuService.buttonTap(update.callbackQuery()).equals("Узнать информацию о приюте")) {
+                        newUserMenuService.send(userIdFromCallBackQuery, "Консультация с новым пользователем");
+                        potentialOwnerService.setLocationInMenu(userIdFromCallBackQuery, newUserMenuService.toString());
+                    }
+                    if (!potentialOwner.getName().isBlank()) {
+                        if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
                             sendMessage(userIdFromCallBackQuery, "Ваши данные уже в базе");
-                        } else {
-                            sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона");
+                            newUserMenuService.send(userIdFromCallBackQuery, "Консультация с новым пользователем");
+                        }
+                    } else  {
+                        if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
+                            sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона!");
+                            potentialOwnerService.setLocationInMenu(userIdFromCallBackQuery, update.callbackQuery().data());
+                        }
+                    }
+                    if (petService.existsPetByPotentialOwner(potentialOwner) != null) {
+                        if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце")) {
+                            //Код Яна
+                        }
+                        if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список проверенных кинологов")) {
+                            //sendMessage(userIdFromCallBackQuery, cynologistService.getAll());
+                        }
+                    } else {
+                        if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце") ||
+                                potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список проверенных кинологов")) {
+                            sendMessage(userIdFromCallBackQuery, "За вами пока не числится животное");
                         }
                     }
                 }
-                if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                        openChat(userIdFromCallBackQuery);
+                if (potentialOwner == null) {
+                    if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
+                        openChat(userIdFromCallBackQuery, "Консультация без регистрации");
+                    }
+                    if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце") ||
+                            potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список проверенных кинологов")) {
+                        sendMessage(userIdFromCallBackQuery, "Для начала оставьте свои данные");
+                    }
+                    if (mainMenuService.buttonTap(update.callbackQuery()).equals("Узнать информацию о приюте")) {
+                        newUserMenuService.send(userIdFromCallBackQuery, "Консультация с новым пользователем");
+                    }
+                    if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
+                        potentialOwnerService.add(userIdFromCallBackQuery, update.callbackQuery().data());
+                        sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона");
+                    }
+                    if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
+                        potentialOwnerService.add(userIdFromCallBackQuery, update.callbackQuery().data());
+                        sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона");
+                    }
+                    if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
+                        openChat(userIdFromCallBackQuery, "Консультация без регистрации");
+                    }
                 }
-                if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                        openChat(userIdFromCallBackQuery);
+                if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
+                    potentialOwnerMenuService.send(userIdFromCallBackQuery, "Консультация с потенциальным хозяином");
                 }
-
+                if (newUserMenuService.buttonTap(update.callbackQuery()).equals("О приюте")) {
+                    sendMessage(userIdFromCallBackQuery, newUserMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Техника безопасности на территории приюта")) {
+                    sendMessage(userIdFromCallBackQuery, newUserMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Расписание и адрес")) {
+/*                      sendMessage(userIdFromCallBackQuery, shelterService.getShelterDescription());
+                        sendMessage(userIdFromCallBackQuery, shelterService.getShelterLocation());
+                        sendPhoto(userIdFromCallBackQuery, shelterService.getLocationPhoto(), "Схема проезда");*/
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Правила знакомства с животным")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список необходимых документов")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Рекомендации по транспортировке")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Обустройство дома для щенка")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Обустройство дома для собаки")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Обустройство дома для собаки с ограниченным возможностями")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Советы кинолога")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
+                if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Причины отказа")) {
+                    sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
+                }
             }
-
-
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
@@ -154,45 +251,54 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         telegramBot.execute(sm);
     }
 
-    public void openChat(Long id) {
-        if (volunteerService.isAnyFree()) {
+    public void sendPhoto(Long id, byte[] photo, String text) {
+        SendPhoto msg = new SendPhoto(id, photo).caption(text);
+        telegramBot.execute(msg);
+    }
+
+    public void openChat(Long id, String locationInMenu) {
+        if (volunteerService.existsByPotentialOwner(null)) {
             sendMessage(id, "Волонтер скоро Вам ответит");
-            PotentialOwner potentialOwner = potentialOwnerService.get(id);
-            Volunteer volunteer = volunteerService.get(volunteerService.getFree().getVolunteerId());
-            potentialOwner.setVolunteer(volunteer);
+            PotentialOwner potentialOwner;
+            if (potentialOwnerService.find(id)) {
+                potentialOwner = potentialOwnerService.get(id);
+            } else {
+                potentialOwner = new PotentialOwner();
+                potentialOwner.setId(id);
+            }
+            Volunteer volunteer = volunteerService.get(volunteerService.getFree().getId());
+            potentialOwner.setLocationInMenu(locationInMenu);
             potentialOwnerService.save(potentialOwner);
             volunteer.setPotentialOwner(potentialOwner);
-            volunteer.setBusy(true);
             volunteerService.save(volunteer);
-            sendMessage(potentialOwner.getVolunteer().getVolunteerId(),
+            sendMessage(volunteer.getId(),
                     potentialOwner + " ждет от тебя помощи");
         } else {
             sendMessage(id, "Все волонтеры заняты, попробуйте позже");
         }
     }
 
-    public void closeChatByOwner(Long id) {
-        PotentialOwner potentialOwner = potentialOwnerService.get(id);
-        Volunteer volunteer = volunteerService.get(potentialOwner.getVolunteer().getVolunteerId());
-        potentialOwner.setVolunteer(null);
-        volunteer.setPotentialOwner(null);
-        volunteer.setBusy(false);
-        potentialOwnerService.save(potentialOwner);
-        volunteerService.save(volunteer);
-        sendMessage(volunteer.getVolunteerId(), "Пользователь закрыл чат");
+    public String closeChatBy(Object botUser) {
+        PotentialOwner potentialOwner;
+        Volunteer volunteer;
+        Long id;
+        if (botUser.equals(PotentialOwner.class)) {
+            potentialOwner = (PotentialOwner) botUser;
+            volunteer = volunteerService.findByPotentialOwner(potentialOwner.getId());
+            volunteer.setPotentialOwner(null);
+            volunteerService.save(volunteer);
+            sendMessage(volunteer.getId(), "Пользователь закрыл чат");
+            id = potentialOwner.getId();
+        } else {
+            volunteer = (Volunteer) botUser;
+            potentialOwner = volunteer.getPotentialOwner();
+            volunteer.setPotentialOwner(null);
+            volunteerService.save(volunteer);
+            sendMessage(potentialOwner.getId(), "Волонтер закрыл чат");
+            id = volunteer.getId();
+        }
         sendMessage(id, "Вы закрыли чат");
-    }
-
-    public void closeChatByVolunteer(Long id) {
-        Volunteer volunteer = volunteerService.get(id);
-        PotentialOwner potentialOwner = potentialOwnerService.get(volunteer.getPotentialOwner().getId());
-        potentialOwner.setVolunteer(null);
-        volunteer.setPotentialOwner(null);
-        volunteer.setBusy(false);
-        volunteerService.save(volunteer);
-        potentialOwnerService.save(potentialOwner);
-        sendMessage(potentialOwner.getId(), "Волонтер закрыл чат");
-        sendMessage(id, "Вы закрыли чат");
+        return potentialOwner.getLocationInMenu();
     }
 
 

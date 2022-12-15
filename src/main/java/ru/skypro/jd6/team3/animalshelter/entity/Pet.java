@@ -1,79 +1,71 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
-
-/**
- * Класс для питомце, питомцев, а не собак так как приют может в будующем принимать и других животных
- */
+import java.util.Objects;
 
 @Entity
-@Table(name = "pets")
+@Table(name = "pet")
 public class Pet {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long petId;
+    @GeneratedValue(generator = "pedIdGen")
+    private long id;
 
-    @Column(nullable = false)
-    private String name;
+    private String type;
 
-    @Column(nullable = false)
-    private double weight;
-
-    @Column(nullable = false)
-    private double age;
-
-    @Column(nullable = false)
     private String breed;
 
-    @Column(nullable = false)
-    private String species;
+    private String name;
 
-    private boolean adopted = false;
-    private boolean disabled = false;
+    private double wight;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Owner owner;
+    private int age;
+    @OneToOne
+    private PotentialOwner potentialOwner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Shelter shelter;
-    public Pet() {}
-
-    /**
-     * Стандартные методы гет и сет
-     */
-
-    public long getPetId() {
-        return petId;
+    public Pet() {
     }
 
-    public void setPetId(long petId) {
-        this.petId = petId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pet pet = (Pet) o;
+        return id == pet.id;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String toString() {
+        return "Pet{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", breed='" + breed + '\'' +
+                ", name='" + name + '\'' +
+                ", wight=" + wight +
+                ", age=" + age +
+                ", potentialOwner=" + potentialOwner +
+                '}';
     }
 
-    public double getWeight() {
-        return weight;
+    public long getId() {
+        return id;
     }
 
-    public void setWeight(double weight) {
-        this.weight = weight;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public double getAge() {
-        return age;
+    public String getType() {
+        return type;
     }
 
-    public void setAge(double age) {
-        this.age = age;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getBreed() {
@@ -84,47 +76,35 @@ public class Pet {
         this.breed = breed;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public String getName() {
+        return name;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Shelter getShelter() {
-        return shelter;
+    public double getWight() {
+        return wight;
     }
 
-    public void setShelter(Shelter shelter) {
-        this.shelter = shelter;
+    public void setWight(double wight) {
+        this.wight = wight;
     }
 
-    public boolean isAdopted() {
-        return adopted;
+    public int getAge() {
+        return age;
     }
 
-    public boolean isDisabled() {
-        return disabled;
+    public void setAge(int age) {
+        this.age = age;
     }
 
-    public String getSpecies() {
-        return species;
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
     }
 
-    public void setSpecies(String species) {
-        this.species = species;
+    public void setPotentialOwner(PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
     }
-
-    @Override
-    public String toString() {
-        return "Pet{" +
-                "petId=" + petId +
-                ", name='" + name + '\'' +
-                ", weight=" + weight +
-                ", age=" + age +
-                '}';
-    }
-
-
 }
