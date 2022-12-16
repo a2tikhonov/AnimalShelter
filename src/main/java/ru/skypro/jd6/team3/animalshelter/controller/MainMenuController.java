@@ -1,6 +1,5 @@
 package ru.skypro.jd6.team3.animalshelter.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButton;
@@ -18,23 +17,59 @@ public class MainMenuController {
         this.mainMenuService = mainMenuService;
     }
 
-    @PostMapping
-    public ResponseEntity<MainMenuButton> create(@RequestBody MainMenuButton mainMenuButton) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mainMenuService.add(mainMenuButton));
-    }
-
+    @Operation(
+            summary = "add menu button for main menu",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "adds menu button",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButton.class))
+                            )
+                    )
+            },
+            tags = "MainMenuButton"
+    )
     @PutMapping
-    public ResponseEntity<MainMenuButton> add(@RequestBody MainMenuButton mainMenuButton) {
+    public ResponseEntity<MainMenuButton> create(@RequestBody MainMenuButton mainMenuButton) {
         MainMenuButton mainMenuButton1 = mainMenuService.add(mainMenuButton);
         return ResponseEntity.ok(mainMenuButton1);
     }
 
+    @Operation(
+            summary = "get information about all the buttons (both name and call_back)",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "get information about all the buttons",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButton.class))
+                            )
+                    )
+            },
+            tags = "MainMenuButton"
+    )
     @GetMapping
     public ResponseEntity<Collection<MainMenuButton>> getAll() {
         return ResponseEntity.ok(mainMenuService.getButtons());
     }
 
+    @Operation(
+            summary = "get information about the certain button (both name and call_back)",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "get information about the certain button",
+                            content = @Content(
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButton.class))
+                            )
+                    )
+            },
+            tags = "MainMenuButton"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<MainMenuButton> get(@PathVariable Long id) {
         MainMenuButton mainMenuButton = mainMenuService.get(id);

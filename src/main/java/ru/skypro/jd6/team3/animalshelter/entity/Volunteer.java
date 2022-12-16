@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
-@Table(name = "volunteer")
+@Table(name = "volunteers")
 public class Volunteer {
     @Id
     private Long id;
@@ -20,6 +20,10 @@ public class Volunteer {
 
     @OneToOne
     private PotentialOwner potentialOwner;
+
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    private Shelter shelter;
 
     public Volunteer() {
     }

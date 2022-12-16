@@ -1,18 +1,20 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "potential_owner")
+@Table(name = "potential_owners")
 public class PotentialOwner {
     @Id
     private Long id;
 
     private String name;
 
-    @Column(unique = true)
     private String phone;
 
     private String locationInMenu;

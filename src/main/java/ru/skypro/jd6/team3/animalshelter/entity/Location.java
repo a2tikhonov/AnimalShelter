@@ -1,38 +1,44 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
-@Table(name = "location")
+@Table(name = "locations")
 public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String filePath;
     private Long fileSize;
     private String mediaType;
-
-    @Lob
     private byte[] data;
 
-    @OneToOne
-    private Shelter shelter;
+//    @OneToOne
+//    @JsonIgnore
+//    private Shelter shelter;
 
-    public Location(long id, String filePath, Long fileSize, String mediaType) {
-        this.id = id;
-        this.filePath = filePath;
-        this.fileSize = fileSize;
-        this.mediaType = mediaType;
-    }
+//    public Map() {
+//        this.id = null;
+//        this.filePath = null;
+//        this.fileSize = null;
+//        this.mediaType = null;
+//        this.data = null;
+//        this.shelter = null;
+//    }
 
-    public Location() {
-    }
+    public Location() {};
 
-    public long getId() {
+    public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFilePath() {
@@ -67,25 +73,17 @@ public class Location {
         this.data = data;
     }
 
-    public Shelter getShelter() {
-        return shelter;
-    }
-
-    public void setShelter(Shelter shelter) {
-        this.shelter = shelter;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Location location = (Location) o;
-        return id == location.id && Objects.equals(filePath, location.filePath) && Objects.equals(fileSize, location.fileSize) && Objects.equals(mediaType, location.mediaType) && Arrays.equals(data, location.data) && Objects.equals(shelter, location.shelter);
+        return id == location.id && Objects.equals(filePath, location.filePath) && Objects.equals(fileSize, location.fileSize) && Objects.equals(mediaType, location.mediaType) && Arrays.equals(data, location.data);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, filePath, fileSize, mediaType, shelter);
+        int result = Objects.hash(id, filePath, fileSize, mediaType);
         result = 31 * result + Arrays.hashCode(data);
         return result;
     }
@@ -98,7 +96,6 @@ public class Location {
                 ", fileSize=" + fileSize +
                 ", mediaType='" + mediaType + '\'' +
                 ", data=" + Arrays.toString(data) +
-                ", shelter=" + shelter +
                 '}';
     }
 }

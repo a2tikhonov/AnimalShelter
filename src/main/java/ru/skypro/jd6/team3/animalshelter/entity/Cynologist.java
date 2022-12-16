@@ -1,5 +1,9 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
+import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -11,21 +15,15 @@ public class Cynologist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private long phoneNumber;
     private String name;
-    private double yearsOfPractice;
+    private String phoneNumber;
+    private String yearsOfPractice;
     private String specialties;
 
-    public Cynologist() {
-    }
-
-    public Cynologist(Long id, long phoneNumber, String name, double yearsOfPractice, String specialties) {
-        this.id = id;
-        this.phoneNumber = phoneNumber;
-        this.name = name;
-        this.yearsOfPractice = yearsOfPractice;
-        this.specialties = specialties;
-    }
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    @JsonIgnore
+    private Shelter shelter;
 
     public Long getId() {
         return id;
@@ -35,11 +33,11 @@ public class Cynologist {
         this.id = id;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -51,11 +49,11 @@ public class Cynologist {
         this.name = name;
     }
 
-    public double getYearsOfPractice() {
+    public String getYearsOfPractice() {
         return yearsOfPractice;
     }
 
-    public void setYearsOfPractice(double yearsOfPractice) {
+    public void setYearsOfPractice(String yearsOfPractice) {
         this.yearsOfPractice = yearsOfPractice;
     }
 
@@ -72,7 +70,7 @@ public class Cynologist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cynologist that = (Cynologist) o;
-        return phoneNumber == that.phoneNumber && Double.compare(that.yearsOfPractice, yearsOfPractice) == 0 && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(specialties, that.specialties);
+        return Objects.equals(id, that.id) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(name, that.name) && Objects.equals(yearsOfPractice, that.yearsOfPractice) && Objects.equals(specialties, that.specialties);
     }
 
     @Override

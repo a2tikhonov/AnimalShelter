@@ -33,36 +33,36 @@ public class LocationService {
         this.shelterService = shelterService;
     }
 
-    public void uploadLocation(Long id, MultipartFile file) throws IOException {
-        Shelter shelter = shelterService.getShelter(id);
-
-        Path filePath = Path.of(uploadPath, id + "." + getExtension(file.getOriginalFilename()));
-        Files.createDirectories(filePath.getParent());
-        Files.deleteIfExists(filePath);
-
-        try (
-                InputStream is = file.getInputStream();
-                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-                BufferedInputStream bis = new BufferedInputStream(is, 1024);
-                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-        ) {
-            bis.transferTo(bos);
-        }
-
-        Location location = findLocation(id);
-        location.setShelter(shelter);
-        location.setFilePath(filePath.toString());
-        location.setFileSize(file.getSize());
-        location.setMediaType(file.getContentType());
-        location.setData(location.getData());
-
-        locationRepository.save(location);
-    }
-
-    public Location findLocation(Long id) {
-        logger.info("Simple find location by id");
-        return locationRepository.findByShelter_ShelterId(id).orElse(new Location());
-    }
+//    public void uploadLocation(Long id, MultipartFile file) throws IOException {
+//        Shelter shelter = shelterService.getShelter(id);
+//
+//        Path filePath = Path.of(uploadPath, id + "." + getExtension(file.getOriginalFilename()));
+//        Files.createDirectories(filePath.getParent());
+//        Files.deleteIfExists(filePath);
+//
+//        try (
+//                InputStream is = file.getInputStream();
+//                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
+//                BufferedInputStream bis = new BufferedInputStream(is, 1024);
+//                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
+//        ) {
+//            bis.transferTo(bos);
+//        }
+//
+//        Location location = findLocation(id);
+////        location.setShelter(shelter);
+//        location.setFilePath(filePath.toString());
+//        location.setFileSize(file.getSize());
+//        location.setMediaType(file.getContentType());
+//        location.setData(location.getData());
+//
+//        locationRepository.save(location);
+//    }
+//
+//    public Location findLocation(Long id) {
+//        logger.info("Simple find location by id");
+//        return locationRepository.findByShelter_ShelterId(id).orElse(new Location());
+//    }
 
     public byte[] generateImagePreview(Path filePath) throws IOException {
         logger.info("This generates preview of location.");

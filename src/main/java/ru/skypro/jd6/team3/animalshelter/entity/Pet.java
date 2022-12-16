@@ -1,26 +1,42 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "pet")
+@Table(name = "pets")
 public class Pet {
 
     @Id
-    @GeneratedValue(generator = "pedIdGen")
-    private long id;
-
-    private String type;
-
-    private String breed;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
-    private double weight;
+    private Integer weight;
+
+    private Integer age;
+
+    private String breed;
+
+    private String species;
+
+    private boolean disabled = false;
+
+<<<<<<<<< Temporary merge branch 1
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Shelter shelter;
+    public Pet() {}
+=========
+    private double wight;
+>>>>>>>>> Temporary merge branch 2
 
     private int age;
     @OneToOne
+    @JoinColumn
     private PotentialOwner potentialOwner;
 
     public Pet() {
@@ -39,20 +55,7 @@ public class Pet {
         return Objects.hash(id);
     }
 
-    @Override
-    public String toString() {
-        return "Pet{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", breed='" + breed + '\'' +
-                ", name='" + name + '\'' +
-                ", wight=" + weight +
-                ", age=" + age +
-                ", potentialOwner=" + potentialOwner +
-                '}';
-    }
-
-    public long getId() {
+    public long getPetId() {
         return id;
     }
 
@@ -88,16 +91,58 @@ public class Pet {
         return weight;
     }
 
-    public void setWeight(double wight) {
-        this.weight = wight;
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
-    public int getAge() {
+    public double getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public String getBreed() {
+        return breed;
+    }
+
+    public void setBreed(String breed) {
+        this.breed = breed;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(Shelter shelter) {
+        this.shelter = shelter;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+
+    @Override
+    public String toString() {
+        return "Pet{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", weight=" + weight +
+                ", age=" + age +
+                '}';
     }
 
     public PotentialOwner getPotentialOwner() {
