@@ -8,12 +8,14 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.service.*;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -265,16 +267,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     }
 
     public void sendReport(Update update, PotentialOwner potentialOwner) {
-        if (update.message().photo() != null) {
-            sendMessage(potentialOwner.getId(), "Есть картинка!");
+        for (PhotoSize photoSize : update.message().photo()) {
+            try {
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+                byte[] fileBytes = telegramBot.getFileContent(getFileResponse.file());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        PhotoSize photo = update.message().photo()[0];
-        org.telegram.telegrambots.meta.api.objects.File file = execute(getFile);
-        GetFile file = new GetFile(photo.fileId());
-        File file1 = file.getClass().
-
-
-        telegramBot.
     }
 
     public void openChat(Long id, String locationInMenu) {
