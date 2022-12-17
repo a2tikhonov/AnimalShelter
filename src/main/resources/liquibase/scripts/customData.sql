@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS pets
     breed              TEXT,
     species            TEXT,
     disabled           BOOLEAN                                    DEFAULT FALSE,
-    shelter_id         BIGSERIAL REFERENCES shelters (id)         DEFAULT NULL,
-    potential_owner_id BIGSERIAL REFERENCES potential_owners (id) DEFAULT NULL
+    potential_owner_id BIGSERIAL REFERENCES potential_owners (id) DEFAULT NULL,
+    shelter_id         BIGSERIAL REFERENCES shelters (id)         DEFAULT NULL
 );
 
 -- creating table potentialOwners
