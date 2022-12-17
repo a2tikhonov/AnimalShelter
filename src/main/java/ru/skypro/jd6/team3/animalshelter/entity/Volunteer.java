@@ -1,5 +1,8 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jetbrains.annotations.Nullable;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -19,10 +22,15 @@ public class Volunteer {
     private String email;
 
     @OneToOne
+    @JoinColumn(name = "potential_owner_id")
+    @Nullable
+    @JsonIgnore
     private PotentialOwner potentialOwner;
 
     @ManyToOne
     @JoinColumn(name = "shelter_id")
+    @Nullable
+    @JsonIgnore
     private Shelter shelter;
 
     public Volunteer() {
@@ -90,12 +98,21 @@ public class Volunteer {
         this.email = email;
     }
 
+    @Nullable
     public PotentialOwner getPotentialOwner() {
         return potentialOwner;
     }
 
-    public void setPotentialOwner(PotentialOwner potentialOwner) {
+    public void setPotentialOwner(@Nullable PotentialOwner potentialOwner) {
         this.potentialOwner = potentialOwner;
     }
 
+    @Nullable
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(@Nullable Shelter shelter) {
+        this.shelter = shelter;
+    }
 }

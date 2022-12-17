@@ -2,6 +2,29 @@
 
 -- changeSet: ydeev:1
 
+-- creating table cynologists
+
+CREATE TABLE IF NOT EXISTS cynologists
+(
+    id                BIGSERIAL PRIMARY KEY,
+    name              TEXT        NOT NULL,
+    phone_number      TEXT UNIQUE NOT NULL,
+    specialties       TEXT        NOT NULL,
+    years_of_practice TEXT        NOT NULL,
+    shelter_id        BIGSERIAL REFERENCES shelters (id) DEFAULT NULL
+);
+
+-- creating table locations
+
+CREATE TABLE IF NOT EXISTS locations
+(
+    id         BIGSERIAL PRIMARY KEY,
+    file_path  TEXT UNIQUE,
+    file_size  BIGINT,
+    media_Type TEXT,
+    data       bytea
+);
+
 -- creating table main_menu
 
 CREATE TABLE IF NOT EXISTS main_menu
@@ -20,6 +43,32 @@ CREATE TABLE IF NOT EXISTS new_user_menu
     call_back TEXT UNIQUE NOT NULL
 );
 
+-- creating table pets
+
+CREATE TABLE IF NOT EXISTS pets
+(
+    id                 BIGSERIAL PRIMARY KEY,
+    name               TEXT    NOT NULL,
+    weight             INTEGER NOT NULL,
+    age                INTEGER NOT NULL,
+    breed              TEXT,
+    species            TEXT,
+    disabled           BOOLEAN                                    DEFAULT FALSE,
+    shelter_id         BIGSERIAL REFERENCES shelters (id)         DEFAULT NULL,
+    potential_owner_id BIGSERIAL REFERENCES potential_owners (id) DEFAULT NULL
+);
+
+-- creating table potentialOwners
+
+CREATE TABLE IF NOT EXISTS potential_owners
+(
+    id               BIGSERIAL PRIMARY KEY NOT NULL,
+    phone            TEXT UNIQUE           NOT NULL,
+    name             TEXT                  NOT NULL,
+    location_in_menu TEXT,
+    report_id        BIGSERIAL DEFAULT NULL REFERENCES reports (id) DEFAULT NULL
+);
+
 -- creating table potential_owner_menu
 
 CREATE TABLE IF NOT EXISTS potential_owner_menu
@@ -29,31 +78,6 @@ CREATE TABLE IF NOT EXISTS potential_owner_menu
     call_back TEXT UNIQUE           NOT NULL
 );
 
--- creating table locations
-
-CREATE TABLE IF NOT EXISTS locations
-(
-    id         BIGSERIAL PRIMARY KEY,
-    file_path  TEXT UNIQUE,
-    file_size  BIGINT,
-    media_Type TEXT,
-    data       bytea
-);
-
--- creating table reports
-
-CREATE TABLE IF NOT EXISTS reports
-(
-    id         BIGSERIAL PRIMARY KEY,
-    file_path  TEXT,
-    file_size  INTEGER,
-    photo      BYTEA,
-    date_time  TIMESTAMP WITHOUT TIME ZONE,
-    condition  TEXT,
-    diet       TEXT,
-    changes    TEXT,
-    media_type TEXT
-);
 
 -- creating table recommendations
 
@@ -69,15 +93,20 @@ CREATE TABLE IF NOT EXISTS recommendations
     common_reject_reasons      TEXT
 );
 
--- creating table potentialOwners
+-- creating table reports
 
-CREATE TABLE IF NOT EXISTS potential_owners
+CREATE TABLE IF NOT EXISTS reports
 (
-    id               BIGSERIAL PRIMARY KEY NOT NULL,
-    phone            TEXT UNIQUE           NOT NULL,
-    name             TEXT                  NOT NULL,
-    location_in_menu TEXT
---     report_id        BIGSERIAL DEFAULT NULL REFERENCES reports (id)
+    id         BIGSERIAL PRIMARY KEY,
+    file_path  TEXT,
+    file_size  INTEGER,
+    photo      BYTEA,
+    date_time  TIMESTAMP WITHOUT TIME ZONE,
+    condition  TEXT,
+    diet       TEXT,
+    changes    TEXT,
+    media_type TEXT,
+    potential_owner_id BIGSERIAL DEFAULT NULL REFERENCES reports (id) DEFAULT NULL
 );
 
 -- creating table shelter
@@ -88,40 +117,14 @@ CREATE TABLE IF NOT EXISTS shelters
     location_info      TEXT        NOT NULL,
     description        TEXT        NOT NULL,
     email              TEXT UNIQUE NOT NULL,
-    how_to_find_us     TEXT        NOT NULL
---     volunteer_id BIGSERIAL REFERENCES volunteers (id),
---     pet_id BIGSERIAL REFERENCES pets (id),
---     cynologist_id BIGSERIAL REFERENCES cynologists (id),
---     location_id        BIGSERIAL DEFAULT NULL REFERENCES locations (id),
---     recommendations_id BIGSERIAL DEFAULT NULL REFERENCES recommendations (id)
+    how_to_find_us     TEXT        NOT NULL,
+    volunteer_id       BIGSERIAL REFERENCES volunteers (id)      DEFAULT NULL,
+    pet_id             BIGSERIAL REFERENCES pets (id)            DEFAULT NULL,
+    cynologist_id      BIGSERIAL REFERENCES cynologists (id)     DEFAULT NULL,
+    location_id        BIGSERIAL REFERENCES locations (id)       DEFAULT NULL,
+    recommendations_id BIGSERIAL REFERENCES recommendations (id) DEFAULT NULL
 );
 
--- creating table cynologists
-
-CREATE TABLE IF NOT EXISTS cynologists
-(
-    id                BIGSERIAL PRIMARY KEY,
-    name              TEXT        NOT NULL,
-    phone_number      TEXT UNIQUE NOT NULL,
-    specialties       TEXT        NOT NULL,
-    years_of_practice TEXT        NOT NULL
---     shelter_id        BIGSERIAL DEFAULT NULL REFERENCES shelters (id)
-);
-
--- creating table pets
-
-CREATE TABLE IF NOT EXISTS pets
-(
-    id                 BIGSERIAL PRIMARY KEY,
-    name               TEXT    NOT NULL,
-    weight             INTEGER NOT NULL,
-    age                INTEGER NOT NULL,
-    breed              TEXT,
-    species            TEXT,
-    disabled           BOOLEAN   DEFAULT FALSE
---     shelter_id         BIGSERIAL DEFAULT NULL REFERENCES shelters (id),
---     potential_owner_id BIGSERIAL DEFAULT NULL REFERENCES potential_owners (id)
-);
 
 -- creating table volunteers
 
@@ -131,9 +134,9 @@ CREATE TABLE IF NOT EXISTS volunteers
     name               TEXT        NOT NULL,
     phone              TEXT UNIQUE NOT NULL,
     email              TEXT UNIQUE NOT NULL,
-    busy               BOOLEAN   DEFAULT FALSE
---     shelter_id         BIGSERIAL DEFAULT NULL REFERENCES shelters (id),
---     potential_owner_id BIGSERIAL DEFAULT NULL REFERENCES potential_owners (id)
+    busy               BOOLEAN   DEFAULT FALSE,
+    shelter_id         BIGSERIAL DEFAULT NULL REFERENCES shelters (id) DEFAULT NULL,
+    potential_owner_id BIGSERIAL DEFAULT NULL REFERENCES potential_owners (id) DEFAULT NULL
 );
 
 -- CHANGES
@@ -144,91 +147,85 @@ CREATE TABLE IF NOT EXISTS volunteers
 
 -- cynologists
 
-ALTER TABLE cynologists
-    ADD COLUMN shelter_id BIGSERIAL
-        REFERENCES shelters (id)
-            DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE cynologists
+--     ADD COLUMN shelter_id BIGSERIAL
+--         REFERENCES shelters (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
 -- pets
 
-ALTER TABLE pets
-    ADD COLUMN shelter_id BIGSERIAL
-        REFERENCES shelters (id)
-            DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE pets
-    ADD COLUMN potential_owner_id BIGSERIAL
-        REFERENCES potential_owners (id)
-            DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE pets
+--     ADD COLUMN shelter_id BIGSERIAL
+--         REFERENCES shelters (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE pets
+--     ADD COLUMN potential_owner_id BIGSERIAL
+--         REFERENCES potential_owners (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
 -- potential_owners
 
-ALTER TABLE potential_owners
-    ADD COLUMN pet_id BIGSERIAL
-        REFERENCES pets (id)
-            DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE potential_owners
+--     ADD COLUMN pet_id BIGSERIAL
+--         REFERENCES pets (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
-ALTER TABLE potential_owners
-    ADD COLUMN report_id BIGSERIAL
-        REFERENCES reports (id)
-            DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE potential_owners
-    ADD COLUMN volunteer_id BIGSERIAL
-        REFERENCES volunteers (id)
-            DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE potential_owners
+--     ADD COLUMN report_id BIGSERIAL
+--         REFERENCES reports (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE potential_owners
+--     ADD COLUMN volunteer_id BIGSERIAL
+--         REFERENCES volunteers (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
 -- reports
 
-ALTER TABLE reports
-    ADD COLUMN potential_owner_id BIGSERIAL
-        REFERENCES potential_owners (id)
-            DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE reports
+--     ADD COLUMN potential_owner_id BIGSERIAL
+--         REFERENCES potential_owners (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
 -- shelters
 
-ALTER TABLE shelters
-    ADD COLUMN volunteer_id BIGSERIAL
-        REFERENCES volunteers (id)
-            DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE shelters
-    ADD COLUMN pet_id BIGSERIAL
-        REFERENCES pets (id)
-            DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE shelters
-    ADD COLUMN cynologist_id BIGSERIAL
-        REFERENCES cynologists (id)
-            DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE shelters
-    ADD COLUMN location_id BIGSERIAL
-        REFERENCES locations (id)
-            DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE shelters
-    ADD COLUMN recommendations_id BIGSERIAL
-        REFERENCES recommendations (id)
-            DEFERRABLE INITIALLY DEFERRED;
--- pets
-
-ALTER TABLE pets
-   ADD COLUMN potential_owner_id BIGSERIAL
-       REFERENCES potential_owners (id)
-           DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE shelters
+--     ADD COLUMN volunteer_id BIGSERIAL
+--         REFERENCES volunteers (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE shelters
+--     ADD COLUMN pet_id BIGSERIAL
+--         REFERENCES pets (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE shelters
+--     ADD COLUMN cynologist_id BIGSERIAL
+--         REFERENCES cynologists (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE shelters
+--     ADD COLUMN location_id BIGSERIAL
+--         REFERENCES locations (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE shelters
+--     ADD COLUMN recommendations_id BIGSERIAL
+--         REFERENCES recommendations (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
 -- volunteers
-
-ALTER TABLE volunteers
-    ADD COLUMN potential_owner_id BIGSERIAL
-        REFERENCES potential_owners (id)
-            DEFERRABLE INITIALLY DEFERRED;
-
-ALTER TABLE volunteers
-    ADD COLUMN shelter_id BIGSERIAL
-        REFERENCES shelters (id)
-            DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE volunteers
+--     ADD COLUMN potential_owner_id BIGSERIAL
+--         REFERENCES potential_owners (id)
+--             DEFERRABLE INITIALLY DEFERRED;
+--
+-- ALTER TABLE volunteers
+--     ADD COLUMN shelter_id BIGSERIAL
+--         REFERENCES shelters (id)
+--             DEFERRABLE INITIALLY DEFERRED;
 
 -- changeSet: ydeev:3
 
@@ -273,7 +270,7 @@ VALUES ('О приюте', 'О приюте'),
 -- add some data into table pets
 
 INSERT INTO pets
-    (name, weight, age, breed, species, disabled, potential_owner_id)
+    (name, weight, age, breed, species, disabled)
 VALUES ('Landish', 2.7, 1, 'persian', 'cat', false),
        ('Busya', 3.4, 3, 'foldex', 'cat', false),
        ('Khadjo', 73, 21, 'khajiit', 'cat', false),
@@ -320,7 +317,7 @@ VALUES (1, 'null', 'null', 'null', 'null', 'null', 'null', 'null'),
 -- add some data into table reports
 
 INSERT INTO reports (file_path, file_size, photo, date_time, condition, diet,
-                     changes, media_type, potential_owner_id)
+                     changes, media_type)
 VALUES (null, null, null, null, null, null, null, null),
        (null, null, null, null, null, null, null, null),
        (null, null, null, null, null, null, null, null),

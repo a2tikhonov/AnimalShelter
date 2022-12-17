@@ -2,6 +2,7 @@ package ru.skypro.jd6.team3.animalshelter.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cascade;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 
@@ -29,12 +30,15 @@ public class Pet {
     private boolean disabled = false;
 
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "potential_owner_id")
+    @JsonIgnore
+    @Nullable
     private PotentialOwner potentialOwner;
 
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     @JsonIgnore
+    @Nullable
     private Shelter shelter;
 
     public Pet() {}
@@ -105,6 +109,23 @@ public class Pet {
 
     public void setSpecies(String species) {
         this.species = species;
+    }
+
+    @Nullable
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
+    }
+
+    public void setPotentialOwner(@Nullable PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

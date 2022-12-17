@@ -1,6 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -21,6 +22,12 @@ public class PotentialOwner {
 
     public PotentialOwner() {
     }
+
+    @OneToMany(mappedBy = "potentialOwner")
+//    @JoinColumn(name = "report_id")
+    @JsonIgnore
+    @Nullable
+    private Collection<Report> report;
 
     public PotentialOwner(Long id, String name, String phone, String locationInMenu) {
         this.id = id;
@@ -84,4 +91,12 @@ public class PotentialOwner {
         this.locationInMenu = locationInMenu;
     }
 
+    @Nullable
+    public Collection<Report> getReport() {
+        return report;
+    }
+
+    public void setReport(@Nullable Collection<Report> report) {
+        this.report = report;
+    }
 }
