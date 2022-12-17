@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS potential_owners
     phone            TEXT UNIQUE           NOT NULL,
     name             TEXT                  NOT NULL,
     location_in_menu TEXT,
-    report_id        BIGSERIAL DEFAULT NULL REFERENCES reports (id) DEFAULT NULL
+    report_id        BIGSERIAL REFERENCES reports (id) DEFAULT NULL
 );
 
 -- creating table potential_owner_menu
@@ -97,16 +97,16 @@ CREATE TABLE IF NOT EXISTS recommendations
 
 CREATE TABLE IF NOT EXISTS reports
 (
-    id         BIGSERIAL PRIMARY KEY,
-    file_path  TEXT,
-    file_size  INTEGER,
-    photo      BYTEA,
-    date_time  TIMESTAMP WITHOUT TIME ZONE,
-    condition  TEXT,
-    diet       TEXT,
-    changes    TEXT,
-    media_type TEXT,
-    potential_owner_id BIGSERIAL DEFAULT NULL REFERENCES reports (id) DEFAULT NULL
+    id                 BIGSERIAL PRIMARY KEY,
+    file_path          TEXT,
+    file_size          INTEGER,
+    photo              BYTEA,
+    date_time          TIMESTAMP WITHOUT TIME ZONE,
+    condition          TEXT,
+    diet               TEXT,
+    changes            TEXT,
+    media_type         TEXT,
+    potential_owner_id BIGSERIAL REFERENCES reports (id) DEFAULT NULL
 );
 
 -- creating table shelter
@@ -134,9 +134,9 @@ CREATE TABLE IF NOT EXISTS volunteers
     name               TEXT        NOT NULL,
     phone              TEXT UNIQUE NOT NULL,
     email              TEXT UNIQUE NOT NULL,
-    busy               BOOLEAN   DEFAULT FALSE,
-    shelter_id         BIGSERIAL DEFAULT NULL REFERENCES shelters (id) DEFAULT NULL,
-    potential_owner_id BIGSERIAL DEFAULT NULL REFERENCES potential_owners (id) DEFAULT NULL
+    busy               BOOLEAN                                    DEFAULT FALSE,
+    shelter_id         BIGSERIAL REFERENCES shelters (id)         DEFAULT NULL,
+    potential_owner_id BIGSERIAL REFERENCES potential_owners (id) DEFAULT NULL
 );
 
 -- CHANGES
