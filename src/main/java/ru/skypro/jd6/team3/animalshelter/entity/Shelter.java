@@ -1,6 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -19,23 +20,33 @@ public class Shelter {
     private String howToFindUs;
 
     @OneToMany(mappedBy = "shelter")
+//    @JoinColumn(name = "volunteer_id")
     @JsonIgnore
-    private Collection<Volunteer> volunteers = new java.util.ArrayList<>();
+    @Nullable
+    private Collection<Volunteer> volunteers;
 
     @OneToMany(mappedBy = "shelter")
+//    @JoinColumn(name = "pet_id")
     @JsonIgnore
-    private Collection<Pet> pets = new java.util.ArrayList<>();
+    @Nullable
+    private Collection<Pet> pets;
 
     @OneToMany(mappedBy = "shelter")
+//    @JoinColumn(name = "cynologist_id")
     @JsonIgnore
-    private Collection<Cynologist> cynologists = new java.util.ArrayList<>();
+    @Nullable
+    private Collection<Cynologist> cynologists;
 
     @OneToOne
     @JoinColumn(name = "location_id")
+    @JsonIgnore
+    @Nullable
     private Location location;
 
     @OneToOne
     @JoinColumn(name = "recommendations_id")
+    @JsonIgnore
+    @Nullable
     private Recommendations recommendations;
 
 //    public Shelter() {

@@ -2,14 +2,17 @@ package ru.skypro.jd6.team3.animalshelter.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cascade;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
-import java.util.Objects;
+
+/**
+ * Класс для питомце, питомцев, а не собак так как приют может в будующем принимать и других животных
+ */
 
 @Entity
 @Table(name = "pets")
 public class Pet {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,57 +29,30 @@ public class Pet {
 
     private boolean disabled = false;
 
-<<<<<<<<< Temporary merge branch 1
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Shelter shelter;
-    public Pet() {}
-=========
-    private double wight;
->>>>>>>>> Temporary merge branch 2
-
-    private int age;
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "potential_owner_id")
+    @JsonIgnore
+    @Nullable
     private PotentialOwner potentialOwner;
 
-    public Pet() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    @JsonIgnore
+    @Nullable
+    private Shelter shelter;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pet pet = (Pet) o;
-        return id == pet.id;
-    }
+    public Pet() {}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    /**
+     * Стандартные методы гет и сет
+     */
 
     public long getPetId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setPetId(long id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getBreed() {
-        return breed;
-    }
-
-    public void setBreed(String breed) {
-        this.breed = breed;
     }
 
     public String getName() {
@@ -135,6 +111,23 @@ public class Pet {
         this.species = species;
     }
 
+    @Nullable
+    public PotentialOwner getPotentialOwner() {
+        return potentialOwner;
+    }
+
+    public void setPotentialOwner(@Nullable PotentialOwner potentialOwner) {
+        this.potentialOwner = potentialOwner;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Pet{" +
@@ -145,11 +138,5 @@ public class Pet {
                 '}';
     }
 
-    public PotentialOwner getPotentialOwner() {
-        return potentialOwner;
-    }
 
-    public void setPotentialOwner(PotentialOwner potentialOwner) {
-        this.potentialOwner = potentialOwner;
-    }
 }

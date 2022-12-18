@@ -3,6 +3,7 @@ package ru.skypro.jd6.team3.animalshelter.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Type;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.util.List;
@@ -23,6 +24,7 @@ public class Cynologist {
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     @JsonIgnore
+    @Nullable
     private Shelter shelter;
 
     public Long getId() {
@@ -87,5 +89,14 @@ public class Cynologist {
                 ", yearsOfPractice=" + yearsOfPractice +
                 ", specialties='" + specialties + '\'' +
                 '}';
+    }
+
+    @Nullable
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(@Nullable Shelter shelter) {
+        this.shelter = shelter;
     }
 }

@@ -1,6 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,6 +26,8 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "potential_owner_id")
+    @JsonIgnore
+    @Nullable
     private PotentialOwner potentialOwner;
 
     public Report() {
