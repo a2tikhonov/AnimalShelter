@@ -11,7 +11,7 @@ public class Report {
     @Id
     @GeneratedValue
     private Long id;
-    private int fileSize;
+    private Long fileSize;
     private byte[] photo;
     private LocalDateTime dateTime;
     private String diet;
@@ -25,7 +25,7 @@ public class Report {
 
     public Report() {
         this.id = 0L;
-        this.fileSize = 0;
+        this.fileSize = 0L;
         this.photo = null;
         this.dateTime = null;
         this.diet = null;
@@ -42,7 +42,7 @@ public class Report {
         this.id = id;
     }
 
-    public int getFileSize() {
+    public Long getFileSize() {
         return fileSize;
     }
 
@@ -54,7 +54,7 @@ public class Report {
         this.mediaType = mediaType;
     }
 
-    public void setFileSize(int fileSize) {
+    public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
     }
 

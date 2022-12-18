@@ -119,7 +119,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         sendMessage(volunteerService.findByPotentialOwner(potentialOwner.getId()).getId(), messageText);
                     }
                     if (potentialOwner.getLocationInMenu().equals("Прислать отчет о питомце")) {
-                        sendReport(update, potentialOwner);
+                        //sendReport(update, potentialOwner);
                     }
                 }
                 if (volunteer != null) {
@@ -250,12 +250,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-
-    private void greetMessage(Update update) {
-        SendMessage responseMessage = new SendMessage(update.message().chat().id(), "С возвращением, @" + update.message().chat().username() + "\n !");
-        telegramBot.execute(responseMessage);
-    }
-
     public void sendMessage(Long chatId, String what) {
         SendMessage sm = new SendMessage(chatId, what);
         telegramBot.execute(sm);
@@ -264,17 +258,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     public void sendPhoto(Long id, byte[] photo, String text) {
         SendPhoto msg = new SendPhoto(id, photo).caption(text);
         telegramBot.execute(msg);
-    }
-
-    public void sendReport(Update update, PotentialOwner potentialOwner) {
-        for (PhotoSize photoSize : update.message().photo()) {
-            try {
-                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
-                byte[] fileBytes = telegramBot.getFileContent(getFileResponse.file());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public void openChat(Long id, String locationInMenu) {
