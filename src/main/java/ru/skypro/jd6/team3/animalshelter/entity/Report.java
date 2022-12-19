@@ -9,10 +9,12 @@ import java.util.Objects;
 public class Report {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "reportGen")
     private Long id;
     private Long fileSize;
     private byte[] photo;
+
+    private String fileId;
     private LocalDateTime dateTime;
     private String diet;
     private String condition;
@@ -32,6 +34,7 @@ public class Report {
         this.condition = null;
         this.changes = null;
         this.mediaType = null;
+        this.fileId = null;
     }
 
     public Long getId() {
@@ -104,6 +107,14 @@ public class Report {
 
     public void setOwner(PotentialOwner potentialOwner) {
         this.potentialOwner = potentialOwner;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 
     @Override

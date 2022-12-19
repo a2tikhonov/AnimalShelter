@@ -4,20 +4,17 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
 import ru.skypro.jd6.team3.animalshelter.repository.ReportRepository;
 
 import java.io.*;
 import java.util.Collection;
-
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 public class ReportService {
@@ -27,6 +24,7 @@ public class ReportService {
     private final ReportRepository reportRepository;
 
     private final TelegramBot telegramBot;
+
 
     public ReportService(ReportRepository repository, TelegramBot telegramBot) {
         this.reportRepository = repository;
@@ -76,7 +74,6 @@ public class ReportService {
 
     /**
      * Поиск всех отчетов
-     *
      */
     public Collection<Report> findAll() {
         logger.info("*findAll* (reports) method was invoked");
@@ -103,18 +100,21 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
-    public void uploadReportPhoto(Update update, Report report)  {
-        for (PhotoSize photoSize : update.message().photo()) {
-            try {
+    public void uploadReportPhoto(Update update, PotentialOwner potentialOwner) {
+        if (reportRepository.existsByPotentialOwner_Id(potentialOwner.getId())) {
+
+        } else {
+            Report report = new Report();
+            for (PhotoSize photoSize : update.message().photo()) {
                 GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
-                byte[] fileBytes = telegramBot.getFileContent(getFileResponse.file());
-                String mediaType = getFileResponse.file().filePath().substring(getFileResponse.file().filePath().lastIndexOf('.'));
-                report.setPhoto(fileBytes);
-                report.setMediaType(mediaType);
+                report.setMediaType("image/" + getFileResponse.file().filePath()
+                        .substring(getFileResponse.file().filePath().lastIndexOf('.') + 1));
                 report.setFileSize(getFileResponse.file().fileSize());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                report.setFileId(photoSize.fileId());
+                report.setOwner(potentialOwner);
+                reportRepository.save(report);
             }
+
         }
 
 /*        Report report = findReport(id);
@@ -125,15 +125,19 @@ public class ReportService {
         reportRepository.save(report);*/
     }
 
-    public void sendReport(Update update, PotentialOwner potentialOwner) {
-        for (PhotoSize photoSize : update.message().photo()) {
+    public byte[] downloadPhoto(Long id) {
+        byte[] fileBytes = null;
+        Report report = reportRepository.findById(id).orElse(null);
+        if (report != null) {
             try {
-                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
-                byte[] fileBytes = telegramBot.getFileContent(getFileResponse.file());
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(report.getFileId()));
+                fileBytes = telegramBot.getFileContent(getFileResponse.file());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
+        return fileBytes;
     }
+
 
 }

@@ -36,11 +36,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final PetService petService;
 
+    private final ReportService reportService;
+
     public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuService,
-                                      NewUserMenuService newUserMenuService,
-                                      PotentialOwnerMenuService potentialOwnerMenuService,
-                                      PotentialOwnerService potentialOwnerService,
-                                      VolunteerService volunteerService, PetService petService) {
+                                      NewUserMenuService newUserMenuService, PotentialOwnerMenuService potentialOwnerMenuService,
+                                      PotentialOwnerService potentialOwnerService, VolunteerService volunteerService,
+                                      PetService petService, ReportService reportService) {
         this.telegramBot = telegramBot;
         this.mainMenuService = mainMenuService;
         this.newUserMenuService = newUserMenuService;
@@ -48,6 +49,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         this.potentialOwnerService = potentialOwnerService;
         this.volunteerService = volunteerService;
         this.petService = petService;
+        this.reportService = reportService;
     }
 
     @PostConstruct
@@ -119,7 +121,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         sendMessage(volunteerService.findByPotentialOwner(potentialOwner.getId()).getId(), messageText);
                     }
                     if (potentialOwner.getLocationInMenu().equals("Прислать отчет о питомце")) {
-                        //sendReport(update, potentialOwner);
+                        reportService.uploadReportPhoto(update, potentialOwner);
                     }
                 }
                 if (volunteer != null) {
@@ -171,6 +173,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     }
                     if (petService.existsPetByPotentialOwner(potentialOwner)) {
                         if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце")) {
+                            potentialOwnerService.setLocationInMenu(potentialOwner.getId(), "Прислать отчет о питомце");
+                            sendMessage(userIdFromCallBackQuery, "Прикрепите фото");
                             //Код Яна
                         }
                         if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список проверенных кинологов")) {
@@ -180,7 +184,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце") ||
                                 potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список проверенных кинологов")) {
                             sendMessage(userIdFromCallBackQuery, "За вами пока не числится животное");
-                            potentialOwnerService.setLocationInMenu(potentialOwner.getId(), "Прислать отчет о питомце");
                         }
                     }
                 }
