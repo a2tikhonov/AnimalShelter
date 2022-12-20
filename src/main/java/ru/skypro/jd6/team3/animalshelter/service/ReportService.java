@@ -4,7 +4,6 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.GetFile;
-import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,21 +100,27 @@ public class ReportService {
     }
 
     public void uploadReportPhoto(Update update, PotentialOwner potentialOwner) {
-        if (reportRepository.existsByPotentialOwner_Id(potentialOwner.getId())) {
+        Report report;
+        if (reportRepository.existsByPotentialOwner(potentialOwner)) {
+            report = reportRepository.findTopByPotentialOwnerOrderByIdDesc(potentialOwner);
+            if (report.getPhotoId().isBlank()) {
 
-        } else {
-            Report report = new Report();
-            for (PhotoSize photoSize : update.message().photo()) {
-                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
-                report.setMediaType("image/" + getFileResponse.file().filePath()
-                        .substring(getFileResponse.file().filePath().lastIndexOf('.') + 1));
-                report.setFileSize(getFileResponse.file().fileSize());
-                report.setFileId(photoSize.fileId());
-                report.setOwner(potentialOwner);
-                reportRepository.save(report);
             }
-
+        } else {
+            report = new Report();
         }
+        for (PhotoSize photoSize : update.message().photo()) {
+            GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+            report.setMediaType("image/" + getFileResponse.file().filePath()
+                    .substring(getFileResponse.file().filePath().lastIndexOf('.') + 1));
+            report.setFileSize(getFileResponse.file().fileSize());
+            report.setPhotoId(photoSize.fileId());
+            report.setOwner(potentialOwner);
+            reportRepository.save(report);
+        }
+
+
+    }
 
 /*        Report report = findReport(id);
         report.setFilePath(filePath.toString());
@@ -123,20 +128,31 @@ public class ReportService {
         report.setMediaType(reportFile.getContentType());
         report.setPhoto(reportFile.getBytes());
         reportRepository.save(report);*/
+
+    public void uploadReportText(Update update, PotentialOwner potentialOwner) {
+
     }
 
-    public byte[] downloadPhoto(Long id) {
+    public byte[] downloadPhoto(Long reportId) {
         byte[] fileBytes = null;
-        Report report = reportRepository.findById(id).orElse(null);
+        Report report = reportRepository.findById(reportId).orElse(null);
         if (report != null) {
             try {
-                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(report.getFileId()));
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(report.getPhotoId()));
                 fileBytes = telegramBot.getFileContent(getFileResponse.file());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
         return fileBytes;
+    }
+
+    public String getReportForm() {
+        return "В ежедневный отчет входит следующая информация:\n" +
+                "Фото животного;\n" +
+                "Рацион животного;\n" +
+                "Общее самочувствие и привыкание к новому месту;\n" +
+                "Изменение в поведении: отказ от старых привычек, приобретение новых.";
     }
 
 

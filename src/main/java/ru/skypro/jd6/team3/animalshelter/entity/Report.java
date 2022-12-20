@@ -2,6 +2,7 @@ package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -12,13 +13,9 @@ public class Report {
     @GeneratedValue(generator = "reportGen")
     private Long id;
     private Long fileSize;
-    private byte[] photo;
-
-    private String fileId;
+    private String photoId;
     private LocalDateTime dateTime;
-    private String diet;
-    private String condition;
-    private String changes;
+    private String reportText;
     private String mediaType;
 
     @ManyToOne
@@ -28,13 +25,10 @@ public class Report {
     public Report() {
         this.id = 0L;
         this.fileSize = 0L;
-        this.photo = null;
         this.dateTime = null;
-        this.diet = null;
-        this.condition = null;
-        this.changes = null;
+        this.reportText = null;
         this.mediaType = null;
-        this.fileId = null;
+        this.photoId = null;
     }
 
     public Long getId() {
@@ -61,44 +55,12 @@ public class Report {
         this.fileSize = fileSize;
     }
 
-    public byte[] getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
-    }
-
     public LocalDateTime getDateTime() {
         return dateTime;
     }
 
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
-    }
-
-    public String getDiet() {
-        return diet;
-    }
-
-    public void setDiet(String diet) {
-        this.diet = diet;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public String getChanges() {
-        return changes;
-    }
-
-    public void setChanges(String changes) {
-        this.changes = changes;
     }
 
     public PotentialOwner getOwner() {
@@ -109,23 +71,29 @@ public class Report {
         this.potentialOwner = potentialOwner;
     }
 
-    public String getFileId() {
-        return fileId;
+    public String getPhotoId() {
+        return photoId;
     }
 
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
+    public void setPhotoId(String fileId) {
+        this.photoId = fileId;
+    }
+
+    public String getReportText() {
+        return reportText;
+    }
+
+    public void setReportText(String reportText) {
+        this.reportText = reportText;
     }
 
     @Override
     public String toString() {
         return "Report{" +
                 "id=" + id +
+                ", photoId='" + photoId + '\'' +
                 ", dateTime=" + dateTime +
-                ", diet='" + diet + '\'' +
-                ", condition='" + condition + '\'' +
-                ", changes='" + changes + '\'' +
-                ", mediaType='" + mediaType + '\'' +
+                ", reportText='" + reportText + '\'' +
                 ", potentialOwner=" + potentialOwner +
                 '}';
     }

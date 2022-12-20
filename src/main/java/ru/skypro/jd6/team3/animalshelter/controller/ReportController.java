@@ -1,10 +1,5 @@
 package ru.skypro.jd6.team3.animalshelter.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -92,7 +87,7 @@ public class ReportController {
     @GetMapping(value = "/{id}/photo")
     public ResponseEntity<byte[]> downloadPhoto(@PathVariable Long id) {
         Report report = reportService.findReport(id);
-        if (report.getFileId() == null) {
+        if (report.getPhotoId() == null) {
             return ResponseEntity.badRequest().build();
         }
         HttpHeaders headers = new HttpHeaders();

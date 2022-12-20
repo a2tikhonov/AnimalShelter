@@ -2,6 +2,7 @@ package ru.skypro.jd6.team3.animalshelter.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
 
 import java.util.List;
@@ -13,5 +14,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 //    List<Report> findOwnerReportByPhoneNumber(long phone);
 //    List<Report> findOwnerReportByOwnerId(Long id);
 
-    Boolean existsByPotentialOwner_Id(Long potentialOwnerId);
+    Boolean existsByPotentialOwner(PotentialOwner potentialOwner);
+
+    Report findTopByPotentialOwnerOrderByIdDesc(PotentialOwner potentialOwner);
 }
