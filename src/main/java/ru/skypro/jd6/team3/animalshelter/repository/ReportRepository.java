@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
 
+import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -17,4 +19,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Boolean existsByPotentialOwner(PotentialOwner potentialOwner);
 
     Report findTopByPotentialOwnerOrderByIdDesc(PotentialOwner potentialOwner);
+
+    Collection<Report> findAllByDayOfMonthBefore(LocalDate day);
 }

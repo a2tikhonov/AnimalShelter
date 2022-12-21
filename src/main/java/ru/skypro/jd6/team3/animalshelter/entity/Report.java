@@ -1,8 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -14,7 +13,7 @@ public class Report {
     private Long id;
     private Long fileSize;
     private String photoId;
-    private LocalDateTime dateTime;
+    private LocalDate dayOfMonth;
     private String reportText;
     private String mediaType;
 
@@ -25,7 +24,7 @@ public class Report {
     public Report() {
         this.id = 0L;
         this.fileSize = 0L;
-        this.dateTime = null;
+        this.dayOfMonth = null;
         this.reportText = null;
         this.mediaType = null;
         this.photoId = null;
@@ -55,12 +54,12 @@ public class Report {
         this.fileSize = fileSize;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDate getDayOfMonth() {
+        return dayOfMonth;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setDayOfMonth(LocalDate day) {
+        this.dayOfMonth = day;
     }
 
     public PotentialOwner getOwner() {
@@ -92,7 +91,7 @@ public class Report {
         return "Report{" +
                 "id=" + id +
                 ", photoId='" + photoId + '\'' +
-                ", dateTime=" + dateTime +
+                ", dayOfMonth=" + dayOfMonth +
                 ", reportText='" + reportText + '\'' +
                 ", potentialOwner=" + potentialOwner +
                 '}';

@@ -9,13 +9,16 @@ import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
 import com.pengrad.telegrambot.response.GetFileResponse;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
+import ru.skypro.jd6.team3.animalshelter.entity.Report;
 import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.service.*;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -122,14 +125,23 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     }
                     if (potentialOwner.getLocationInMenu().equals("Прислать отчет о питомце")) {
                         if (update.message().photo() != null) {
-                            reportService.uploadReportPhoto(update, potentialOwner);
-                        } else {
-                            sendMessage(userIdFromMessage, "Пожалуйста, пришлите фото");
+                            reportService.uploadReportPhoto(update.message().photo(), potentialOwner);
                         }
-                        if (update.message().text() != null) {
-
-                        } else {
-                            sendMessage(userIdFromMessage, "Пожалуйста, напишите отчет");
+                        if (!messageText.isBlank() && messageText.charAt(0) != '/') {
+                            reportService.uploadReportText(messageText, potentialOwner);
+                        }
+                        if (reportService.existsBy(potentialOwner)) {
+                            Report report = reportService.getLastBy(potentialOwner);
+                            if (report.getPhotoId() == null) {
+                                sendMessage(userIdFromMessage, "Пожалуйста, пришлите фото");
+                            }
+                            if (report.getReportText() == null) {
+                                sendMessage(userIdFromMessage, "Пожалуйста, напишите отчет");
+                            }
+                        }
+                        if (reportService.reportCompleted(potentialOwner)) {
+                            potentialOwnerService.setLocationInMenu(userIdFromMessage, "MainMenu");
+                            sendMessage(userIdFromMessage, "Ваш отчет отправлен");
                         }
                     }
                 }
@@ -261,6 +273,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
+    }
+
+    @Scheduled(cron = "0 0 16 * * *")
+    public void notifyOwnersAboutReport() {
+        List<Long> ids = reportService.reportTimer();
+        ids.forEach(id -> {
+            sendMessage(id, "Сегодня необходимо отправить отчет");
+        });
     }
 
     public void sendMessage(Long chatId, String what) {
