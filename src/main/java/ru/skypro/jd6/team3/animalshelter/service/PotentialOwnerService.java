@@ -6,6 +6,7 @@ import ru.skypro.jd6.team3.animalshelter.repository.PotentialOwnerRepository;
 
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class PotentialOwnerService {
@@ -38,6 +39,10 @@ public class PotentialOwnerService {
         return potentialOwnerRepository.findById(id).isPresent();
     }
 
+    public PotentialOwner findByPhone(String phone) {
+        return Optional.of(potentialOwnerRepository.findPotentialOwnerByPhone(phone)).orElse(null);
+    }
+
     public boolean addContactData(Long id, String message, String locationInMenu) {
         boolean nameIsCorrect = false;
         boolean phoneIsCorrect = false;
@@ -52,6 +57,11 @@ public class PotentialOwnerService {
         }
         String phone1 = phone.replaceAll("\\D+", "");
         if (phone1.matches("(7|8)?9\\d{9}")) {
+            if (phone1.charAt(0) == '7') {
+                StringBuilder builder = new StringBuilder(phone1);
+                builder.replace(0, 1, "8");
+                phone1 = builder.toString();
+            }
             phoneIsCorrect = true;
         }
         if (nameIsCorrect && phoneIsCorrect) {
@@ -83,6 +93,7 @@ public class PotentialOwnerService {
     public Collection<PotentialOwner> getAll() {
         return potentialOwnerRepository.findAll();
     }
+
 
 }
 

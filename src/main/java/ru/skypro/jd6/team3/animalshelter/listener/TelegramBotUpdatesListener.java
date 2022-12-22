@@ -155,6 +155,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             potentialOwnerService.delete(volunteer.getPotentialOwner().getId());
                         }
                     }
+                    if (messageText.matches("^/notify\\s89\\d{9}")) {
+                        String[] str = messageText.split(" ");
+                        PotentialOwner potentialOwner1 = potentialOwnerService.findByPhone(str[1]);
+                        if (potentialOwner1 != null) {
+                            sendMessage(potentialOwner1.getId(), "Ты плохо заполняешь отчет!");
+                        } else {
+
+                        }
+                    }
                     if (messageText.charAt(0) != '/' && volunteer.getPotentialOwner() != null) {
                         sendMessage(volunteer.getPotentialOwner().getId(), messageText);
                     }

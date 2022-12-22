@@ -47,4 +47,5 @@ public class VolunteerService {
     public Volunteer getFree() {
         return volunteerRepository.getFirstByPotentialOwner(null);
     }
+
 }

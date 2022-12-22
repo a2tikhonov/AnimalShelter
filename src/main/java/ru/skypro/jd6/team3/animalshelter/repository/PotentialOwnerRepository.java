@@ -7,4 +7,6 @@ import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 @Repository
 public interface PotentialOwnerRepository extends JpaRepository<PotentialOwner, Long> {
 
+    PotentialOwner findPotentialOwnerByPhone(String phone);
+
 }
