@@ -189,5 +189,14 @@ public class ReportService {
         return userIdsWithOutdatedReports;
     }
 
+    public List<Long> findOwnersWithOutdatedReports() {
+        LocalDate currentDay = LocalDate.now();
+        Collection<Report> outdatedReports = reportRepository.findAllByDayOfMonthBefore(currentDay);
+        List<Long> userIdsWithOutdatedReports = outdatedReports.stream()
+                .filter(e -> currentDay.getDayOfMonth() - e.getDayOfMonth().getDayOfMonth() >= 2 )
+                .map(n -> n.getOwner().getId()).collect(Collectors.toList());
+        return userIdsWithOutdatedReports;
+    }
+
 
 }

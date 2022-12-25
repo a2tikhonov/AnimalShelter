@@ -21,4 +21,5 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Report findTopByPotentialOwnerOrderByIdDesc(PotentialOwner potentialOwner);
 
     Collection<Report> findAllByDayOfMonthBefore(LocalDate day);
+
 }

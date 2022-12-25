@@ -2,13 +2,9 @@ package ru.skypro.jd6.team3.animalshelter.listener;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
-import com.pengrad.telegrambot.model.File;
-import com.pengrad.telegrambot.model.PhotoSize;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.GetFile;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SendPhoto;
-import com.pengrad.telegrambot.response.GetFileResponse;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
@@ -17,9 +13,6 @@ import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.service.*;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -161,7 +154,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         if (potentialOwner1 != null) {
                             sendMessage(potentialOwner1.getId(), "Ты плохо заполняешь отчет!");
                         } else {
-
+                            sendMessage(volunteer.getId(), "Такого владельца нет в базе");
+                        }
+                    }
+                    if (messageText.matches("^/chat\\s89\\d{9}")) {
+                        String[] str = messageText.split(" ");
+                        PotentialOwner potentialOwner1 = potentialOwnerService.findByPhone(str[1]);
+                        if (potentialOwner1 != null) {
+                            openChatBy(volunteer, potentialOwner1.getId());
+                        } else {
+                            sendMessage(volunteer.getId(), "Такого владельца нет в базе");
                         }
                     }
                     if (messageText.charAt(0) != '/' && volunteer.getPotentialOwner() != null) {
@@ -174,13 +176,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 PotentialOwner potentialOwner = potentialOwnerService.get(userIdFromCallBackQuery);
                 if (potentialOwner != null) {
                         if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                            openChat(userIdFromCallBackQuery, mainMenuService.toString());
+                            openChatByOwner(userIdFromCallBackQuery, mainMenuService.toString());
                         }
                         if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                            openChat(userIdFromCallBackQuery, newUserMenuService.toString());
+                            openChatByOwner(userIdFromCallBackQuery, newUserMenuService.toString());
                         }
                         if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                            openChat(userIdFromCallBackQuery, potentialOwnerMenuService.toString());
+                            openChatByOwner(userIdFromCallBackQuery, potentialOwnerMenuService.toString());
                         }
                         if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
                             potentialOwnerMenuService.send(userIdFromCallBackQuery, "Консультация с потенциальным хозяином");
@@ -220,7 +222,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 }
                 if (potentialOwner == null) {
                     if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                        openChat(userIdFromCallBackQuery, "Консультация без регистрации");
+                        openChatByOwner(userIdFromCallBackQuery, "Консультация без регистрации");
                     }
                     if (mainMenuService.buttonTap(update.callbackQuery()).equals("Прислать отчет о питомце") ||
                             potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Список проверенных кинологов")) {
@@ -238,7 +240,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона");
                     }
                     if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
-                        openChat(userIdFromCallBackQuery, "Консультация без регистрации");
+                        openChatByOwner(userIdFromCallBackQuery, "Консультация без регистрации");
                     }
                 }
                 if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
@@ -290,6 +292,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         ids.forEach(id -> {
             sendMessage(id, "Сегодня необходимо отправить отчет");
         });
+        List<Long> olderIds = reportService.findOwnersWithOutdatedReports();
+        Long volunteerId;
+        if (volunteerService.getFree() != null) {
+            volunteerId = volunteerService.getFree().getId();
+        } else {
+            volunteerId = volunteerService.get().stream().findAny().get().getId();
+        }
+        olderIds.forEach(olderId -> {
+                sendMessage(volunteerId, olderId.toString() + " не отправлял отчет более 2-х дней");
+        });
     }
 
     public void sendMessage(Long chatId, String what) {
@@ -302,7 +314,15 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         telegramBot.execute(msg);
     }
 
-    public void openChat(Long id, String locationInMenu) {
+    public void openChatBy(Volunteer volunteer, Long ownerId) {
+        PotentialOwner potentialOwner = potentialOwnerService.get(ownerId);
+        volunteer.setPotentialOwner(potentialOwner);
+        volunteerService.save(volunteer);
+        sendMessage(ownerId, "Волонтер подключился к чату");
+        sendMessage(volunteer.getId(), "Вы подключились к чату с " + potentialOwner.getName());
+    }
+
+    public void openChatByOwner(Long id, String locationInMenu) {
         if (volunteerService.existsByPotentialOwner(null)) {
             sendMessage(id, "Волонтер скоро Вам ответит");
             PotentialOwner potentialOwner;
