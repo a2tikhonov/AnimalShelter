@@ -84,7 +84,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         }
                     }
                     if (messageText.equalsIgnoreCase("/close")
-                            && volunteerService.existsByPotentialOwner(potentialOwner)) {
+                            && volunteerService.existsByPotentialOwner(potentialOwner)
+                            && !potentialOwner.getLocationInMenu().equals("Чат открыт волонтером")) {
                         String locationInMenu = closeChatBy(potentialOwner);
                         if (locationInMenu.equals("Консультация без регистрации")) {
                             potentialOwnerService.delete(potentialOwner.getId());
@@ -316,6 +317,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     public void openChatBy(Volunteer volunteer, Long ownerId) {
         PotentialOwner potentialOwner = potentialOwnerService.get(ownerId);
+        potentialOwner.setLocationInMenu("Чат открыт волонтером");
+        potentialOwnerService.save(potentialOwner);
         volunteer.setPotentialOwner(potentialOwner);
         volunteerService.save(volunteer);
         sendMessage(ownerId, "Волонтер подключился к чату");
