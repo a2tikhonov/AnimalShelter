@@ -10,12 +10,15 @@ import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwnerMenuButton;
 import ru.skypro.jd6.team3.animalshelter.repository.PotentialOwnerMenuRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Service
 public class PotentialOwnerMenuService {
 
     private final InlineKeyboardMarkup keyboard;
+
+    private final InlineKeyboardMarkup keyboard2;
 
     private final TelegramBot telegramBot;
 
@@ -25,11 +28,21 @@ public class PotentialOwnerMenuService {
         this.potentialOwnerMenuRepository = potentialOwnerMenuRepository;
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
+        this.keyboard2 = new InlineKeyboardMarkup();
         setButtons();
+    }
+
+    @Override
+    public String toString() {
+        return "PotentialOwnerMenuService";
     }
 
     public PotentialOwnerMenuButton get(Long id) {
         return potentialOwnerMenuRepository.findById(id).orElse(null);
+    }
+
+    public PotentialOwnerMenuButton get(String button) {
+        return potentialOwnerMenuRepository.findByButton(button);
     }
 
     public Collection<PotentialOwnerMenuButton> getButtons() {
@@ -38,7 +51,7 @@ public class PotentialOwnerMenuService {
 
     private void setButtons() {
         getButtons().forEach(button ->
-                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
+                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
     }
 
     public PotentialOwnerMenuButton add(PotentialOwnerMenuButton potentialOwnerMenuButton) {

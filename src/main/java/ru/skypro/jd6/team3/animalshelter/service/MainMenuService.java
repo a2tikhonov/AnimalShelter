@@ -35,6 +35,11 @@ public class MainMenuService {
         setButtons();
     }
 
+    @Override
+    public String toString() {
+        return "MainMenu";
+    }
+
     public MainMenuButton get(Long id) {
         return mainMenuRepository.findById(id).orElse(null);
     }
@@ -45,7 +50,7 @@ public class MainMenuService {
 
     private void setButtons() {
         getButtons().forEach(button ->
-                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
+                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
     }
 
     public MainMenuButton add(MainMenuButton mainMenuButton) {

@@ -28,8 +28,17 @@ public class NewUserMenuService{
         setButtons();
     }
 
+    @Override
+    public String toString() {
+        return "NewUserMenuService";
+    }
+
     public NewUserMenuButton get(Long id) {
         return newUserMenuRepository.findById(id).orElse(null);
+    }
+
+    public NewUserMenuButton get(String button) {
+        return newUserMenuRepository.findByButton(button);
     }
 
     public Collection<NewUserMenuButton> getButtons() {
@@ -38,7 +47,7 @@ public class NewUserMenuService{
 
     public void setButtons() {
         getButtons().forEach(button ->
-                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
+                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
     }
 
     public NewUserMenuButton add(NewUserMenuButton newUserMenu) {

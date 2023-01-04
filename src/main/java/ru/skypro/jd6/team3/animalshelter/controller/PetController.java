@@ -1,15 +1,12 @@
 package ru.skypro.jd6.team3.animalshelter.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.Pet;
-import ru.skypro.jd6.team3.animalshelter.record.PetRecord;
 import ru.skypro.jd6.team3.animalshelter.service.PetService;
 
-/**
- * Контроллер для класса "Pet"
- */
+import java.util.Collection;
+
 @RestController
 @RequestMapping("/pet")
 public class PetController {
@@ -20,49 +17,20 @@ public class PetController {
         this.petService = petService;
     }
 
-    /**
-     * Создаёт Питомец в базе данных
-     * @param pet Передаваемый упрощённый Питомец
-     * @return Возвращает полноценную сущность Питомец из базы данных
-     */
-    @PostMapping
-    public ResponseEntity<PetRecord> createPet(@RequestBody PetRecord pet) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(petService.createPet(pet));
-    }
-
-    /**
-     * Возвращает Питомец из базы данных
-     * @param id Параметр по которому мы ищём Питомец в базе данных
-     * @return Возвращает Питомец из базы данных если найден, если нет то сообщает об ошибке
-     */
-    @GetMapping("{id}")
-    public ResponseEntity<Pet> getPet(@PathVariable Long id) {
-        Pet pet = petService.getPet(id);
-        if (pet == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Обновляет Питомец в базе данных
-     * @param petRecord Данные для обновления в базе данных
-     * @return Возвращает обновлённую сущность из базы данных
-     */
     @PutMapping
-    public PetRecord updatePet(@RequestBody PetRecord petRecord) {
-        return petService.updatePet(petRecord);
+    public ResponseEntity<Pet> create(@RequestBody Pet pet) {
+        Pet pet1 = petService.add(pet);
+        return ResponseEntity.ok(pet1);
     }
 
-    /**
-     * Удаляет Питомец из базы данных
-     * @param id Параметр по которому ищется Хозяин в базе данных
-     * @return Возвращает успшность данной операции
-     */
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> deletePet(@PathVariable Long id) {
-        petService.deletePet(id);
-        return ResponseEntity.ok().build();
+    @GetMapping
+    public ResponseEntity<Collection<Pet>> getAll() {
+        return ResponseEntity.ok(petService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Pet> get(@PathVariable Long id) {
+        Pet pet = petService.get(id);
+        return ResponseEntity.ok(pet);
     }
 }

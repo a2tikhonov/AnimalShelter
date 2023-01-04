@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 @Entity
+@Table(name = "volunteer")
 public class Volunteer {
     @Id
     private Long id;
@@ -17,19 +18,17 @@ public class Volunteer {
     @Column(unique = true)
     private String email;
 
-    private boolean busy;
     @OneToOne
     private PotentialOwner potentialOwner;
 
     public Volunteer() {
     }
 
-    public Volunteer(Long id, String name, String phone, String email, Boolean busy) {
+    public Volunteer(Long id, String name, String phone, String email) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
-        this.busy = busy;
     }
 
     @Override
@@ -87,14 +86,6 @@ public class Volunteer {
         this.email = email;
     }
 
-    public boolean isBusy() {
-        return busy;
-    }
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
-
     public PotentialOwner getPotentialOwner() {
         return potentialOwner;
     }
@@ -102,4 +93,5 @@ public class Volunteer {
     public void setPotentialOwner(PotentialOwner potentialOwner) {
         this.potentialOwner = potentialOwner;
     }
+
 }
