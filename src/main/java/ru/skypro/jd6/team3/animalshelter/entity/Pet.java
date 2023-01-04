@@ -1,79 +1,58 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+import org.jetbrains.annotations.Nullable;
+
 import javax.persistence.*;
-import java.util.Objects;
+
+/**
+ * Класс для питомце, питомцев, а не собак так как приют может в будующем принимать и других животных
+ */
 
 @Entity
-@Table(name = "pet")
+@Table(name = "pets")
 public class Pet {
-
     @Id
-    @GeneratedValue(generator = "pedIdGen")
-    private long id;
-
-    private String type;
-
-    private String breed;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 
-    private double wight;
+    private Integer weight;
 
-    private int age;
+    private Integer age;
+
+    private String breed;
+
+    private String species;
+
+    private boolean disabled = false;
+
     @OneToOne
+    @JoinColumn(name = "potential_owner_id")
+    @JsonIgnore
+    @Nullable
     private PotentialOwner potentialOwner;
 
-    public Pet() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    @JsonIgnore
+    @Nullable
+    private Shelter shelter;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pet pet = (Pet) o;
-        return id == pet.id;
-    }
+    public Pet() {}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    /**
+     * Стандартные методы гет и сет
+     */
 
-    @Override
-    public String toString() {
-        return "Pet{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", breed='" + breed + '\'' +
-                ", name='" + name + '\'' +
-                ", wight=" + wight +
-                ", age=" + age +
-                ", potentialOwner=" + potentialOwner +
-                '}';
-    }
-
-    public long getId() {
+    public long getPetId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setPetId(long id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getBreed() {
-        return breed;
-    }
-
-    public void setBreed(String breed) {
-        this.breed = breed;
     }
 
     public String getName() {
@@ -84,27 +63,80 @@ public class Pet {
         this.name = name;
     }
 
-    public double getWight() {
-        return wight;
+    public double getWeight() {
+        return weight;
     }
 
-    public void setWight(double wight) {
-        this.wight = wight;
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
-    public int getAge() {
+    public double getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
+    public String getBreed() {
+        return breed;
+    }
+
+    public void setBreed(String breed) {
+        this.breed = breed;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Shelter getShelter() {
+        return shelter;
+    }
+
+    public void setShelter(Shelter shelter) {
+        this.shelter = shelter;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+
+    @Nullable
     public PotentialOwner getPotentialOwner() {
         return potentialOwner;
     }
 
-    public void setPotentialOwner(PotentialOwner potentialOwner) {
+    public void setPotentialOwner(@Nullable PotentialOwner potentialOwner) {
         this.potentialOwner = potentialOwner;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Pet{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", weight=" + weight +
+                ", age=" + age +
+                '}';
+    }
+
+
 }

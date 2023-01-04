@@ -1,7 +1,11 @@
 package ru.skypro.jd6.team3.animalshelter.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jetbrains.annotations.Nullable;
+
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Entity
@@ -9,25 +13,33 @@ import java.util.Objects;
 public class Report {
 
     @Id
-    @GeneratedValue(generator = "reportGen")
+    @GeneratedValue
     private Long id;
-    private Long fileSize;
-    private String photoId;
-    private LocalDate dayOfMonth;
-    private String reportText;
+    private String filePath;
+    private int fileSize;
+    private byte[] photo;
+    private LocalDateTime dateTime;
+    private String diet;
+    private String condition;
+    private String changes;
     private String mediaType;
 
     @ManyToOne
     @JoinColumn(name = "potential_owner_id")
+    @JsonIgnore
+    @Nullable
     private PotentialOwner potentialOwner;
 
     public Report() {
         this.id = 0L;
-        this.fileSize = 0L;
-        this.dayOfMonth = null;
-        this.reportText = null;
+        this.filePath = null;
+        this.fileSize = 0;
+        this.photo = null;
+        this.dateTime = null;
+        this.diet = null;
+        this.condition = null;
+        this.changes = null;
         this.mediaType = null;
-        this.photoId = null;
     }
 
     public Long getId() {
@@ -38,7 +50,15 @@ public class Report {
         this.id = id;
     }
 
-    public Long getFileSize() {
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public int getFileSize() {
         return fileSize;
     }
 
@@ -50,16 +70,48 @@ public class Report {
         this.mediaType = mediaType;
     }
 
-    public void setFileSize(Long fileSize) {
+    public void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
 
-    public LocalDate getDayOfMonth() {
-        return dayOfMonth;
+    public byte[] getPhoto() {
+        return photo;
     }
 
-    public void setDayOfMonth(LocalDate day) {
-        this.dayOfMonth = day;
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public String getDiet() {
+        return diet;
+    }
+
+    public void setDiet(String diet) {
+        this.diet = diet;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public String getChanges() {
+        return changes;
+    }
+
+    public void setChanges(String changes) {
+        this.changes = changes;
     }
 
     public PotentialOwner getOwner() {
@@ -70,29 +122,17 @@ public class Report {
         this.potentialOwner = potentialOwner;
     }
 
-    public String getPhotoId() {
-        return photoId;
-    }
-
-    public void setPhotoId(String fileId) {
-        this.photoId = fileId;
-    }
-
-    public String getReportText() {
-        return reportText;
-    }
-
-    public void setReportText(String reportText) {
-        this.reportText = reportText;
-    }
-
     @Override
     public String toString() {
         return "Report{" +
                 "id=" + id +
-                ", photoId='" + photoId + '\'' +
-                ", dayOfMonth=" + dayOfMonth +
-                ", reportText='" + reportText + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", fileSize=" + fileSize +
+                ", photo=" + Arrays.toString(photo) +
+                ", dateTime=" + dateTime +
+                ", diet='" + diet + '\'' +
+                ", condition='" + condition + '\'' +
+                ", changes='" + changes + '\'' +
                 ", potentialOwner=" + potentialOwner +
                 '}';
     }
@@ -102,11 +142,13 @@ public class Report {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Report report = (Report) o;
-        return id.equals(report.id);
+        return fileSize == report.fileSize && Objects.equals(id, report.id) && Objects.equals(filePath, report.filePath) && Arrays.equals(photo, report.photo) && Objects.equals(dateTime, report.dateTime) && Objects.equals(diet, report.diet) && Objects.equals(condition, report.condition) && Objects.equals(changes, report.changes) && Objects.equals(potentialOwner, report.potentialOwner);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        int result = Objects.hash(id, filePath, fileSize, dateTime, diet, condition, changes, potentialOwner);
+        result = 31 * result + Arrays.hashCode(photo);
+        return result;
     }
 }

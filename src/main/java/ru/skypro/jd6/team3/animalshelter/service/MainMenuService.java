@@ -50,7 +50,7 @@ public class MainMenuService {
 
     private void setButtons() {
         getButtons().forEach(button ->
-                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
+                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
     }
 
     public MainMenuButton add(MainMenuButton mainMenuButton) {
@@ -90,7 +90,4 @@ public class MainMenuService {
         return button;
     }
 
-    public void delete(Long id) {
-        mainMenuRepository.deleteById(id);
-    }
 }

@@ -51,7 +51,7 @@ public class PotentialOwnerMenuService {
 
     private void setButtons() {
         getButtons().forEach(button ->
-                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
+                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
     }
 
     public PotentialOwnerMenuButton add(PotentialOwnerMenuButton potentialOwnerMenuButton) {
@@ -89,13 +89,5 @@ public class PotentialOwnerMenuService {
             telegramBot.execute(answerCallbackQuery);
         }
         return button;
-    }
-
-    /**
-     * Удаление кнопки
-     * @param id параметр по которому происходит поиск и удаление
-     */
-    public void delete(Long id) {
-        potentialOwnerMenuRepository.deleteById(id);
     }
 }
