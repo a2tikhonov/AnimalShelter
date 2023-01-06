@@ -38,13 +38,13 @@ public class MainMenuCatService extends MainMenuService{
         return mainMenuCatRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public Collection<MainMenuButton> getButtons() {
+
+    public Collection<MainMenuButton> getButtonsCats() {
         return mainMenuCatRepository.findAll();
     }
 
-    public MainMenuButtonCat add(MainMenuButtonCat mainMenuButtonCat) {
-        return mainMenuCatRepository.save(mainMenuButtonCat);
+    public MainMenuButton add(MainMenuButton mainMenuButton) {
+        return mainMenuCatRepository.save(mainMenuButton);
     }
 
     public boolean buttonExist(String button) {

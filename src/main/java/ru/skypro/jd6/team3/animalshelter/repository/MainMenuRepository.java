@@ -9,5 +9,4 @@ public interface MainMenuRepository extends JpaRepository<MainMenuButton, Long> 
     Boolean existsByButton(String button);
 
     MainMenuButton findByButton(String button);
-
 }
