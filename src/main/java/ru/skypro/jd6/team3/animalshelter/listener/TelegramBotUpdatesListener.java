@@ -20,6 +20,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final MainMenuService mainMenuService;
 
+    private final MainMenuCatService mainMenuCatService;
+
     private final NewUserMenuService newUserMenuService;
 
     private final PotentialOwnerMenuService potentialOwnerMenuService;
@@ -31,12 +33,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
     private final PetService petService;
 
     public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuService,
+                                      MainMenuCatService mainMenuCatService,
                                       NewUserMenuService newUserMenuService,
                                       PotentialOwnerMenuService potentialOwnerMenuService,
                                       PotentialOwnerService potentialOwnerService,
                                       VolunteerService volunteerService, PetService petService) {
         this.telegramBot = telegramBot;
         this.mainMenuService = mainMenuService;
+        this.mainMenuCatService = mainMenuCatService;
         this.newUserMenuService = newUserMenuService;
         this.potentialOwnerMenuService = potentialOwnerMenuService;
         this.potentialOwnerService = potentialOwnerService;
@@ -65,8 +69,9 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
                     }
                 }
+// 0
                 if (potentialOwner != null) {
-                    if (messageText.equalsIgnoreCase("/start")) {
+                    if (messageText.equalsIgnoreCase("/startDog")) {
                         potentialOwnerService.setLocationInMenu(userIdFromMessage, mainMenuService.toString());
                         if (potentialOwner.getName().isBlank()) {
                             mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
@@ -74,6 +79,17 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             mainMenuService.send(userIdFromMessage, "Добро пожаловать " + potentialOwner.getName() + "!");
                         }
                     }
+// 0
+// 1
+                    if (messageText.equalsIgnoreCase("/startCat")) {
+                        potentialOwnerService.setLocationInMenu(userIdFromMessage, mainMenuCatService.toString());
+                        if (potentialOwner.getName().isBlank()) {
+                            mainMenuCatService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
+                        } else {
+                            mainMenuCatService.send(userIdFromMessage, "Добро пожаловать " + potentialOwner.getName() + "!");
+                        }
+                    }
+// 1
                     if (messageText.equalsIgnoreCase("/stop")) {
                         if (potentialOwner.getName().isBlank() || !petService.existsPetByPotentialOwner(potentialOwner)) {
                             potentialOwnerService.delete(userIdFromMessage);
