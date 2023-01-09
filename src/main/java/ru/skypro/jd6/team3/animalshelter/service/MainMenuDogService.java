@@ -7,23 +7,22 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
-import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButtonCat;
-import ru.skypro.jd6.team3.animalshelter.repository.MainMenuCatRepository;
-
+import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButtonDog;
+import ru.skypro.jd6.team3.animalshelter.repository.MainMenuDogRepository;
 import java.util.Collection;
 
 @Service
-public class MainMenuCatService implements MainMenuService{
+public class MainMenuDogService implements MainMenuService {
 
     private final InlineKeyboardMarkup keyboard;
 
-    private final MainMenuCatRepository mainMenuCatRepository;
+    private final MainMenuDogRepository mainMenuDogRepository;
 
     private final TelegramBot telegramBot;
 
-    public MainMenuCatService(TelegramBot telegramBot,
-                              MainMenuCatRepository mainMenuCatRepository) {
-        this.mainMenuCatRepository = mainMenuCatRepository;
+    public MainMenuDogService(TelegramBot telegramBot,
+                              MainMenuDogRepository mainMenuDogRepository) {
+        this.mainMenuDogRepository = mainMenuDogRepository;
         this.telegramBot = telegramBot;
         this.keyboard = new InlineKeyboardMarkup();
         setButtons();
@@ -34,12 +33,12 @@ public class MainMenuCatService implements MainMenuService{
         return "MainMenuCats";
     }
 
-    public MainMenuButtonCat get(Long id) {
-        return mainMenuCatRepository.findById(id).orElse(null);
+    public MainMenuButtonDog get(Long id) {
+        return mainMenuDogRepository.findById(id).orElse(null);
     }
 
-    public Collection<MainMenuButtonCat> getButtons() {
-        return mainMenuCatRepository.findAll();
+    public Collection<MainMenuButtonDog> getButtons() {
+        return mainMenuDogRepository.findAll();
     }
 
     @Override
@@ -48,13 +47,13 @@ public class MainMenuCatService implements MainMenuService{
                 keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
     }
 
-    public MainMenuButtonCat add(MainMenuButtonCat mainMenuButtonDogCat) {
-        return mainMenuCatRepository.save(mainMenuButtonDogCat);
+    public MainMenuButtonDog add(MainMenuButtonDog mainMenuButtonDogCat) {
+        return mainMenuDogRepository.save(mainMenuButtonDogCat);
     }
 
     @Override
     public boolean buttonExist(String button) {
-        return mainMenuCatRepository.existsByButton(button);
+        return mainMenuDogRepository.existsByButton(button);
     }
 
     @Override
@@ -67,8 +66,8 @@ public class MainMenuCatService implements MainMenuService{
     public String buttonTap(CallbackQuery query) {
         String button = "";
         if (query != null && buttonExist(query.data())) {
-            MainMenuButtonCat mainMenuButtonCat = mainMenuCatRepository.findByButton(query.data());
-            button = mainMenuButtonCat.getButton();
+            MainMenuButtonDog mainMenuButtonDog = mainMenuDogRepository.findByButton(query.data());
+            button = mainMenuButtonDog.getButton();
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
         }

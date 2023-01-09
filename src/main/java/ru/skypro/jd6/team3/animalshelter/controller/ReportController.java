@@ -1,17 +1,11 @@
 package ru.skypro.jd6.team3.animalshelter.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
-import ru.skypro.jd6.team3.animalshelter.entity.Shelter;
-import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.service.ReportService;
 
 import java.util.Collection;
@@ -26,20 +20,20 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @Operation(
-            summary = "search for report",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "finds certain report",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Shelter.class))
-                            )
-                    )
-            },
-            tags = "Report"
-    )
+    /*    @Operation(
+                summary = "search for report",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "finds certain report",
+                                content = @Content(
+                                        mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        array = @ArraySchema(schema = @Schema(implementation = Shelter.class))
+                                )
+                        )
+                },
+                tags = "Report"
+        )*/
     @GetMapping("/{id}")
     public ResponseEntity<Report> findReport(@PathVariable Long id) {
         Report report = reportService.findReport(id);
@@ -57,64 +51,49 @@ public class ReportController {
         return ResponseEntity.ok(reportService.findAll());
     }
 
-    @Operation(
-            summary = "add report",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "adds report",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Report.class))
-                            )
-                    )
-            },
-            tags = "Report"
-    )
+    /**
+     * Добавление отчета через браузер
+     *
+     * @param report новый объект "Волонтер"
+     */
     @PostMapping
     public ResponseEntity<Report> addReport(@RequestBody Report report) {
         Report newReport = reportService.addReport(report);
         return ResponseEntity.ok(newReport);
     }
 
-    @Operation(
-            summary = "change the report",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "modifies report",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Shelter.class))
-                            )
-                    )
-            },
-            tags = "Report"
-    )
+    /**
+     * Изменение отчета через браузер
+     *
+     * @param report новый объект "Волонтер"
+     */
     @PutMapping
     public ResponseEntity<Report> editReport(@RequestBody Report report) {
         Report updateReport = reportService.editReport(report);
         return ResponseEntity.ok(updateReport);
     }
 
-    @Operation(
-            summary = "delete the report",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "deletes the report",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Shelter.class))
-                            )
-                    )
-            },
-            tags = "Report"
-    )
+    /**
+     * Удалить отчет по идентификатору
+     *
+     * @param id - идентификатор отчета
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReport(@PathVariable Long id) {
         reportService.deleteReport(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/{id}/photo")
+    public ResponseEntity<byte[]> downloadPhoto(@PathVariable Long id) {
+        Report report = reportService.findReport(id);
+        if (report.getPhotoId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(report.getMediaType()));
+        headers.setContentLength(reportService.downloadPhoto(report.getId()).length);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(reportService.downloadPhoto(report.getId()));
     }
 
 //    @Operation(

@@ -4,21 +4,21 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "main_menu")
-public class MainMenuButton {
+@Table(name = "main_menu_dogs")
+public class MainMenuButtonDog {
 
     @Id
-    @GeneratedValue(generator = "mainMenuGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String button;
 
     private String callBack;
 
-    public MainMenuButton() {
+    public MainMenuButtonDog() {
     }
 
-    public MainMenuButton(Long id, String button, String callBack) {
+    public MainMenuButtonDog(Long id, String button, String callBack) {
         this.id = id;
         this.button = button;
         this.callBack = callBack;
@@ -28,8 +28,8 @@ public class MainMenuButton {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MainMenuButton mainMenuButton = (MainMenuButton) o;
-        return id.equals(mainMenuButton.id);
+        MainMenuButtonDog mainMenuButtonDog = (MainMenuButtonDog) o;
+        return id.equals(mainMenuButtonDog.id);
     }
 
     @Override

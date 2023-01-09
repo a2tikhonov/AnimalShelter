@@ -47,7 +47,7 @@ public class NewUserMenuService{
 
     public void setButtons() {
         getButtons().forEach(button ->
-                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getCallBack())));
+                keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
     }
 
     public NewUserMenuButton add(NewUserMenuButton newUserMenu) {

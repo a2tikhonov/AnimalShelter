@@ -5,10 +5,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "main_menu_cats")
-public class MainMenuButtonCat {
+public class MainMenuButtonCat{
 
     @Id
-    @GeneratedValue(generator = "mainMenuGen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String button;

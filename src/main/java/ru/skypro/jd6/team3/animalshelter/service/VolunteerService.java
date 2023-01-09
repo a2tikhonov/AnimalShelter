@@ -6,6 +6,7 @@ import ru.skypro.jd6.team3.animalshelter.entity.Volunteer;
 import ru.skypro.jd6.team3.animalshelter.repository.VolunteerRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class VolunteerService {
@@ -45,6 +46,7 @@ public class VolunteerService {
     }
 
     public Volunteer getFree() {
-        return volunteerRepository.getFirstByPotentialOwner(null);
+        return Optional.of(volunteerRepository.getFirstByPotentialOwner(null)).orElse(null);
     }
+
 }

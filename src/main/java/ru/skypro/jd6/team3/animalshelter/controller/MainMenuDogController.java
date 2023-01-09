@@ -8,20 +8,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButton;
-import ru.skypro.jd6.team3.animalshelter.entity.Report;
+import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButtonDog;
+import ru.skypro.jd6.team3.animalshelter.service.MainMenuDogService;
 import ru.skypro.jd6.team3.animalshelter.service.MainMenuService;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/mainMenu")
-public class MainMenuController {
+public class MainMenuDogController {
 
-    private final MainMenuService mainMenuService;
+    private final MainMenuDogService mainMenuDogService;
 
-    public MainMenuController(MainMenuService mainMenuService) {
-        this.mainMenuService = mainMenuService;
+    public MainMenuDogController(MainMenuDogService mainMenuDogService) {
+        this.mainMenuDogService = mainMenuDogService;
     }
 
     @Operation(
@@ -32,16 +32,16 @@ public class MainMenuController {
                             description = "adds menu button",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButton.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButtonDog.class))
                             )
                     )
             },
             tags = "MainMenuButton"
     )
     @PutMapping
-    public ResponseEntity<MainMenuButton> create(@RequestBody MainMenuButton mainMenuButton) {
-        MainMenuButton mainMenuButton1 = mainMenuService.add(mainMenuButton);
-        return ResponseEntity.ok(mainMenuButton1);
+    public ResponseEntity<MainMenuButtonDog> create(@RequestBody MainMenuButtonDog mainMenuButtonDog) {
+        MainMenuButtonDog mainMenuButtonDog1 = mainMenuDogService.add(mainMenuButtonDog);
+        return ResponseEntity.ok(mainMenuButtonDog1);
     }
 
     @Operation(
@@ -52,15 +52,15 @@ public class MainMenuController {
                             description = "get information about all the buttons",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButton.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButtonDog.class))
                             )
                     )
             },
             tags = "MainMenuButton"
     )
     @GetMapping
-    public ResponseEntity<Collection<MainMenuButton>> getAll() {
-        return ResponseEntity.ok(mainMenuService.getButtons());
+    public ResponseEntity<Collection<MainMenuButtonDog>> getAll() {
+        return ResponseEntity.ok(mainMenuDogService.getButtons());
     }
 
     @Operation(
@@ -71,16 +71,16 @@ public class MainMenuController {
                             description = "get information about the certain button",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButton.class))
+                                    array = @ArraySchema(schema = @Schema(implementation = MainMenuButtonDog.class))
                             )
                     )
             },
             tags = "MainMenuButton"
     )
     @GetMapping("/{id}")
-    public ResponseEntity<MainMenuButton> get(@PathVariable Long id) {
-        MainMenuButton mainMenuButton = mainMenuService.get(id);
-        return ResponseEntity.ok(mainMenuButton);
+    public ResponseEntity<MainMenuButtonDog> get(@PathVariable Long id) {
+        MainMenuButtonDog mainMenuButtonDog = mainMenuDogService.get(id);
+        return ResponseEntity.ok(mainMenuButtonDog);
     }
 
 }

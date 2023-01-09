@@ -1,21 +1,24 @@
 package ru.skypro.jd6.team3.animalshelter.service;
 
+import com.pengrad.telegrambot.TelegramBot;
+import com.pengrad.telegrambot.model.PhotoSize;
+import com.pengrad.telegrambot.request.GetFile;
+import com.pengrad.telegrambot.response.GetFileResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.jd6.team3.animalshelter.entity.Location;
+import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
 import ru.skypro.jd6.team3.animalshelter.entity.Report;
-import ru.skypro.jd6.team3.animalshelter.entity.Shelter;
 import ru.skypro.jd6.team3.animalshelter.repository.ReportRepository;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.Collection;
-
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
@@ -24,11 +27,12 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
 
-    @Value("${upload.path}$")
-    private String uploadPath;
+    private final TelegramBot telegramBot;
 
-    public ReportService(ReportRepository repository) {
+
+    public ReportService(ReportRepository repository, TelegramBot telegramBot) {
         this.reportRepository = repository;
+        this.telegramBot = telegramBot;
     }
 
     /**
@@ -74,7 +78,6 @@ public class ReportService {
 
     /**
      * Поиск всех отчетов
-     *
      */
     public Collection<Report> findAll() {
         logger.info("*findAll* (reports) method was invoked");
@@ -101,31 +104,99 @@ public class ReportService {
         return reportRepository.findAll();
     }
 
-//    public void uploadReportPhoto(Long reportId, MultipartFile reportFile) throws IOException {
-//        Report report = findReport(reportId);
-//
-//        Path filePath = Path.of(uploadPath, reportId + "." + getExtension(reportFile.getOriginalFilename()));
-//        Files.createDirectories(filePath.getParent());
-//        Files.deleteIfExists(filePath);
-//
-//        try (
-//                InputStream is = reportFile.getInputStream();
-//                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-//                BufferedInputStream bis = new BufferedInputStream(is, 1024);
-//                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-//        ) {
-//            bis.transferTo(bos);
-//        }
-//
-//        report.setFilePath(filePath.toString());
-//        report.setFileSize(reportFile.getSize());
-//        report.setMediaType(reportFile.getContentType());
-//        report.setPhoto(reportFile.getBytes());
-//
-//        reportRepository.save(report);
-//    }
-//
-//    private String getExtension(String fileName) {
-//        return fileName.substring(fileName.lastIndexOf(".") + 1);
-//    }
+    public Report getLastBy(PotentialOwner potentialOwner) {
+        Optional<Report> report = Optional.of(reportRepository.findTopByPotentialOwnerOrderByIdDesc(potentialOwner));
+        return report.orElse(null);
+    }
+
+    public void uploadReportPhoto(PhotoSize[] photoSizes, PotentialOwner potentialOwner) {
+        String mediaType = null;
+        Long fileSize = 0L;
+        String photoId =null;
+        for (PhotoSize photoSize : photoSizes) {
+            GetFileResponse getFileResponse = telegramBot.execute(new GetFile(photoSize.fileId()));
+            mediaType = "image/" + getFileResponse.file().filePath()
+                    .substring(getFileResponse.file().filePath().lastIndexOf('.') + 1);
+            fileSize = getFileResponse.file().fileSize();
+            photoId = photoSize.fileId();
+        }
+        Report report = updateOrCreateReport(potentialOwner);
+        report.setPhotoId(photoId);
+        report.setMediaType(mediaType);
+        report.setFileSize(fileSize);
+        reportRepository.save(report);
+    }
+
+    public void uploadReportText(String text, PotentialOwner potentialOwner) {
+        Report report = updateOrCreateReport(potentialOwner);
+        report.setReportText(text);
+        reportRepository.save(report);
+    }
+
+    private Report updateOrCreateReport(PotentialOwner potentialOwner) {
+        Report report;
+        LocalDate day = LocalDate.now();
+        if (existsBy(potentialOwner)) {
+            report = getLastBy(potentialOwner);
+        } else {
+            report = new Report();
+            report.setOwner(potentialOwner);
+        }
+        report.setDayOfMonth(day);
+        return report;
+    }
+
+    public Boolean reportCompleted(PotentialOwner potentialOwner) {
+        if (existsBy(potentialOwner)) {
+            Report report = getLastBy(potentialOwner);
+            if (report.getReportText() != null && report.getPhotoId() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Boolean existsBy(PotentialOwner potentialOwner) {
+        return reportRepository.existsByPotentialOwner(potentialOwner);
+    }
+
+    public byte[] downloadPhoto(Long reportId) {
+        byte[] fileBytes = null;
+        Report report = reportRepository.findById(reportId).orElse(null);
+        if (report != null) {
+            try {
+                GetFileResponse getFileResponse = telegramBot.execute(new GetFile(report.getPhotoId()));
+                fileBytes = telegramBot.getFileContent(getFileResponse.file());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return fileBytes;
+    }
+
+    public String getReportForm() {
+        return "В ежедневный отчет входит следующая информация:\n" +
+                "Фото животного;\n" +
+                "Рацион животного;\n" +
+                "Общее самочувствие и привыкание к новому месту;\n" +
+                "Изменение в поведении: отказ от старых привычек, приобретение новых.";
+    }
+
+    public List<Long> reportTimer() {
+        LocalDate currentDay = LocalDate.now();
+        Collection<Report> outdatedReports = reportRepository.findAllByDayOfMonthBefore(currentDay);
+        List<Long> userIdsWithOutdatedReports = outdatedReports.stream().map(e -> e.getOwner().getId()).collect(Collectors.toList());
+        return userIdsWithOutdatedReports;
+    }
+
+    public List<Long> findOwnersWithOutdatedReports() {
+        LocalDate currentDay = LocalDate.now();
+        Collection<Report> outdatedReports = reportRepository.findAllByDayOfMonthBefore(currentDay);
+        List<Long> userIdsWithOutdatedReports = outdatedReports.stream()
+                .filter(e -> currentDay.getDayOfMonth() - e.getDayOfMonth().getDayOfMonth() >= 2 )
+                .map(n -> n.getOwner().getId()).collect(Collectors.toList());
+        return userIdsWithOutdatedReports;
+    }
+
+
 }
