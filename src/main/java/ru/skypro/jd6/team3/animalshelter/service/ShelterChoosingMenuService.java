@@ -7,42 +7,38 @@ import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup;
 import com.pengrad.telegrambot.request.AnswerCallbackQuery;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
-import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButtonDog;
-import ru.skypro.jd6.team3.animalshelter.repository.MainMenuDogRepository;
+import ru.skypro.jd6.team3.animalshelter.entity.ShelterChoosingMenu;
+import ru.skypro.jd6.team3.animalshelter.repository.ShelterChoosingMenuRepository;
+
 import java.util.Collection;
 
 @Service
-public class MainMenuDogService implements MainMenuService {
+public class ShelterChoosingMenuService implements MainMenuService{
 
     private final InlineKeyboardMarkup keyboard;
 
-    private final MainMenuDogRepository mainMenuDogRepository;
+    private final ShelterChoosingMenuRepository shelterChoosingMenuRepository;
 
     private final TelegramBot telegramBot;
 
-    public MainMenuDogService(TelegramBot telegramBot,
-                              MainMenuDogRepository mainMenuDogRepository) {
-        this.mainMenuDogRepository = mainMenuDogRepository;
-        this.telegramBot = telegramBot;
+    public ShelterChoosingMenuService(ShelterChoosingMenuRepository shelterChoosingMenuRepository,
+                                      TelegramBot telegramBot) {
         this.keyboard = new InlineKeyboardMarkup();
-        setButtons();
+        this.shelterChoosingMenuRepository = shelterChoosingMenuRepository;
+        this.telegramBot = telegramBot;
     }
-
-//    public MainMenuDogService() {
-//
-//    }
 
     @Override
     public String toString() {
-        return "MainMenuCats";
+        return "ShelterChoosingMenu";
     }
 
-    public MainMenuButtonDog get(Long id) {
-        return mainMenuDogRepository.findById(id).orElse(null);
+    public ShelterChoosingMenu get(Long id) {
+        return shelterChoosingMenuRepository.findById(id).orElse(null);
     }
 
-    public Collection<MainMenuButtonDog> getButtons() {
-        return mainMenuDogRepository.findAll();
+    public Collection<ShelterChoosingMenu> getButtons() {
+    return shelterChoosingMenuRepository.findAll();
     }
 
     @Override
@@ -51,13 +47,13 @@ public class MainMenuDogService implements MainMenuService {
                 keyboard.addRow(new InlineKeyboardButton(button.getButton()).callbackData(button.getButton())));
     }
 
-    public MainMenuButtonDog add(MainMenuButtonDog mainMenuButtonDogCat) {
-        return mainMenuDogRepository.save(mainMenuButtonDogCat);
+    public ShelterChoosingMenu add (ShelterChoosingMenu shelterChoosingMenu) {
+        return shelterChoosingMenuRepository.save(shelterChoosingMenu);
     }
 
     @Override
     public boolean buttonExist(String button) {
-        return mainMenuDogRepository.existsByButton(button);
+        return shelterChoosingMenuRepository.existsByButton(button);
     }
 
     @Override
@@ -70,8 +66,8 @@ public class MainMenuDogService implements MainMenuService {
     public String buttonTap(CallbackQuery query) {
         String button = "";
         if (query != null && buttonExist(query.data())) {
-            MainMenuButtonDog mainMenuButtonDog = mainMenuDogRepository.findByButton(query.data());
-            button = mainMenuButtonDog.getButton();
+            ShelterChoosingMenu shelterChoosingMenu = shelterChoosingMenuRepository.findByButton(query.data());
+            button = shelterChoosingMenu.getButton();
             AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(query.id()).text("");
             telegramBot.execute(answerCallbackQuery);
         }

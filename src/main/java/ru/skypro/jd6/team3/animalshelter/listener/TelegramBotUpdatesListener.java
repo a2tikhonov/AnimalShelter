@@ -20,9 +20,13 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final TelegramBot telegramBot;
 
-    private final MainMenuService mainMenuService;
+//    private final MainMenuService mainMenuService;
 
-    private final MainMenuCatService mainMenuCatService;
+    private final MainMenuService mainMenuCatService;
+
+    private final MainMenuService mainMenuDogService;
+
+    private final ShelterChoosingMenuService shelterChoosingMenuService;
 
     private final NewUserMenuService newUserMenuService;
 
@@ -36,13 +40,14 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     private final ReportService reportService;
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuService,
-                                      MainMenuCatService mainMenuCatService, NewUserMenuService newUserMenuService, PotentialOwnerMenuService potentialOwnerMenuService,
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, MainMenuService mainMenuDogService, ShelterChoosingMenuService shelterChoosingMenuService,
+                                      MainMenuService mainMenuCatService, NewUserMenuService newUserMenuService, PotentialOwnerMenuService potentialOwnerMenuService,
                                       PotentialOwnerService potentialOwnerService, VolunteerService volunteerService,
                                       PetService petService, ReportService reportService) {
         this.telegramBot = telegramBot;
-        this.mainMenuService = mainMenuService;
+        this.mainMenuDogService = mainMenuDogService;
         this.mainMenuCatService = mainMenuCatService;
+        this.shelterChoosingMenuService = shelterChoosingMenuService;
         this.newUserMenuService = newUserMenuService;
         this.potentialOwnerMenuService = potentialOwnerMenuService;
         this.potentialOwnerService = potentialOwnerService;
@@ -58,6 +63,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
+        MainMenuService mainMenuService = shelterChoosingMenuService;
         updates.forEach(update -> {
             if (update.message() != null) {
                 Long userIdFromMessage = update.message().chat().id();
@@ -117,7 +123,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(userIdFromMessage, "Введите данные корректно: сначала имя кириллицей, затем номер");
                         }
                     }
-                    if (volunteerService.existsByPotentialOwner(potentialOwner) && messageText.charAt(0) != '/' ) {
+                    if (volunteerService.existsByPotentialOwner(potentialOwner) && messageText.charAt(0) != '/') {
                         sendMessage(volunteerService.findByPotentialOwner(potentialOwner.getId()).getId(), messageText);
                     }
                     if (potentialOwner.getLocationInMenu().equals("Прислать отчет о питомце")) {
@@ -201,7 +207,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                             sendMessage(userIdFromCallBackQuery, "Ваши данные уже в базе");
                             newUserMenuService.send(userIdFromCallBackQuery, "Консультация с новым пользователем");
                         }
-                    } else  {
+                    } else {
                         if (newUserMenuService.buttonTap(update.callbackQuery()).equals("Записать контактные данные")) {
                             sendMessage(userIdFromCallBackQuery, "Введите свое имя и номер телефона!");
                             potentialOwnerService.setLocationInMenu(userIdFromCallBackQuery, update.callbackQuery().data());
@@ -225,10 +231,12 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                     }
                 }
                 if (potentialOwner == null) {
-                    // 1
-                    if (mainMenuCatService.buttonTap(update.callbackQuery()).equals("Позвать волоннтера")) {
-                        openChatByOwner(userIdFromCallBackQuery, "Консультация без регистрации");
+                    if (shelterChoosingMenuService.buttonTap(update.callbackQuery()).equals("Меню приюта собак")) {
+                        mainMenuService = mainMenuDogService;
+                    } else if (shelterChoosingMenuService.buttonTap(update.callbackQuery()).equals("Меню приюта кошек")){
+                        mainMenuService = mainMenuCatService;
                     }
+//dog menu
                     // 1
                     if (mainMenuService.buttonTap(update.callbackQuery()).equals("Позвать волонтера")) {
                         openChatByOwner(userIdFromCallBackQuery, "Консультация без регистрации");
@@ -252,7 +260,16 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                         openChatByOwner(userIdFromCallBackQuery, "Консультация без регистрации");
                     }
                 }
+                if (shelterChoosingMenuService.buttonTap(update.callbackQuery()).equals("Меню приюта собак")) {
+                    mainMenuService = mainMenuDogService;
+                } else if (shelterChoosingMenuService.buttonTap(update.callbackQuery()).equals("Меню приюта кошек")){
+                    mainMenuService = mainMenuCatService;
+                }
+//dog menu
                 if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять собаку из приюта")) {
+                    potentialOwnerMenuService.send(userIdFromCallBackQuery, "Консультация с потенциальным хозяином");
+                }
+                if (mainMenuService.buttonTap(update.callbackQuery()).equals("Как взять кошку из приюта")) {
                     potentialOwnerMenuService.send(userIdFromCallBackQuery, "Консультация с потенциальным хозяином");
                 }
                 if (newUserMenuService.buttonTap(update.callbackQuery()).equals("О приюте")) {
@@ -290,6 +307,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 if (potentialOwnerMenuService.buttonTap(update.callbackQuery()).equals("Причины отказа")) {
                     sendMessage(userIdFromCallBackQuery, potentialOwnerMenuService.get(update.callbackQuery().data()).getCallBack());
                 }
+//dog menu
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
