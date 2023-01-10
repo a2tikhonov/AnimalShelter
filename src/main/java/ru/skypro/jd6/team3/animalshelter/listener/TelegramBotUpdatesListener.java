@@ -63,8 +63,8 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     @Override
     public int process(List<Update> updates) {
-        MainMenuService mainMenuService = shelterChoosingMenuService;
         updates.forEach(update -> {
+            MainMenuService mainMenuService = mainMenuDogService;
             if (update.message() != null) {
                 Long userIdFromMessage = update.message().chat().id();
                 String messageText = "";

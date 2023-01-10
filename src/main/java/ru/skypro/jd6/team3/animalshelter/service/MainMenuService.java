@@ -1,6 +1,7 @@
 package ru.skypro.jd6.team3.animalshelter.service;
 
 import com.pengrad.telegrambot.model.CallbackQuery;
+import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.MainMenuButtonDog;
 
 import java.util.Collection;
