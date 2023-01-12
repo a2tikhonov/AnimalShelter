@@ -1,5 +1,6 @@
 package ru.skypro.jd6.team3.animalshelter.service;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import ru.skypro.jd6.team3.animalshelter.entity.Pet;
 import ru.skypro.jd6.team3.animalshelter.entity.PotentialOwner;
@@ -34,5 +35,17 @@ public class PetService {
 
     public Boolean existsPetByPotentialOwner(PotentialOwner potentialOwner) {
         return petRepository.existsPetByPotentialOwner(potentialOwner);
+    }
+
+//    public Pet PetByPotentialOwnerId(Long id) {
+//        return
+//    }
+//
+//    public String catOrDogByOwnerId(Long potentialOwnerId) {
+//        return getAll()
+//    }
+
+    public String getPetSpeciesByOwner(PotentialOwner potentialOwner) {
+        return petRepository.findByPotentialOwner(potentialOwner).getSpecies();
     }
 }

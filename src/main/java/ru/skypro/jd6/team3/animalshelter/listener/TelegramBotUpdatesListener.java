@@ -75,12 +75,30 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Volunteer volunteer = volunteerService.get(userIdFromMessage);
                 if (potentialOwner == null || volunteer == null) {
                     if (messageText.equalsIgnoreCase("/start")) {
-                        mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
+                        shelterChoosingMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
                     }
                 }
                 if (potentialOwner != null) {
                     if (messageText.equalsIgnoreCase("/start")) {
                         potentialOwnerService.setLocationInMenu(userIdFromMessage, mainMenuService.toString());
+// 1
+
+                        if (!petService.existsPetByPotentialOwner(potentialOwner)) {
+                            if (potentialOwner.getName().isBlank()) {
+                                mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
+                            } else {
+                                mainMenuService.send(userIdFromMessage, "Добро пожаловать " + potentialOwner.getName() + "!");
+                            }
+                        }
+                        if (petService.existsPetByPotentialOwner(potentialOwner)) {
+                            if (petService.getPetSpeciesByOwner(potentialOwner).equals("dog")) {
+                                mainMenuService = mainMenuDogService;
+                            } else if (petService.getPetSpeciesByOwner(potentialOwner).equals("cat")) {
+                                mainMenuService = mainMenuCatService;
+                            }
+                        }
+// 1
+
                         if (potentialOwner.getName().isBlank()) {
                             mainMenuService.send(userIdFromMessage, "Добро пожаловать " + update.message().from().username() + "!");
                         } else {

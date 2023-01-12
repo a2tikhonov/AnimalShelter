@@ -356,3 +356,5 @@ VALUES ('Agatha', '87825172840', 'Agatha_volunteer_@gmail.com', false),
        ('Tracy', '89166207830', 'Tracy_volunteer_@yandex.ru', false),
        ('Gabby', '89267448592', 'Gabby_volunteer_@yandex.ru', false),
        ('Juel', '89571281901', 'Juel_volunteer_@yandex.ru', false);
+
+-- SELECT pets.species FROM pets WHERE pets.potential_owner_id = 1;
